@@ -34,6 +34,9 @@ export interface Candidate {
   medianHoldS: number | null;
   verified: boolean;
   identityChecked: boolean;
+  lastSwapAt: number | null; // ms; set only by the Helius activity check
+  solQuotePct: number | null;
+  starter: boolean;
 }
 
 export type DropCounts = Record<string, number>;
@@ -110,6 +113,9 @@ export const mergeRows = (rows: WindowRow[], identityChecked: Set<string>): Cand
       medianHoldS: null,
       verified: false,
       identityChecked: identityChecked.has(address),
+      lastSwapAt: null,
+      solQuotePct: null,
+      starter: false,
     };
   });
 };
@@ -137,6 +143,22 @@ export const compareCandidates =
     }
     return (b.winRate ?? 0) - (a.winRate ?? 0) || b.realizedPnl - a.realizedPnl;
   };
+
+/**
+ * Starter-list criteria. Identity, activity, trade rate and trade size must be known;
+ * win rate and top-token share pass when unknown.
+ */
+export const isStarter = (c: Candidate, s: DiscoveryConfig['starter']) =>
+  c.identityChecked &&
+  c.lastSwapAt !== null &&
+  c.solQuotePct !== null &&
+  c.solQuotePct >= s.min_sol_quote_pct &&
+  c.tradesPerDay !== null &&
+  c.tradesPerDay <= s.max_trades_per_day &&
+  c.avgTradeUsd !== null &&
+  c.avgTradeUsd <= s.max_avg_trade_usd &&
+  (c.winRate === null || (c.winRate >= s.min_win_rate_pct && c.winRate <= s.max_win_rate_pct)) &&
+  (c.topTokenPct === null || c.topTokenPct <= s.max_top_token_pct);
 
 /** Largest profitable token's share of total profitable realized PnL, or null if unknowable. */
 export const topTokenShare = (realized: (number | null | undefined)[]) => {
@@ -170,6 +192,9 @@ export const CSV_COLUMNS = [
   'avg_trade_usd',
   'median_hold_s',
   'identity_checked',
+  'last_swap_at',
+  'sol_quote_pct',
+  'starter',
 ] as const;
 
 const fixed = (v: number | null) => (v === null ? '' : v.toFixed(2));
@@ -200,6 +225,9 @@ export const toCsv = (candidates: Candidate[]) =>
         fixed(c.avgTradeUsd),
         c.medianHoldS === null ? '' : String(Math.round(c.medianHoldS)),
         String(c.identityChecked),
+        c.lastSwapAt === null ? '' : new Date(c.lastSwapAt).toISOString(),
+        fixed(c.solQuotePct),
+        String(c.starter),
       ]
         .map(csvCell)
         .join(','),

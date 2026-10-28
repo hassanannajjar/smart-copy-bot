@@ -31,7 +31,7 @@ To get wallets tagged `smart_trader`, we would need a token-seeded crawl: tokens
 ### `GET /trader/gainers-losers`: candidate source (30 CU per call)
 | Param | Values | Default | We send |
 |---|---|---|---|
-| `type` (required) | `yesterday`, `today`, `1W`, `30d`, `90d` | `1W` | `30d`, `90d` |
+| `type` (required) | `yesterday`, `today`, `1W`, `30d`, `90d` | `1W` | `1W` (our 7d), `30d`, `90d` |
 | `sort_by` (required) | `PnL`, `realized_pnl`, `unrealized_pnl`, `trader_score` | `PnL` | `realized_pnl` |
 | `min_trade` / `max_trade` | uint | none | `min_trade=50` |
 | `min_realized_pnl` | number | 1000 when `sort_by=realized_pnl` | not sent (so the default of 1000 applies) |

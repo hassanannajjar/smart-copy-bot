@@ -128,7 +128,12 @@ describe('whale_trade_size', () => {
 
 describe('short_hold', () => {
   const realMedian = median(stPositions().positions.map((p) => p.timing?.holdTimeSecs)) as number;
-  const enrichOne = { ...off, enrich_top_n: 1, max_pages: 1, windows_days: [30] as 30[] };
+  const enrichOne = {
+    ...off,
+    enrich_top_n: 1,
+    max_pages: { solanatracker: 1, birdeye: 1 },
+    windows_days: [30] as 30[],
+  };
 
   it('the recorded positions expose holdTimeSecs', () => {
     expect(realMedian).toBeTypeOf('number');

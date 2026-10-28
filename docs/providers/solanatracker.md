@@ -21,10 +21,10 @@ Query parameters, with the values we send:
 
 | Param | Values | Default | We send |
 |---|---|---|---|
-| `days` | 1, 7, 30, 90 (others snap to the nearest) | 90 | 30 and 90 |
+| `days` | 1, 7, 30, 90 (others snap to the nearest) | 90 | 7, 30 and 90 |
 | `sort` / `direction` | `realized`, `volume`, `days`, `roi`, `win_percentage`, `trades`, `tokens` / `asc`, `desc` | `realized` / `desc` | `realized` / `desc` |
 | `minTrades` | int | 20 | 50 |
-| `minDays` | int (active trading days) | 3 | 10 |
+| `minDays` | int (active trading days) | 3 | 3 (7d), 10 (30d, 90d) |
 | `maxSingleTokenPct` | number; the max % of PnL that may come from one token | none | 30 |
 | `excludeArbitrage` | `true`, `false` | `true` | `true` |
 | `pnlMode` | `strict`, `adjusted`, `raw` | `strict` | `strict` |
@@ -83,7 +83,7 @@ We read `positions[].pnl.realized` and `pagination.hasMore`.
 - No per-call credit cost is documented for PnL V2. The Data API is metered per request.
 - The docs don't say whether the Free plan includes PnL V2 or the leaderboard.
 
-**Cost per discovery run:** up to 2 windows × 2 pages leaderboard calls, plus up to 40 positions calls, so about 44 requests. Our throttle is `min_interval_ms: 350`, under the free plan's 3 rps.
+**Cost per discovery run:** 3 windows × up to 20 leaderboard pages (the 2026-10-29 runs ran out after about 24 pages in total), plus up to `enrich_top_n` (80) positions calls; in practice about 70 requests. Our throttle is `min_interval_ms: 350`, under the free plan's 3 rps.
 
 ## Unverified until a key exists
 - The real response shapes. The fixtures are the official OpenAPI examples, and the doc example rows omit `identity.tags` and `type`.
@@ -100,11 +100,11 @@ To refresh the fixtures with real data, run `pnpm wallets:discover --record`.
 - **Hold time:** `positions[].timing.holdTimeSecs` is present on every position. Discovery's `short_hold` filter uses the median across the first page of profitable positions (up to 200, all-time). Profitable-only positions bias the sample toward winning flips.
 - **Leaderboard bias:** sorted by `realized`, the top of the leaderboard is mostly high-frequency wallets. On the first recorded 30d page, 85 of 100 rows had more than 150 trades/day, so `max_pages` was raised to 5.
 
-## Next discovery tuning (not implemented yet)
+## Discovery tuning: recent SOL-quoted activity (implemented 2026-10-29)
 The first live scout run (M1, 2026-10-29) showed that leaderboard winners aren't always copyable. One starter wallet traded only USDC ↔ xStocks, and another only USDC-quoted swaps. Neither can produce a signal under the scout's SOL-quoted v1 rule, so both were removed from `data/wallets.csv`.
 
 Discovery should require **recent SOL-quoted memecoin activity**:
 - A majority of recent positions are SOL-quoted, not USDC/USDT or tokenized stocks.
 - The last trade is within 48 h.
 
-Both thresholds belong in the `discovery:` section of `rules.yaml` when this is built.
+Both are now implemented as `discovery.activity` in `rules.yaml` (drop reasons `inactive` and `not_memecoin_trader`), using a Helius sample of recent transactions run through the scout's `parseSwap`. The 7d window was added. The leaderboard runs out after about 2,300 rows over the three windows with our filters, and about 2,400 of the ~3,800 rows are dropped as `bot_trade_rate`, so Solana Tracker supplies only about 30 identity-checked candidates per run. See `docs/notes/2026-10-29-overnight.md`.

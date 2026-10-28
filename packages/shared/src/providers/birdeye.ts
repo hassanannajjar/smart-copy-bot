@@ -34,7 +34,7 @@ export type BeGainers = z.infer<typeof beGainersSchema>;
 export type BeIdentities = z.infer<typeof beIdentitiesSchema>;
 
 export interface BeGainersQuery {
-  type: '30d' | '90d';
+  type: '1W' | '30d' | '90d';
   min_trade: number;
   offset: number;
   limit: number;

@@ -5,7 +5,9 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
   type BirdeyeApi,
+  type Config,
   createBirdeyeApi,
+  createHeliusRpc,
   createSolanaTrackerApi,
   type Env,
   loadConfig,
@@ -13,7 +15,7 @@ import {
   type RecordedCall,
   type SolanaTrackerApi,
 } from '@scb/shared';
-import { type DiscoveryResult, discover } from './discover.js';
+import { type DiscoveryResult, discover, type HeliusCheck } from './discover.js';
 import {
   CANDIDATES_FILE,
   type Candidate,
@@ -57,7 +59,8 @@ export const fixtureRecorder = (
   };
 };
 
-export const buildApis = (env: Env, cfg: DiscoveryConfig, io: Io, record: boolean) => {
+export const buildApis = (env: Env, config: Config, io: Io, record: boolean) => {
+  const cfg = config.discovery;
   const onRateLimited = (i: { provider: string; path: string; attempt: number }) =>
     io.err(`warn: ${i.provider} 429 on ${i.path} (attempt ${i.attempt + 1}), backing off`);
   const st: SolanaTrackerApi | undefined = env.SOLANATRACKER_API_KEY
@@ -76,7 +79,19 @@ export const buildApis = (env: Env, cfg: DiscoveryConfig, io: Io, record: boolea
         record: record ? fixtureRecorder('birdeye') : undefined,
       })
     : undefined;
-  return { st, be };
+  const helius: HeliusCheck | undefined = env.HELIUS_API_KEY
+    ? {
+        rpc: createHeliusRpc({
+          apiKey: env.HELIUS_API_KEY,
+          commitment: config.scout.commitment,
+          ...limits(cfg.helius),
+          onRateLimited,
+        }),
+        quoteMint: config.scout.quote_mint,
+        ignoredMints: config.prefilters.ignored_mints,
+      }
+    : undefined;
+  return { st, be, helius };
 };
 
 const limits = (l: DiscoveryConfig['solanatracker']) => ({
@@ -89,7 +104,7 @@ const short = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…
 const money = (v: number | null) => (v === null ? '-' : Math.round(v).toLocaleString('en-US'));
 const pct = (v: number | null) => (v === null ? '-' : `${v.toFixed(1)}%`);
 
-const reportRow = (c: Candidate, rank: number) =>
+const reportRow = (c: Candidate, rank: number, now: number) =>
   [
     String(rank).padStart(3),
     c.address.padEnd(44),
@@ -111,7 +126,10 @@ const reportRow = (c: Candidate, rank: number) =>
     (c.medianHoldS === null ? '-' : String(Math.round(c.medianHoldS))).padStart(6),
     `${pct(c.topTokenPct)}${c.topTokenPartial ? '~' : ''}`.padStart(7),
     (c.verified ? 'yes' : 'no').padEnd(3),
-    c.identityChecked ? 'yes' : 'no',
+    (c.identityChecked ? 'yes' : 'no').padEnd(3),
+    (c.lastSwapAt === null ? '-' : `${num1((now - c.lastSwapAt) / 3_600_000)}h`).padStart(7),
+    pct(c.solQuotePct).padStart(6),
+    c.starter ? 'yes' : 'no',
   ].join('  ');
 
 const num1 = (v: number | null) => (v === null ? '-' : v.toFixed(1));
@@ -128,7 +146,12 @@ export const humanLikeness = (cs: Candidate[]) => {
   ].join(', ');
 };
 
-export const formatReport = (r: DiscoveryResult, cfg: DiscoveryConfig, outPath: string) => {
+export const formatReport = (
+  r: DiscoveryResult,
+  cfg: DiscoveryConfig,
+  outPath: string,
+  now = Date.now(),
+) => {
   const verified = r.candidates.filter((c) => c.verified).length;
   const bothWindows = r.candidates.filter(
     (c) => c.windows.length >= cfg.windows_days.length,
@@ -148,7 +171,10 @@ export const formatReport = (r: DiscoveryResult, cfg: DiscoveryConfig, outPath: 
     'hold_s'.padStart(6),
     'top_tok'.padStart(7),
     'ver',
-    'id',
+    'id ',
+    'swap_ago'.padStart(7),
+    'sol_q%'.padStart(6),
+    'starter',
   ].join('  ');
   const dropped = Object.entries(r.dropped)
     .sort((a, b) => b[1] - a[1])
@@ -157,15 +183,16 @@ export const formatReport = (r: DiscoveryResult, cfg: DiscoveryConfig, outPath: 
   return [
     `Top ${Math.min(cfg.report_top, r.candidates.length)} of ${r.candidates.length} candidates`,
     header,
-    ...r.candidates.slice(0, cfg.report_top).map((c, i) => reportRow(c, i + 1)),
+    ...r.candidates.slice(0, cfg.report_top).map((c, i) => reportRow(c, i + 1, now)),
     '',
     `providers: ${r.providers.map((p) => `${p.source}=${p.status}${p.status === 'ok' ? ` (${p.rows} rows)` : ''}${p.error ? ` [${p.error}]` : ''}`).join(', ')}`,
     `fetched rows: ${r.fetched}; dropped: ${dropped || 'none'}`,
     `candidates: ${r.candidates.length}; profitable in all windows: ${bothWindows}`,
     `VERIFIED: ${verified}   UNVERIFIED: ${r.candidates.length - verified} (no top-token check; ranked below verified)`,
     `human-likeness: ${humanLikeness(r.candidates)}`,
+    `STARTER: ${r.candidates.filter((c) => c.starter).length} (activity-checked: ${r.candidates.filter((c) => c.lastSwapAt !== null).length}; Helius calls = credits: ${r.heliusCalls})`,
     ...r.notes.map((n) => `note: ${n}`),
-    'Scopes: realized/win%/tr/day = leaderboard window; win% = token win rate; top_tok + hold_s = all-time profitable positions, first page ("~" = partial).',
+    'Scopes: realized/win%/tr/day = leaderboard window; win% = token win rate; top_tok + hold_s = all-time profitable positions, first page ("~" = partial); swap_ago + sol_q% = Helius sample of recent txs.',
     `Wrote ${outPath}. Review by hand; copy chosen rows into data/wallets.csv yourself.`,
   ].join('\n');
 };
@@ -182,13 +209,15 @@ export const run = async (
       io.err(NO_KEY_MESSAGE);
       return 1;
     }
-    const cfg = loadConfig(env.RULES_PATH).discovery;
-    const apis = makeApis(env, cfg, io, argv.includes('--record'));
+    const config = loadConfig(env.RULES_PATH);
+    const cfg = config.discovery;
+    const apis = makeApis(env, config, io, argv.includes('--record'));
     if (!apis.st)
       io.err(
         'note: SOLANATRACKER_API_KEY not set; skipping Solana Tracker (no top-token check, all rows unverified)',
       );
     if (!apis.be) io.err('note: BIRDEYE_API_KEY not set; skipping Birdeye');
+    if (!apis.helius) io.err('note: HELIUS_API_KEY not set; no activity check, so no starter rows');
 
     const result = await discover(apis, cfg);
     for (const w of result.warnings) io.err(`warn: ${w}`);

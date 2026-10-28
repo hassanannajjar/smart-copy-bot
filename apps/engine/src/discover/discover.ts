@@ -4,17 +4,20 @@ import {
   type BeGainers,
   BIRDEYE_IDENTITY_BATCH,
   type BirdeyeApi,
+  type HeliusRpc,
   ProviderError,
   type SolanaTrackerApi,
   type StIdentity,
   type StLeaderboard,
 } from '@scb/shared';
+import { parseSwap } from '../scout/parse.js';
 import {
   type Candidate,
   compareCandidates,
   type DiscoveryConfig,
   type DropCounts,
   filterRows,
+  isStarter,
   median,
   mergeRows,
   type Source,
@@ -31,6 +34,7 @@ export interface ProviderRun {
 
 export interface DiscoveryResult {
   candidates: Candidate[];
+  heliusCalls: number;
   fetched: number;
   dropped: DropCounts;
   providers: ProviderRun[];
@@ -102,11 +106,11 @@ const fetchSolanaTracker = async (st: SolanaTrackerApi, cfg: DiscoveryConfig) =>
   const rows: WindowRow[] = [];
   for (const days of cfg.windows_days) {
     let cursor: string | undefined;
-    for (let page = 0; page < cfg.max_pages; page++) {
+    for (let page = 0; page < cfg.max_pages.solanatracker; page++) {
       const res = await st.topTraders({
         days,
         minTrades: cfg.min_trades,
-        minDays: cfg.min_days,
+        minDays: cfg.min_days[`${days}`],
         maxSingleTokenPct: cfg.max_single_token_pct,
         excludeArbitrage: cfg.exclude_arbitrage,
         pnlMode: cfg.pnl_mode,
@@ -124,9 +128,9 @@ const fetchSolanaTracker = async (st: SolanaTrackerApi, cfg: DiscoveryConfig) =>
 const fetchBirdeye = async (be: BirdeyeApi, cfg: DiscoveryConfig) => {
   const rows: WindowRow[] = [];
   for (const days of cfg.windows_days) {
-    for (let page = 0; page < cfg.max_pages; page++) {
+    for (let page = 0; page < cfg.max_pages.birdeye; page++) {
       const res = await be.gainers({
-        type: `${days}d`,
+        type: days === 7 ? '1W' : `${days}d`,
         min_trade: cfg.min_trades,
         offset: page * cfg.page_limit,
         limit: cfg.page_limit,
@@ -157,10 +161,85 @@ const applyBirdeyeIdentity = async (be: BirdeyeApi, rows: WindowRow[], checked: 
   }
 };
 
+/** Helius RPC plus what parseSwap needs (scout.quote_mint, prefilters.ignored_mints). */
+export interface HeliusCheck {
+  rpc: HeliusRpc;
+  quoteMint: string;
+  ignoredMints: readonly string[];
+}
+
+export interface Activity {
+  lastSwapAt: number | null; // ms
+  solQuotedSwaps: number;
+  nonSolQuoteSwaps: number;
+  solQuotePct: number | null;
+}
+
+/**
+ * Newest signatures -> getTransaction on the newest non-failed ones -> the scout's parseSwap.
+ * Stable-quoted and token-to-token swaps count as non-SOL-quoted; transfers and airdrops aren't swaps.
+ */
+export const checkActivity = async (
+  rpc: HeliusRpc,
+  wallet: string,
+  a: DiscoveryConfig['activity'],
+  h: Omit<HeliusCheck, 'rpc'>,
+  now = Date.now(),
+): Promise<Activity> => {
+  const sigs = await rpc.signatures(wallet, { limit: a.signatures_limit });
+  let sol = 0;
+  let nonSol = 0;
+  let last: number | null = null;
+  const newest = sigs[0]?.blockTime;
+  // Nothing at all inside the window means no swap either: skip the getTransaction credits.
+  const stale = newest != null && newest * 1000 < now - a.max_inactive_h * 3_600_000;
+  if (!stale) {
+    for (const s of sigs.filter((s) => s.err == null).slice(0, a.tx_sample)) {
+      const { tx } = await rpc.getTransaction(s.signature);
+      if (!tx) continue;
+      const p = parseSwap(tx, wallet, h.quoteMint, h.ignoredMints);
+      if (!('skip' in p)) sol++;
+      else if (p.skip === 'non_sol_quote' || p.skip === 'multi_token') nonSol++;
+      else continue;
+      const t = tx.blockTime ?? s.blockTime;
+      if (t != null) last = Math.max(last ?? 0, t * 1000);
+    }
+  }
+  const swaps = sol + nonSol;
+  return {
+    lastSwapAt: last,
+    solQuotedSwaps: sol,
+    nonSolQuoteSwaps: nonSol,
+    solQuotePct: swaps ? (sol / swaps) * 100 : null,
+  };
+};
+
+/** Drop reason for a checked wallet, or null to keep it. No swap seen counts as inactive. */
+export const activityDrop = (a: Activity, cfg: DiscoveryConfig['activity'], now: number) => {
+  if (a.lastSwapAt === null || now - a.lastSwapAt > cfg.max_inactive_h * 3_600_000)
+    return 'inactive';
+  if (a.solQuotePct === null || a.solQuotePct < cfg.min_sol_quote_pct) return 'not_memecoin_trader';
+  return null;
+};
+
 export const discover = async (
-  apis: { st?: SolanaTrackerApi; be?: BirdeyeApi },
+  apis: { st?: SolanaTrackerApi; be?: BirdeyeApi; helius?: HeliusCheck },
   cfg: DiscoveryConfig,
+  now = Date.now(),
 ): Promise<DiscoveryResult> => {
+  // Every Helius RPC call costs 1 credit (getSignaturesForAddress, getTransaction).
+  let heliusCalls = 0;
+  const { helius } = apis;
+  const rpc: HeliusRpc | undefined = helius && {
+    getTransaction: (sig) => {
+      heliusCalls++;
+      return helius.rpc.getTransaction(sig);
+    },
+    signatures: (wallet, o) => {
+      heliusCalls++;
+      return helius.rpc.signatures(wallet, o);
+    },
+  };
   const warnings: string[] = [];
   const notes: string[] = [];
   const providers: ProviderRun[] = [];
@@ -211,12 +290,13 @@ export const discover = async (
     }
   }
 
-  // Enrich the top N Solana Tracker-backed candidates with a top-token share.
+  // Enrich the top N identity-checked candidates (the only ones that can be starters): top-token
+  // share and hold time from Solana Tracker positions, then the Helius activity check.
   // Anything not enriched stays unverified (kept, ranked below verified): this is a review list.
   const candidates: Candidate[] = [];
   let enriched = 0;
   for (const c of merged) {
-    if (st && enriched < cfg.enrich_top_n && c.sources.includes('solanatracker')) {
+    if (st && enriched < cfg.enrich_top_n && c.identityChecked) {
       enriched++;
       try {
         const res = await st.profitablePositions(c.address, cfg.enrich_period);
@@ -240,12 +320,36 @@ export const discover = async (
       } catch (e) {
         warnings.push(`top-token check failed for ${c.address} (${errorText(e)}); left unverified`);
       }
+      if (rpc && helius) {
+        try {
+          const a = await checkActivity(rpc, c.address, cfg.activity, helius, now);
+          const reason = activityDrop(a, cfg.activity, now);
+          if (reason) {
+            dropped[reason] = (dropped[reason] ?? 0) + 1;
+            continue;
+          }
+          c.lastSwapAt = a.lastSwapAt;
+          c.solQuotePct = a.solQuotePct;
+        } catch (e) {
+          warnings.push(`activity check failed for ${c.address} (${errorText(e)}); left unchecked`);
+        }
+      }
     }
     candidates.push(c);
   }
 
+  candidates.sort(compare);
+  let starters = 0;
+  for (const c of candidates) {
+    if (starters < cfg.starter.max_wallets && isStarter(c, cfg.starter)) {
+      c.starter = true;
+      starters++;
+    }
+  }
+
   return {
-    candidates: candidates.sort(compare),
+    candidates,
+    heliusCalls,
     fetched: rows.length,
     dropped,
     providers,

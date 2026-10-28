@@ -111,6 +111,11 @@ Free plan WebSockets (standard methods only): 5 concurrent connections, 1,000 su
 - **Total: about 650–810 credits a day, or ~20–25k a month, which is about 2.5% of the 1M free quota.** 80 wallets would still be under 25%.
 - Worst case, a reconnect storm at the 30 s cap all day: 2,880 × 9 ≈ 26k credits a day. That's why reconnects get a warning every 10.
 
+## Discovery activity check (`pnpm wallets:discover`)
+- Per enriched candidate: 1 `getSignaturesForAddress` (limit 20), then `getTransaction` on up to 10 of the newest non-failed signatures. That is at most 11 credits. A wallet whose newest signature is older than 48 h costs 1.
+- It uses its own throttle (`discovery.helius`, 250 ms) because it shares the free plan's 10 rps with a running engine.
+- The three runs on 2026-10-29 cost 112, 211 and 257 credits (580 in total).
+
 ## Unverified / revisit
 - Whether Helius bills each WebSocket message at a 0.1 MB minimum. Compare the credits dashboard after 24 h with the estimate above.
 - Parsed Streams on the free plan, and its GA date. It would remove the `getTransaction` call (1 credit per event, decoded swaps).

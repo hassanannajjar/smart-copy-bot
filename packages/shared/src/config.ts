@@ -64,15 +64,16 @@ export const configSchema = obj({
     priority_fee_cap_sol: positive,
   }),
   discovery: obj({
-    // Birdeye gainers only supports 30d/90d windows, so only those are allowed.
-    windows_days: z.array(z.union([z.literal(30), z.literal(90)])).min(1),
+    // Windows both providers support (Birdeye calls 7d "1W").
+    windows_days: z.array(z.union([z.literal(7), z.literal(30), z.literal(90)])).min(1),
     min_trades: num.int().min(0),
-    min_days: num.int().min(0),
+    // Active trading days per window (Solana Tracker minDays); 10 of 7 days would match nobody.
+    min_days: obj({ '7': num.int().min(0).max(7), '30': num.int().min(0), '90': num.int().min(0) }),
     max_single_token_pct: pct,
     exclude_arbitrage: z.boolean(),
     pnl_mode: z.enum(['strict', 'adjusted', 'raw']),
     page_limit: num.int().min(1).max(100),
-    max_pages: num.int().min(1),
+    max_pages: obj({ solanatracker: num.int().min(1), birdeye: num.int().min(1) }), // per window
     enrich_top_n: num.int().min(0),
     enrich_period: z.enum(['1d', '7d', '14d', '30d', '90d', 'all']),
     max_trades_per_day: positive,
@@ -83,8 +84,26 @@ export const configSchema = obj({
     min_median_hold_s: num.min(0),
     drop_identity_labels: z.array(z.string().min(1)),
     report_top: num.int().positive(),
+    // Helius activity check on enriched candidates.
+    activity: obj({
+      signatures_limit: num.int().min(1).max(1000),
+      tx_sample: num.int().min(1),
+      max_inactive_h: positive,
+      min_sol_quote_pct: pct,
+    }),
+    // The `starter` CSV column. Unknown win rate / top-token share pass; unknown activity fails.
+    starter: obj({
+      min_sol_quote_pct: pct,
+      max_trades_per_day: positive,
+      max_avg_trade_usd: positive,
+      min_win_rate_pct: pct,
+      max_win_rate_pct: pct,
+      max_top_token_pct: pct,
+      max_wallets: num.int().positive(),
+    }),
     solanatracker: obj(providerLimits),
     birdeye: obj(providerLimits),
+    helius: obj(providerLimits),
   }),
   scout: obj({
     commitment: z.enum(['confirmed', 'finalized']), // getTransaction rejects 'processed'
