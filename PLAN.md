@@ -121,6 +121,11 @@ R4 is the hardest. Implement v1 as a documented heuristic with unit tests on fix
 ## 6. Wallet list
 
 - Start with a manually curated `data/wallets.csv` of 10–30 wallets (user supplies). Validate addresses on load.
+- Milestone M0.5 adds `pnpm wallets:discover`, which builds a **candidate shortlist** to help with that curation.
+  - It pulls the Solana Tracker top-traders leaderboard and Birdeye gainers over 30d and 90d windows.
+  - It drops arbitrage/MEV bots, exchange and program addresses, and wallets whose profit is mostly from one token.
+  - It ranks by consistency and writes `data/wallets.candidates.csv` for manual review.
+  - It never writes `data/wallets.csv`. Provider details are in `docs/providers/`.
 - Milestone M5 adds **wallet scoring** from our own data: per-wallet signal count, pass rate, paper win rate, avg net R, time-to-peak after their buy. Auto-deactivate wallets below thresholds; flag wallets that are often first buyers / creators of the tokens they "call" (likely insiders).
 - Never trust a purchased/shared list blindly — everything is scored by our own results.
 
@@ -190,6 +195,7 @@ R4 is the hardest. Implement v1 as a documented heuristic with unit tests on fix
 | #   | Milestone                                                                                                                                               | Acceptance                                                                                                                                            |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | M0  | Scaffold: workspace, shared package, zod config/env, Drizzle schema + migrations, `rules.yaml`, `.env.example`, lint, vitest, README with reality check | `pnpm i && pnpm build && pnpm test` green; `pnpm db:migrate` creates all tables                                                                       |
+| M0.5 | Wallet discovery (§6): Solana Tracker + Birdeye providers behind interfaces, doc-derived fixtures, `pnpm wallets:discover [--record]` writes `data/wallets.candidates.csv` | Build/test/lint green offline; no keys gives a clear one-line message and exit 1; never writes `data/wallets.csv` |
 | M1  | Scout: stream tracked wallets' swaps via Helius, parse buys/sells, write `signals`, record raw events to `data/raw/`                                    | Run against 5 wallets, signals appear in DB with `detect_latency_ms`; reconnect/backoff tested                                                        |
 | M2  | Enricher + Rules: providers for DexScreener + RugCheck/on-chain, `token_snapshots`, 6 rules, `rule_results`, `decisions`                                | Unit tests per rule (pass/fail/missing data) on fixtures; live run shows KILLED/PASSED with reasons in DB                                             |
 | M3  | Paper executor + PositionManager: Jupiter quotes, latency, fees, guard, TP ladder, trailing, time stop, rug exit                                        | Unit tests for exit logic; live run opens/closes paper positions with full PnL breakdown                                                              |

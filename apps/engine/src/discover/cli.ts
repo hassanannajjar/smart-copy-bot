@@ -1,0 +1,189 @@
+// `pnpm wallets:discover [--record]`: writes data/wallets.candidates.csv and prints a ranked report.
+// Never writes data/wallets.csv. Never prints API keys or stack traces.
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import {
+  type BirdeyeApi,
+  createBirdeyeApi,
+  createSolanaTrackerApi,
+  type Env,
+  loadConfig,
+  parseEnv,
+  type RecordedCall,
+  type SolanaTrackerApi,
+} from '@scb/shared';
+import { type DiscoveryResult, discover } from './discover.js';
+import {
+  CANDIDATES_FILE,
+  type Candidate,
+  type DiscoveryConfig,
+  pnlPerTrade,
+  toCsv,
+  writeCandidates,
+} from './rank.js';
+
+export const NO_KEY_MESSAGE =
+  'No provider key set. Add SOLANATRACKER_API_KEY (leaderboard + top-token check) and/or BIRDEYE_API_KEY to .env, then re-run.';
+
+export const FIXTURES_DIR = 'packages/shared/test/fixtures';
+
+interface Io {
+  out: (line: string) => void;
+  err: (line: string) => void;
+}
+
+/** --record: keep the first raw response per provider + fixture name, in the fixture envelope. */
+export const fixtureRecorder = (provider: string, dir = FIXTURES_DIR) => {
+  const seen = new Set<string>();
+  return (call: RecordedCall) => {
+    if (seen.has(call.name)) return;
+    seen.add(call.name);
+    mkdirSync(join(dir, provider), { recursive: true });
+    const envelope = {
+      _provenance: `recorded ${new Date().toISOString()} by pnpm wallets:discover --record`,
+      request: call.request,
+      response: call.response,
+    };
+    writeFileSync(
+      join(dir, provider, `${call.name}.json`),
+      `${JSON.stringify(envelope, null, 2)}\n`,
+    );
+  };
+};
+
+export const buildApis = (env: Env, cfg: DiscoveryConfig, io: Io, record: boolean) => {
+  const onRateLimited = (i: { provider: string; path: string; attempt: number }) =>
+    io.err(`warn: ${i.provider} 429 on ${i.path} (attempt ${i.attempt + 1}), backing off`);
+  const st: SolanaTrackerApi | undefined = env.SOLANATRACKER_API_KEY
+    ? createSolanaTrackerApi({
+        apiKey: env.SOLANATRACKER_API_KEY,
+        ...limits(cfg.solanatracker),
+        onRateLimited,
+        record: record ? fixtureRecorder('solanatracker') : undefined,
+      })
+    : undefined;
+  const be: BirdeyeApi | undefined = env.BIRDEYE_API_KEY
+    ? createBirdeyeApi({
+        apiKey: env.BIRDEYE_API_KEY,
+        ...limits(cfg.birdeye),
+        onRateLimited,
+        record: record ? fixtureRecorder('birdeye') : undefined,
+      })
+    : undefined;
+  return { st, be };
+};
+
+const limits = (l: DiscoveryConfig['solanatracker']) => ({
+  minIntervalMs: l.min_interval_ms,
+  timeoutMs: l.timeout_ms,
+  retries: l.retries,
+});
+
+const short = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s);
+const money = (v: number | null) => (v === null ? '-' : Math.round(v).toLocaleString('en-US'));
+const pct = (v: number | null) => (v === null ? '-' : `${v.toFixed(1)}%`);
+
+const reportRow = (c: Candidate, rank: number) =>
+  [
+    String(rank).padStart(3),
+    c.address.padEnd(44),
+    short(c.label || '-', 14).padEnd(14),
+    c.windows
+      .map((w) => `${w}d`)
+      .join('+')
+      .padEnd(7),
+    c.sources
+      .map((s) => (s === 'solanatracker' ? 'ST' : 'BE'))
+      .join('+')
+      .padEnd(5),
+    money(c.realizedPnl).padStart(12),
+    pct(c.winRate).padStart(6),
+    String(c.trades ?? '-').padStart(6),
+    money(pnlPerTrade(c)).padStart(9),
+    `${pct(c.topTokenPct)}${c.topTokenPartial ? '~' : ''}`.padStart(7),
+    c.verified ? 'yes' : 'no',
+  ].join('  ');
+
+export const formatReport = (r: DiscoveryResult, cfg: DiscoveryConfig, outPath: string) => {
+  const verified = r.candidates.filter((c) => c.verified).length;
+  const bothWindows = r.candidates.filter(
+    (c) => c.windows.length >= cfg.windows_days.length,
+  ).length;
+  const header = [
+    '  #',
+    'address'.padEnd(44),
+    'label'.padEnd(14),
+    'window'.padEnd(7),
+    'src'.padEnd(5),
+    'realized_usd'.padStart(12),
+    'win%'.padStart(6),
+    'trades'.padStart(6),
+    'pnl/trade'.padStart(9),
+    'top_tok'.padStart(7),
+    'verified',
+  ].join('  ');
+  const dropped = Object.entries(r.dropped)
+    .sort((a, b) => b[1] - a[1])
+    .map(([k, v]) => `${k}=${v}`)
+    .join(', ');
+  return [
+    `Top ${Math.min(cfg.report_top, r.candidates.length)} of ${r.candidates.length} candidates`,
+    header,
+    ...r.candidates.slice(0, cfg.report_top).map((c, i) => reportRow(c, i + 1)),
+    '',
+    `providers: ${r.providers.map((p) => `${p.source}=${p.status}${p.status === 'ok' ? ` (${p.rows} rows)` : ''}${p.error ? ` [${p.error}]` : ''}`).join(', ')}`,
+    `fetched rows: ${r.fetched}; dropped: ${dropped || 'none'}`,
+    `candidates: ${r.candidates.length}; profitable in all windows: ${bothWindows}`,
+    `VERIFIED: ${verified}   UNVERIFIED: ${r.candidates.length - verified} (no top-token check; ranked below verified)`,
+    'Scopes: realized/win% = leaderboard window; top_tok = all-time profitable positions; "~" = partial (first page only).',
+    `Wrote ${outPath}. Review by hand; copy chosen rows into data/wallets.csv yourself.`,
+  ].join('\n');
+};
+
+export const run = async (
+  argv: string[],
+  source: Record<string, string | undefined>,
+  io: Io,
+  makeApis: typeof buildApis = buildApis,
+): Promise<number> => {
+  try {
+    const env = parseEnv(source);
+    if (!env.SOLANATRACKER_API_KEY && !env.BIRDEYE_API_KEY) {
+      io.err(NO_KEY_MESSAGE);
+      return 1;
+    }
+    const cfg = loadConfig(env.RULES_PATH).discovery;
+    const apis = makeApis(env, cfg, io, argv.includes('--record'));
+    if (!apis.st)
+      io.err(
+        'note: SOLANATRACKER_API_KEY not set; skipping Solana Tracker (no top-token check, all rows unverified)',
+      );
+    if (!apis.be) io.err('note: BIRDEYE_API_KEY not set; skipping Birdeye');
+
+    const result = await discover(apis, cfg);
+    for (const w of result.warnings) io.err(`warn: ${w}`);
+    if (result.providers.every((p) => p.status !== 'ok')) {
+      const errors = result.providers.filter((p) => p.status === 'failed').map((p) => p.error);
+      io.err(`All providers failed: ${errors.join('; ')}`);
+      return 1;
+    }
+    const outPath = join(env.DATA_DIR, CANDIDATES_FILE);
+    mkdirSync(env.DATA_DIR, { recursive: true });
+    writeCandidates(outPath, toCsv(result.candidates));
+    io.out(formatReport(result, cfg, outPath));
+    return 0;
+  } catch (e) {
+    // One line, no stack: messages here never contain keys (see providers/http.ts).
+    io.err(`wallets:discover failed: ${e instanceof Error ? e.message : String(e)}`);
+    return 1;
+  }
+};
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  if (existsSync('.env')) process.loadEnvFile('.env');
+  process.exitCode = await run(process.argv.slice(2), process.env, {
+    out: (l) => console.log(l),
+    err: (l) => console.error(l),
+  });
+}

@@ -1,0 +1,144 @@
+{
+  "_provenance": "doc-derived: official OpenAPI example from https://docs.solanatracker.io/data-api/pnl-v2/openapi.json (GET /v2/pnl/wallets/{wallet}/positions), fetched 2026-10-28. NOT a real recording; replace via `pnpm wallets:discover --record` once a key exists.",
+  "request": {
+    "method": "GET",
+    "path": "/v2/pnl/wallets/{wallet}/positions",
+    "query": {}
+  },
+  "response": {
+    "wallet": "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
+    "identity": {
+      "name": "Cented",
+      "twitter": "@Cented7",
+      "avatar": "https://kol-avatar.solanatracker.io/CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
+      "platforms": ["axiom", "bloom"],
+      "type": "kol",
+      "tags": ["kol", "axiom", "bloom"]
+    },
+    "positions": [
+      {
+        "token": "38PgzpJYu2HkiYvV8qePFakB8tuobPdGm2FFEn7Dpump",
+        "pnl": {
+          "realized": 88872.66,
+          "unrealized": 0,
+          "total": 88872.66
+        },
+        "invested": 3071.27,
+        "proceeds": 91943.94,
+        "roi": 2893.67,
+        "current": {
+          "balance": 0,
+          "costBasis": 0,
+          "value": 0,
+          "price": 0.001490308105474092,
+          "avgCost": 0
+        },
+        "volume": {
+          "tokensBought": 46026806.173715,
+          "tokensSold": 46026806.173715,
+          "buyUsd": 3071.27,
+          "sellUsd": 91943.94
+        },
+        "averages": {
+          "buy": 341.25,
+          "sell": 1242.49
+        },
+        "counts": {
+          "buys": 9,
+          "sells": 74,
+          "total": 83
+        },
+        "timing": {
+          "firstBuy": 1746044721229,
+          "lastBuy": 1772031549416,
+          "firstSell": 1746044751527,
+          "lastSell": 1772032040873,
+          "firstTrade": 1746044721229,
+          "lastTrade": 1772032040873,
+          "holdTimeSecs": 25987320
+        },
+        "meta": {
+          "symbol": "gork",
+          "name": "New XAI gork",
+          "image": "https://image.solanatracker.io/proxy?url=https%3A%2F%2Fipfs-forward.solanatracker.io%2Fipfs%2FQmXkHvTBRFMyY5ozYHXcF7JHqqLBTorca3dXAdF3ooD5e3",
+          "decimals": 6,
+          "price": 0.001490308105474092,
+          "snapshotPrice": 0.001666646257827002,
+          "marketCap": 1489948.99,
+          "liquidity": 371378.83,
+          "primaryMarket": "pumpfun-amm"
+        },
+        "portfolioPercent": 0
+      },
+      {
+        "token": "84cAEWqiDsV5xXh6CB69Hi3HcnumBbdjH4THfyorpump",
+        "pnl": {
+          "realized": 50791.19,
+          "unrealized": 0,
+          "total": 50791.19
+        },
+        "invested": 2621.72,
+        "proceeds": 53412.92,
+        "roi": 1937.32,
+        "current": {
+          "balance": 0,
+          "costBasis": 0,
+          "value": 0,
+          "price": 0.000016173713662274,
+          "avgCost": 0
+        },
+        "volume": {
+          "tokensBought": 96296057.47450998,
+          "tokensSold": 96296057.47451006,
+          "buyUsd": 2621.72,
+          "sellUsd": 53412.92
+        },
+        "averages": {
+          "buy": 70.86,
+          "sell": 346.84
+        },
+        "counts": {
+          "buys": 37,
+          "sells": 154,
+          "total": 191
+        },
+        "timing": {
+          "firstBuy": 1774277622281,
+          "lastBuy": 1774294723039,
+          "firstSell": 1774277870173,
+          "lastSell": 1774296331666,
+          "firstTrade": 1774277622281,
+          "lastTrade": 1774296331666,
+          "holdTimeSecs": 18709
+        },
+        "meta": {
+          "symbol": "7",
+          "name": "The 7 Wanderers",
+          "image": "https://image.solanatracker.io/proxy?url=https%3A%2F%2Fedge.uxento.io%2Fimage%2FBxu1Dr8rLNBDyEutHRapKLdquDLeZkn8zkiUn9Avpump",
+          "decimals": 6,
+          "price": 0.000016173713662274,
+          "snapshotPrice": 0.000022584238960459607,
+          "marketCap": 16168.06,
+          "liquidity": 14118.7,
+          "primaryMarket": "pumpfun-amm"
+        },
+        "portfolioPercent": 0
+      }
+    ],
+    "stats": {
+      "total": 78195,
+      "filtered": 78195,
+      "holding": 67,
+      "sold": 77978,
+      "profitable": 47817,
+      "losing": 30175
+    },
+    "pagination": {
+      "hasMore": true,
+      "nextCursor": "eyJzb3J0VmFsdWUiOjUwNzkxLjE5Mzc4MjkwNzc5NCwidGllQnJlYWtlciI6Ijg0Y0FFV3FpRHNWNXhYaDZDQjY5SGkzSGNudW1CYmRqSDRUSGZ5b3JwdW1wIn0=",
+      "count": 2,
+      "total": 78195,
+      "pnlMode": "strict"
+    }
+  }
+}

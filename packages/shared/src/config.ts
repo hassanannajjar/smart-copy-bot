@@ -8,6 +8,11 @@ const num = z.number().finite();
 const pct = num.min(0).max(100);
 const positive = num.positive();
 const obj = z.strictObject;
+const providerLimits = {
+  min_interval_ms: num.int().min(0),
+  timeout_ms: num.int().positive(),
+  retries: num.int().min(0).max(10),
+};
 
 export const configSchema = obj({
   data: obj({ max_snapshot_age_s: positive }),
@@ -57,6 +62,24 @@ export const configSchema = obj({
     max_wallet_balance_sol: positive,
     slippage_cap_bps: num.int().positive(),
     priority_fee_cap_sol: positive,
+  }),
+  discovery: obj({
+    // Birdeye gainers only supports 30d/90d windows, so only those are allowed.
+    windows_days: z.array(z.union([z.literal(30), z.literal(90)])).min(1),
+    min_trades: num.int().min(0),
+    min_days: num.int().min(0),
+    max_single_token_pct: pct,
+    exclude_arbitrage: z.boolean(),
+    pnl_mode: z.enum(['strict', 'adjusted', 'raw']),
+    page_limit: num.int().min(1).max(100),
+    max_pages: num.int().min(1),
+    enrich_top_n: num.int().min(0),
+    enrich_period: z.enum(['1d', '7d', '14d', '30d', '90d', 'all']),
+    max_trades_per_day: positive,
+    drop_identity_labels: z.array(z.string().min(1)),
+    report_top: num.int().positive(),
+    solanatracker: obj(providerLimits),
+    birdeye: obj(providerLimits),
   }),
 });
 

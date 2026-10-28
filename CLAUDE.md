@@ -18,6 +18,7 @@ It is a TypeScript pnpm workspace:
 - After a schema change: `pnpm db:generate`, then commit the generated SQL in `packages/shared/drizzle/`.
 - `pnpm db:migrate` applies the migrations to `data/control.db` and to `demo.db`, `paper.db` and `live.db`.
 - Run the engine: `pnpm start`. Run it from the repo root, because `DATA_DIR` and `RULES_PATH` are relative paths.
+- Wallet discovery: `pnpm wallets:discover [--record]` writes `data/wallets.candidates.csv` only. Never make it write `data/wallets.csv`.
 
 ## Workflow
 - Plan first, wait for approval, then implement. One milestone per branch/PR.
@@ -38,7 +39,7 @@ It is a TypeScript pnpm workspace:
   - An invalid `rules.yaml` stops the engine. The zod schema is strict and has no code defaults.
   - Errors never open a position.
 - **Providers sit behind interfaces.**
-  - Every external provider (Helius, DexScreener, RugCheck, Jupiter, SolanaTracker, Birdeye, LLMs) sits behind an interface in `packages/shared` and has recorded fixtures.
+  - Every external provider (Helius, DexScreener, RugCheck, Jupiter, SolanaTracker, Birdeye, LLMs) sits behind an interface in `packages/shared` and has recorded fixtures (`packages/shared/test/fixtures/`, with a `_provenance` field per file, either doc-derived or recorded). Provider notes live in `docs/providers/<name>.md`.
   - Tests never hit the network.
 - **No real transactions outside M7.** No code path may sign or send a real transaction except the M7 live executor, and only behind its gate (PLAN §9):
   - `LIVE_ENABLED=true`

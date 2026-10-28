@@ -12,6 +12,7 @@
     "format": "biome check --write .",
     "db:generate": "pnpm --filter @scb/shared db:generate",
     "start": "node apps/engine/dist/main.js",
+    "wallets:discover": "pnpm -r --reporter=silent build && node apps/engine/dist/discover/cli.js",
     "db:migrate": "pnpm --filter @scb/shared build && node packages/shared/dist/db/migrate.js"
   },
   "devDependencies": {

@@ -1,0 +1,33 @@
+{
+  "_provenance": "doc-derived: official OpenAPI example from https://data.birdeye.so/docs/openapi/data/openapi_docs.json (GET /trader/gainers-losers), fetched 2026-10-28. NOT a real recording; replace via `pnpm wallets:discover --record` once a key exists.",
+  "request": {
+    "method": "GET",
+    "path": "/trader/gainers-losers",
+    "query": {}
+  },
+  "response": {
+    "success": true,
+    "data": {
+      "items": [
+        {
+          "address": "1JKP3jcMcBzpp5SUSj9DFMFZGiJiXLyuRyGYcf6E97z",
+          "pnl": 67395290.55367899,
+          "realized_pnl": 761218.7928862367,
+          "unrealized_pnl": 66634071.76079275,
+          "volume": 7103127.149509426,
+          "trade_count": 83,
+          "network": "solana"
+        },
+        {
+          "address": "81m9aRw8RSAKchZ6pZo1L8m6DeJskq8hLZoTLU5gzoUc",
+          "pnl": 64080474.36939919,
+          "realized_pnl": -26045.200510758965,
+          "unrealized_pnl": 64106519.56990995,
+          "volume": 971495.1923311986,
+          "trade_count": 82,
+          "network": "solana"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "_provenance": "doc-derived: official OpenAPI example from https://data.birdeye.so/docs/openapi/data/openapi_docs.json (POST /identity/v1/multiple), fetched 2026-10-28. NOT a real recording; replace via `pnpm wallets:discover --record` once a key exists.",
+  "request": {
+    "method": "POST",
+    "path": "/identity/v1/multiple",
+    "query": {}
+  },
+  "response": {
+    "success": true,
+    "data": {
+      "DaP44wF8mKmYki1M5zguvXYAW5XF6sLQEzvdmvcizRqD": {
+        "address": "DaP44wF8mKmYki1M5zguvXYAW5XF6sLQEzvdmvcizRqD",
+        "type": "wallet",
+        "label": "dap4.sol",
+        "category": "Wallet",
+        "tags": [],
+        "domains": ["dap4.sol", "uapx.sol", "ufox.sol", "blxme.sol", "bruca.sol"],
+        "domains_total": 2192
+      },
+      "5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvuAi9": {
+        "address": "5tzFkiKscXHK5ZXCGbXZxdw7gTjjD1mBwuoFbhUvuAi9",
+        "type": "exchange",
+        "entity": "Binance",
+        "label": "Binance",
+        "category": "Exchange",
+        "tags": ["Binance"]
+      }
+    }
+  }
+}

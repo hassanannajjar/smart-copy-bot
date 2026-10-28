@@ -57,3 +57,21 @@ live: # M7 only; enforced by the engine gate
   max_wallet_balance_sol: 2 # placeholder, tune
   slippage_cap_bps: 300 # placeholder, tune
   priority_fee_cap_sol: 0.001 # placeholder, tune
+
+discovery: # M0.5 `pnpm wallets:discover`: builds data/wallets.candidates.csv for manual review
+  windows_days: [30, 90]
+  min_trades: 50
+  min_days: 10 # Solana Tracker only (Birdeye has no trading-days filter)
+  max_single_token_pct: 30 # ST server filter + our top_token_pct check
+  exclude_arbitrage: true
+  pnl_mode: strict
+  page_limit: 100
+  max_pages: 2 # per window per provider; caps quota use
+  enrich_top_n: 40 # ST positions calls to compute top_token_pct
+  enrich_period: all # positions scope for top_token_pct (all-time)
+  max_trades_per_day: 150 # placeholder, tune. trades / window days above this => bot-like, dropped
+  drop_identity_labels: # matched against identity type/tags from either provider
+    [arbitrage, potential_bot, bot, pool, exchange, protocol, program, token, hacker, spam]
+  report_top: 20
+  solanatracker: { min_interval_ms: 350, timeout_ms: 10000, retries: 4 } # free plan: 3 rps
+  birdeye: { min_interval_ms: 1100, timeout_ms: 10000, retries: 4 } # Standard plan: 1 rps

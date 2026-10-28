@@ -1,0 +1,119 @@
+{
+  "_provenance": "doc-derived: official OpenAPI example from https://docs.solanatracker.io/data-api/pnl-v2/openapi.json (GET /v2/pnl/leaderboard/top), fetched 2026-10-28. NOT a real recording; replace via `pnpm wallets:discover --record` once a key exists.",
+  "request": {
+    "method": "GET",
+    "path": "/v2/pnl/leaderboard/top",
+    "query": {}
+  },
+  "response": {
+    "traders": [
+      {
+        "wallet": "HkFGQsW8mr8DTC2AE2WcC7MzwSnynfEryGMQSht271nf",
+        "period": {
+          "realized": 29253686.75,
+          "realizedRaw": 29511824.12,
+          "volume": 53377270.16,
+          "tradingDays": 79,
+          "roi": 345.12,
+          "days": {
+            "profitable": 58,
+            "losing": 21,
+            "maxSinglePnl": 891245.33,
+            "winRate": 73.42
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "adjusted",
+          "invalidPnl": 29511824.12,
+          "adjustedCorrection": 258137.37
+        },
+        "ending": {
+          "pnl": {
+            "realized": 29642991.91,
+            "total": 29684935.07
+          }
+        },
+        "invested": 8476262.08,
+        "proceeds": 38119253.99,
+        "counts": {
+          "buys": 13842,
+          "sells": 27968,
+          "trades": 41810,
+          "tokensTraded": 4689
+        },
+        "averages": {
+          "buy": 1168.23,
+          "sell": 1362.96
+        },
+        "tokens": {
+          "profitable": 2441,
+          "losing": 159,
+          "closed": 2600
+        },
+        "winRate": 93.88,
+        "timing": {
+          "firstTrade": 1736769677989,
+          "lastTrade": 1776617215655
+        },
+        "lastSnapshotDate": "2026-04-19",
+        "updatedAt": "2026-04-19T16:46:56.831Z",
+        "identity": {
+          "name": null,
+          "twitter": null,
+          "avatar": "https://kol-avatar.solanatracker.io/HkFGQsW8mr8DTC2AE2WcC7MzwSnynfEryGMQSht271nf"
+        }
+      },
+      {
+        "wallet": "ApAKzJEqfnP7F74Za5xdTQxZMK4nD8dFTVBQ9bksTtGM",
+        "period": {
+          "realized": 19624090.03,
+          "volume": 34214876.02,
+          "tradingDays": 51,
+          "roi": 394.24
+        },
+        "ending": {
+          "pnl": {
+            "realized": 19769219.5,
+            "total": 19768875.79
+          }
+        },
+        "invested": 4977742.44,
+        "proceeds": 24746961.94,
+        "counts": {
+          "buys": 8655,
+          "sells": 20887,
+          "trades": 29542,
+          "tokensTraded": 2915
+        },
+        "averages": {
+          "buy": 1119.37,
+          "sell": 1184.8
+        },
+        "tokens": {
+          "profitable": 1811,
+          "losing": 33,
+          "closed": 1844
+        },
+        "winRate": 98.21,
+        "timing": {
+          "firstTrade": 1772358151760,
+          "lastTrade": 1776607936649
+        },
+        "lastSnapshotDate": "2026-04-19",
+        "updatedAt": "2026-04-19T14:12:17.583Z",
+        "identity": {
+          "name": null,
+          "twitter": null,
+          "avatar": "https://kol-avatar.solanatracker.io/ApAKzJEqfnP7F74Za5xdTQxZMK4nD8dFTVBQ9bksTtGM"
+        }
+      }
+    ],
+    "pagination": {
+      "hasMore": true,
+      "nextCursor": "eyJzb3J0VmFsdWUiOjE5NjI0MDkwLjAyODk1MTU5MywidGllQnJlYWtlciI6IkFwQUt6SkVxZm5QN0Y3NFphNXhkVFF4Wk1LNG5EOGRGVFZCUTlia3NUdEdNIn0=",
+      "count": 2,
+      "total": 2,
+      "pnlMode": "adjusted"
+    }
+  }
+}

@@ -1,0 +1,180 @@
+// Pure filter / merge / rank / CSV logic for wallet discovery. No I/O except writeCandidates.
+import { writeFileSync } from 'node:fs';
+import { basename } from 'node:path';
+import type { Config } from '@scb/shared';
+
+export type DiscoveryConfig = Config['discovery'];
+export type Source = 'solanatracker' | 'birdeye';
+
+/** One leaderboard row from one provider for one window, normalized. */
+export interface WindowRow {
+  address: string;
+  source: Source;
+  windowDays: number;
+  realizedPnl: number | null;
+  winRate: number | null; // percent, 0..100
+  trades: number | null;
+  label: string | null;
+  labels: string[]; // identity type/tags, lowercased
+}
+
+export interface Candidate {
+  address: string;
+  label: string;
+  sources: Source[];
+  windows: number[];
+  realizedPnl: number;
+  winRate: number | null;
+  trades: number | null;
+  topTokenPct: number | null;
+  topTokenPartial: boolean;
+  verified: boolean;
+}
+
+export type DropCounts = Record<string, number>;
+
+const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+const unique = <T>(xs: T[]) => [...new Set(xs)];
+
+/**
+ * Returns rows worth keeping and per-reason drop counts (counted per row).
+ * An identity flag on any row drops every row of that address: if one provider says
+ * "exchange", the other provider's clean-looking row for the same wallet goes too.
+ */
+export const filterRows = (rows: WindowRow[], cfg: DiscoveryConfig) => {
+  const flaggedBy = new Map<string, string>();
+  for (const r of rows) {
+    const label = r.labels.find((l) => cfg.drop_identity_labels.includes(l));
+    if (label && !flaggedBy.has(r.address)) flaggedBy.set(r.address, label);
+  }
+  const reasonFor = (r: WindowRow) => {
+    if (!BASE58_ADDRESS.test(r.address)) return 'invalid_address';
+    const flag = flaggedBy.get(r.address);
+    if (flag) return `identity_${flag}`;
+    if (r.realizedPnl === null || r.realizedPnl <= 0) return 'unprofitable';
+    // Arbitrage/MEV bots trade far more often than any human copy target.
+    if (r.trades !== null && r.trades / r.windowDays > cfg.max_trades_per_day)
+      return 'bot_trade_rate';
+    return null;
+  };
+
+  const kept: WindowRow[] = [];
+  const dropped: DropCounts = {};
+  for (const r of rows) {
+    const reason = reasonFor(r);
+    if (reason) dropped[reason] = (dropped[reason] ?? 0) + 1;
+    else kept.push(r);
+  }
+  return { kept, dropped };
+};
+
+/** Metrics come from the longest window; at equal windows Solana Tracker wins (it has win rate). */
+const preferred = (a: WindowRow, b: WindowRow) =>
+  b.windowDays - a.windowDays || (a.source === 'solanatracker' ? -1 : 1);
+
+export const mergeRows = (rows: WindowRow[]): Candidate[] => {
+  const byAddress = Map.groupBy(rows, (r) => r.address);
+  return [...byAddress.entries()].map(([address, group]) => {
+    const best = [...group].sort(preferred)[0] as WindowRow;
+    return {
+      address,
+      label: group.find((r) => r.label)?.label ?? '',
+      sources: unique(group.map((r) => r.source)).sort(),
+      windows: unique(group.map((r) => r.windowDays)).sort((a, b) => a - b),
+      realizedPnl: best.realizedPnl ?? 0,
+      winRate: best.winRate ?? group.find((r) => r.winRate !== null)?.winRate ?? null,
+      trades: best.trades,
+      topTokenPct: null,
+      topTokenPartial: false,
+      verified: false,
+    };
+  });
+};
+
+/**
+ * Tiers first (verified, profitable in every window, confirmed by both sources), then
+ * consistency: win rate desc (missing last), then realized PnL desc. At ~$50 copy size,
+ * consistency matters more than absolute PnL, which mostly reflects the wallet's size.
+ */
+export const compareCandidates =
+  (windowCount: number) =>
+  (a: Candidate, b: Candidate): number => {
+    const tier = (c: Candidate) => [
+      c.verified ? 1 : 0,
+      c.windows.length >= windowCount ? 1 : 0,
+      c.sources.length > 1 ? 1 : 0,
+      c.winRate === null ? 0 : 1,
+    ];
+    const ta = tier(a);
+    const tb = tier(b);
+    for (let i = 0; i < ta.length; i++) {
+      const d = (tb[i] as number) - (ta[i] as number);
+      if (d) return d;
+    }
+    return (b.winRate ?? 0) - (a.winRate ?? 0) || b.realizedPnl - a.realizedPnl;
+  };
+
+/** Largest profitable token's share of total profitable realized PnL, or null if unknowable. */
+export const topTokenShare = (realized: (number | null | undefined)[]) => {
+  const wins = realized.filter((v): v is number => typeof v === 'number' && v > 0);
+  const total = wins.reduce((s, v) => s + v, 0);
+  return total > 0 ? (Math.max(...wins) / total) * 100 : null;
+};
+
+export const pnlPerTrade = (c: Candidate) => (c.trades ? c.realizedPnl / c.trades : null);
+
+export const CSV_COLUMNS = [
+  'address',
+  'label',
+  'source',
+  'window',
+  'realized_pnl',
+  'win_rate',
+  'trades',
+  'pnl_per_trade',
+  'top_token_pct',
+  'top_token_partial',
+  'verified',
+] as const;
+
+const fixed = (v: number | null) => (v === null ? '' : v.toFixed(2));
+
+/** Quotes when needed and neutralizes spreadsheet formulas (labels come from providers). */
+export const csvCell = (raw: string) => {
+  const v = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
+  return /[",\r\n]/.test(v) ? `"${v.replaceAll('"', '""')}"` : v;
+};
+
+export const toCsv = (candidates: Candidate[]) =>
+  [
+    CSV_COLUMNS.join(','),
+    ...candidates.map((c) =>
+      [
+        c.address,
+        c.label,
+        c.sources.join('+'),
+        c.windows.map((w) => `${w}d`).join('+'),
+        fixed(c.realizedPnl),
+        fixed(c.winRate),
+        c.trades === null ? '' : String(c.trades),
+        fixed(pnlPerTrade(c)),
+        fixed(c.topTokenPct),
+        String(c.topTokenPartial),
+        String(c.verified),
+      ]
+        .map(csvCell)
+        .join(','),
+    ),
+    '',
+  ].join('\n');
+
+export const CANDIDATES_FILE = 'wallets.candidates.csv';
+
+/** The only file discovery may write. data/wallets.csv is curated by hand and never touched. */
+export const writeCandidates = (path: string, csv: string) => {
+  if (basename(path) !== CANDIDATES_FILE) {
+    throw new Error(`refusing to write ${path}: discovery only writes ${CANDIDATES_FILE}`);
+  }
+  writeFileSync(path, csv);
+};
