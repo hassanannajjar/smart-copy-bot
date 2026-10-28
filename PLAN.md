@@ -61,11 +61,13 @@
 - In-process typed event bus / queue inside `apps/engine`. Each stage is a module with a clear input/output type.
 - **Every stage writes to the DB**, so the dashboard can rebuild the funnel and we can audit any decision.
 - **Replay mode:** the engine can consume `data/raw/*.jsonl` instead of the live stream, so rules can be re-run with new thresholds offline.
-- **Modes (three, always explicit):**
-  - `DEMO` — dashboard shows seeded fake data only. No engine, no network. For UI work and showing the app.
-  - `PAPER` (default) — real market data, simulated money. No transaction is ever signed.
-  - `LIVE` — real wallet, real transactions. Only possible if the engine was started with the live env flags (§9).
-- The active mode lives in the `app_settings` table and is switchable from the dashboard (§7.1), but the engine enforces the rules — the UI can only request a mode, never bypass the gate.
+- **Modes (three, always explicit), on two separate axes:**
+  - **Data view** (dashboard only, per browser, kept in the `scb_view` cookie, default PAPER): which DB file the panels read (`demo.db`, `paper.db` or `live.db`). DEMO is a view only. It is never written to `control.db` and never affects the engine.
+    - `DEMO` — seeded fake data (`pnpm db:seed:demo`). No engine, no network. For UI work and showing the app.
+  - **Engine mode** (`control.db` `app_settings`): `PAPER` or `LIVE`.
+    - `PAPER` (default) — real market data, simulated money. No transaction is ever signed.
+    - `LIVE` — real wallet, real transactions. Only possible if the engine was started with the live env flags (§9).
+- The dashboard can request an engine mode (§7.1), but the engine enforces the rules: the UI can only request a mode, never bypass the gate. Until M7 the dashboard accepts PAPER requests and rejects and logs every LIVE request.
 - DEMO / PAPER / LIVE data is stored separately (separate DB files: `demo.db`, `paper.db`, `live.db`) so fake or simulated numbers can never mix with real PnL.
 
 ---
@@ -135,14 +137,16 @@ R4 is the hardest. Implement v1 as a documented heuristic with unit tests on fix
 
 ### 7.1 Mode control & visibility (required)
 
-- **Mode switcher** in the header: `DEMO` / `PAPER` / `LIVE`.
-- **Always-visible banner, impossible to miss**, on every page:
-  - DEMO → grey banner: "DEMO DATA — not real".
-  - PAPER → blue/amber banner: "PAPER TRADING — real market data, simulated money".
-  - LIVE → **solid red, sticky banner**: "LIVE — REAL FUNDS", showing the hot wallet's **public** address (shortened), current SOL/USDC balance, today's PnL, daily loss limit remaining, and a **STOP / Kill switch** button.
-  - The browser tab title and favicon also change in LIVE (e.g. "🔴 LIVE — Copy Bot").
+- **Header controls:** a data-view switcher `DEMO` / `PAPER` / `LIVE` (cookie only, §2) and, separately, the engine-mode controls.
+- **Always-visible engine banner, impossible to miss**, on every page and in every data view:
+  - Engine PAPER → blue banner: "PAPER TRADING — real market data, simulated money".
+  - Engine LIVE → **solid red, sticky banner**: "LIVE — REAL FUNDS", showing the hot wallet's **public** address (shortened), current SOL/USDC balance, today's PnL, daily loss limit remaining, and a **STOP / Kill switch** button. This shows even while viewing DEMO or PAPER data.
+  - The browser tab title and favicon also change while the engine is LIVE (e.g. "🔴 LIVE — Copy Bot").
+  - The banner shows the engine heartbeat (last event and last signal), so a stopped engine is obvious.
+- **View strip** under the banner names the data being shown, e.g. "Viewing: DEMO data — not real" (grey).
+- **Empty states:** a missing or empty view DB shows a message (e.g. "No paper data yet — engine writes paper.db"), never zeros.
 - **Switching to LIVE** from the UI:
-  1. Button is disabled with a tooltip explaining why unless the engine reports it was started with the live env flags (§9) and a wallet is configured.
+  1. Button is disabled, with the reason shown as visible text next to it and as a tooltip, unless the engine reports it was started with the live env flags (§9) and a wallet is configured.
   2. Confirmation modal shows: wallet address, balance, position size, max open positions, daily loss limit.
   3. User must type `LIVE` to confirm.
   4. Engine validates again server-side, then writes `active_mode`; the UI only reflects what the engine confirmed.

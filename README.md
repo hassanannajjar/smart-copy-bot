@@ -108,3 +108,16 @@ Why this design, and what it costs in credits (about 2.5% of the free plan): [do
   - `realized_pnl`, `win_rate` (token win rate) and `trades_per_day` cover the leaderboard window.
   - `top_token_pct` and `median_hold_s` cover all-time profitable positions, and only the first page of them when `top_token_partial=true`.
 - **Fixtures:** the test fixtures in `packages/shared/test/fixtures/` are **doc-derived** (official OpenAPI examples) until you run once with `--record` and a real key.
+
+## Dashboard (M4)
+
+```sh
+pnpm db:migrate
+pnpm db:seed:demo   # fills data/demo.db with fake data (refuses a symlinked target)
+pnpm dashboard      # http://127.0.0.1:3000, bound to localhost only
+```
+
+- The **data view** switcher (DEMO / PAPER / LIVE) only picks which DB file the panels read. It lives in a browser cookie and never touches `control.db` or the engine.
+- The **engine banner** always shows the engine mode from `control.db`, whatever the view. While the engine is LIVE it turns solid red, and the tab title and favicon change too.
+- The dashboard can request PAPER and toggle the kill switch. LIVE requests are rejected and logged in `mode_changes` until M7.
+- Pages: Overview (stats, funnel, kill reasons, copy log), Mode history and Settings (`rules.yaml`, read-only). Pages refresh every 5 s.

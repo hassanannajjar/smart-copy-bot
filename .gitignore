@@ -9,3 +9,5 @@ dist/
 *.db-shm
 data/raw/
 data/wallets.candidates.csv
+.next/
+next-env.d.ts
