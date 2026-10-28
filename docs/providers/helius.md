@@ -50,6 +50,12 @@ Parsing is venue-agnostic. We diff the wallet's own SOL and token balances, so J
   - `getSignaturesForAddress`:
     - Params: `[wallet, {until, limit, commitment}]`, with `limit` from 1 to 1000.
     - Results come newest first: `[{signature, slot, err, memo, blockTime, confirmationStatus}]`.
+  - `getAccountInfo` (discovery on-chain identity, https://www.helius.dev/docs/api-reference/rpc/http/getaccountinfo, checked 2026-10-29):
+    - Params: `[address, {encoding:"base64", dataSlice:{offset:0,length:0}, commitment}]`. The zero-length slice skips the account data; we only need the owner.
+    - Result: `{context:{slot}, value:{lamports, owner, executable, data, rentEpoch, space}}`. Per the Solana JSON-RPC spec, `value` is `null` when the account doesn't exist; the Helius page doesn't say.
+    - A plain wallet is owned by the System Program, `11111111111111111111111111111111`.
+    - Cost: the method page states none. The credits page bills standard RPC calls at 1 credit.
+    - Fixtures `account-wallet.json`, `account-token.json` and `account-missing.json` are doc-derived.
 
 ### `getTransaction` (jsonParsed) fields we read
 - `blockTime`: Unix **seconds**, and possibly null. That gives `detect_latency_ms` about ±1 s resolution.
@@ -112,9 +118,10 @@ Free plan WebSockets (standard methods only): 5 concurrent connections, 1,000 su
 - Worst case, a reconnect storm at the 30 s cap all day: 2,880 × 9 ≈ 26k credits a day. That's why reconnects get a warning every 10.
 
 ## Discovery activity check (`pnpm wallets:discover`)
+- An unidentified (Birdeye-only) candidate costs 1 `getAccountInfo` before enrichment.
 - Per enriched candidate: 1 `getSignaturesForAddress` (limit 20), then `getTransaction` on up to 10 of the newest non-failed signatures. That is at most 11 credits. A wallet whose newest signature is older than 48 h costs 1.
 - It uses its own throttle (`discovery.helius`, 250 ms) because it shares the free plan's 10 rps with a running engine.
-- The three runs on 2026-10-29 cost 112, 211 and 257 credits (580 in total).
+- The three runs on 2026-10-29 cost 112, 211 and 257 credits (580 in total). The two later runs with on-chain identity cost 277 and 555.
 
 ## Unverified / revisit
 - Whether Helius bills each WebSocket message at a 0.1 MB minimum. Compare the credits dashboard after 24 h with the estimate above.

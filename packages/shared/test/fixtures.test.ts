@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { z } from 'zod';
 import { beGainersSchema, beIdentitiesSchema } from '../src/providers/birdeye.js';
 import {
+  heliusAccountSchema,
   heliusLogsNotificationSchema,
   heliusSignaturesSchema,
   heliusTxSchema,
@@ -18,6 +19,7 @@ const SCHEMAS: Record<string, Record<string, z.ZodType>> = {
     'logs-notification': heliusLogsNotificationSchema,
     signatures: rpcResultSchema(heliusSignaturesSchema),
     'tx-': rpcResultSchema(heliusTxSchema), // prefix: one file per parse outcome
+    'account-': rpcResultSchema(heliusAccountSchema), // prefix: wallet, token, missing
   },
 };
 

@@ -9,6 +9,7 @@ import {
   type SolanaTrackerApi,
   type StIdentity,
   type StLeaderboard,
+  SYSTEM_PROGRAM_ID,
 } from '@scb/shared';
 import { parseSwap } from '../scout/parse.js';
 import {
@@ -227,7 +228,7 @@ export const discover = async (
   cfg: DiscoveryConfig,
   now = Date.now(),
 ): Promise<DiscoveryResult> => {
-  // Every Helius RPC call costs 1 credit (getSignaturesForAddress, getTransaction).
+  // Every Helius RPC call costs 1 credit (getSignaturesForAddress, getTransaction, getAccountInfo).
   let heliusCalls = 0;
   const { helius } = apis;
   const rpc: HeliusRpc | undefined = helius && {
@@ -238,6 +239,10 @@ export const discover = async (
     signatures: (wallet, o) => {
       heliusCalls++;
       return helius.rpc.signatures(wallet, o);
+    },
+    getAccountInfo: (address) => {
+      heliusCalls++;
+      return helius.rpc.getAccountInfo(address);
     },
   };
   const warnings: string[] = [];
@@ -292,10 +297,30 @@ export const discover = async (
 
   // Enrich the top N identity-checked candidates (the only ones that can be starters): top-token
   // share and hold time from Solana Tracker positions, then the Helius activity check.
+  // A row no provider could identify gets the on-chain substitute first: a plain wallet is owned
+  // by the System Program (programs, token accounts and PDAs are not). Exchange hot wallets are
+  // also system-owned; the activity check drops them, since they don't swap.
   // Anything not enriched stays unverified (kept, ranked below verified): this is a review list.
   const candidates: Candidate[] = [];
   let enriched = 0;
   for (const c of merged) {
+    if (st && rpc && enriched < cfg.enrich_top_n && !c.identityChecked) {
+      try {
+        const acct = await rpc.getAccountInfo(c.address);
+        if (acct && acct.owner !== SYSTEM_PROGRAM_ID) {
+          dropped.not_system_owned = (dropped.not_system_owned ?? 0) + 1;
+          continue;
+        }
+        if (acct) {
+          c.identityChecked = true;
+          c.identitySource = 'onchain';
+        }
+      } catch (e) {
+        warnings.push(
+          `on-chain identity failed for ${c.address} (${errorText(e)}); left unchecked`,
+        );
+      }
+    }
     if (st && enriched < cfg.enrich_top_n && c.identityChecked) {
       enriched++;
       try {

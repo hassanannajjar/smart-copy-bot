@@ -99,12 +99,12 @@ Why this design, and what it costs in credits (about 2.5% of the free plan): [do
   - enriched wallets with no swap in the last 48 h (`inactive`) or with under 50% SOL-quoted swaps (`not_memecoin_trader`). The Helius activity check reads the newest 20 signatures, then runs the scout's `parseSwap` on up to 10 recent non-failed transactions. It costs about 11 credits per wallet and needs `HELIUS_API_KEY`.
 - **Rank:**
   1. verified (top-token check done)
-  2. identity checked (Birdeye identity returns 401 on the free plan, so Birdeye-only rows are unchecked)
+  2. identity checked. Birdeye identity returns 401 on our plan, so a Birdeye-only row reached by enrichment gets the on-chain substitute instead: Helius `getAccountInfo` must show the address is owned by the System Program, i.e. a plain wallet and not a program, token account or PDA. Such rows have `identity_source=onchain`. Other owners are dropped as `not_system_owned`. Exchange hot wallets are also system-owned, but they never pass the activity check because they don't swap.
   3. profitable in every window (7d, 30d, 90d)
   4. seen by both providers
   5. win rate
   6. realized PnL
-- **Output:** `data/wallets.candidates.csv` (gitignored) with these columns: `address, label, source, window, realized_pnl, win_rate, trades, pnl_per_trade, top_token_pct, top_token_partial, verified, trades_per_day, avg_trade_usd, median_hold_s, identity_checked, last_swap_at, sol_quote_pct, starter`. `starter=true` marks rows that meet `discovery.starter` in `rules.yaml` (at most `max_wallets`, in rank order). The report ends with a human-likeness line giving the medians of the final list.
+- **Output:** `data/wallets.candidates.csv` (gitignored) with these columns: `address, label, source, window, realized_pnl, win_rate, trades, pnl_per_trade, top_token_pct, top_token_partial, verified, trades_per_day, avg_trade_usd, median_hold_s, identity_checked, identity_source, last_swap_at, sol_quote_pct, starter`. `starter=true` marks rows that meet `discovery.starter` in `rules.yaml` (at most `max_wallets`, in rank order). The report ends with a human-likeness line giving the medians of the final list.
 - **Scopes:**
   - `realized_pnl`, `win_rate` (token win rate) and `trades_per_day` cover the leaderboard window.
   - `top_token_pct` and `median_hold_s` cover all-time profitable positions, and only the first page of them when `top_token_partial=true`.

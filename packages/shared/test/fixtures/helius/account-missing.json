@@ -1,0 +1,14 @@
+{
+  "_provenance": "doc-derived from the Solana JSON-RPC getAccountInfo spec (value is null when the account does not exist)",
+  "request": {
+    "method": "POST",
+    "path": "getAccountInfo",
+    "query": {},
+    "body": { "address": "4Nd1mBQtrMJVYVfKf2PJy9NZUZdTAsp7D4xWLs4gDB4T" }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "result": { "context": { "apiVersion": "2.0.15", "slot": 341197053 }, "value": null },
+    "id": 1
+  }
+}

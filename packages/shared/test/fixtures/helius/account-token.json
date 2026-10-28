@@ -1,0 +1,24 @@
+{
+  "_provenance": "doc-derived from https://www.helius.dev/docs/api-reference/rpc/http/getaccountinfo (example shape; owner set to the SPL Token program, as for a token account)",
+  "request": {
+    "method": "POST",
+    "path": "getAccountInfo",
+    "query": {},
+    "body": { "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "result": {
+      "context": { "apiVersion": "2.0.15", "slot": 341197053 },
+      "value": {
+        "lamports": 2039280,
+        "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+        "data": ["", "base64"],
+        "executable": false,
+        "rentEpoch": 18446744073709552000,
+        "space": 165
+      }
+    },
+    "id": 1
+  }
+}

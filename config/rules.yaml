@@ -69,7 +69,7 @@ discovery: # M0.5 `pnpm wallets:discover`: builds data/wallets.candidates.csv fo
   # Per window. ST is sorted by realized PnL, so its top pages are mostly HF bots: page deeper
   # (3 windows x 20 = up to 60 requests). Birdeye rows cannot be identity-checked on our plan.
   max_pages: { solanatracker: 20, birdeye: 5 }
-  enrich_top_n: 80 # ST positions calls to compute top_token_pct
+  enrich_top_n: 160 # ST positions calls (top_token_pct, hold) + Helius checks; 80 never reached on-chain-identity rows
   enrich_period: all # positions scope for top_token_pct (all-time)
   # Human-likeness filters (each has its own drop reason in the report). Placeholders, tune.
   max_trades_per_day: 60 # trades / window days above this => bot_trade_rate
@@ -90,7 +90,7 @@ discovery: # M0.5 `pnpm wallets:discover`: builds data/wallets.candidates.csv fo
     min_sol_quote_pct: 50 # SOL-quoted share of sampled swaps below this => not_memecoin_trader
   starter: # `starter` CSV column: identity checked + activity checked + all of these
     min_sol_quote_pct: 50
-    max_trades_per_day: 40
+    max_trades_per_day: 55 # raised from 40 on 2026-10-29
     max_avg_trade_usd: 3000
     min_win_rate_pct: 25 # when known
     max_win_rate_pct: 85 # when known

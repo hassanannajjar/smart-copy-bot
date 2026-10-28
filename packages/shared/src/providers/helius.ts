@@ -46,6 +46,11 @@ export const heliusSignaturesSchema = z.array(
   }),
 );
 
+/** getAccountInfo `result`: `value` is null when the account doesn't exist. */
+export const heliusAccountSchema = z.object({
+  value: z.object({ owner: z.string(), executable: z.boolean() }).nullable(),
+});
+
 export const heliusLogsNotificationSchema = z.object({
   method: z.literal('logsNotification'),
   params: z.object({
@@ -66,12 +71,18 @@ export const rpcResultSchema = <T extends z.ZodType>(result: T) => z.object({ re
 
 export type HeliusTx = z.infer<typeof heliusTxSchema>;
 export type HeliusSignature = z.infer<typeof heliusSignaturesSchema>[number];
+export type HeliusAccount = NonNullable<z.infer<typeof heliusAccountSchema>['value']>;
+
+/** Owner of every plain wallet (keypair) account. */
+export const SYSTEM_PROGRAM_ID = '11111111111111111111111111111111';
 
 export interface HeliusRpc {
   /** `tx` is null when the node doesn't have it yet; `raw` is the untouched result for replay. */
   getTransaction(signature: string): Promise<{ tx: HeliusTx | null; raw: unknown }>;
   /** Newest first, stopping before `until`. */
   signatures(wallet: string, o: { until?: string; limit: number }): Promise<HeliusSignature[]>;
+  /** Owner program of an address; null when the account doesn't exist. */
+  getAccountInfo(address: string): Promise<HeliusAccount | null>;
 }
 
 const rpcEnvelope = z.object({
@@ -130,6 +141,16 @@ export const createHeliusRpc = ({ apiKey, commitment, ...o }: RpcOptions): Heliu
         await call('getSignaturesForAddress', [wallet, { until, limit, commitment }]),
         'getSignaturesForAddress',
       ),
+    getAccountInfo: async (address) =>
+      parse(
+        heliusAccountSchema,
+        // A zero-length data slice: we only need the owner, not the account data.
+        await call('getAccountInfo', [
+          address,
+          { encoding: 'base64', dataSlice: { offset: 0, length: 0 }, commitment },
+        ]),
+        'getAccountInfo',
+      ).value,
   };
 };
 

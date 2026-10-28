@@ -82,7 +82,7 @@ To refresh the fixtures with real data, run `pnpm wallets:discover --record`.
 ## Field notes from the first real run (2026-10-28)
 - **Identity:** `POST /identity/v1/multiple` returned **401 on the free Standard tier**. Discovery treats it as unavailable:
   - It prints one `note:` line and stops calling identity for that run.
-  - Birdeye-only rows get `identity_checked=false` and rank below checked rows.
+  - Birdeye-only rows get `identity_checked=false` and rank below checked rows. When enrichment reaches one, it is checked on-chain instead (Helius `getAccountInfo`, owner must be the System Program) and gets `identity_source=onchain` (since 2026-10-29).
   - `identity-multiple.json` is still the doc-derived fixture.
 - **Rate limit:** `429`s appeared at a 1.1 s interval even though Standard is documented at 1 rps. Discovery now uses `min_interval_ms: 2000`, and retries never wait less than that interval.
 - **Trade size:** discovery uses `volume / trade_count` as the average trade in USD. `volume` counts buys and sells.

@@ -12,7 +12,8 @@ const cfg = loadConfig('config/rules.yaml').discovery;
 
 const ROW_REASONS =
   /^(invalid_address|identity_.+|unprofitable|bot_trade_rate|implausible_win_rate|low_win_rate|whale_trade_size)$/;
-const WALLET_REASONS = /^(one_token_profit|short_hold|inactive|not_memecoin_trader)$/;
+const WALLET_REASONS =
+  /^(one_token_profit|short_hold|inactive|not_memecoin_trader|not_system_owned)$/;
 
 // Invariants that must hold for ANY fixture (doc-derived or recorded).
 describe('discover on the committed fixtures, default config', async () => {

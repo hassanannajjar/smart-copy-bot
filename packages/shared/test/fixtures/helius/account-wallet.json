@@ -1,0 +1,24 @@
+{
+  "_provenance": "doc-derived from https://www.helius.dev/docs/api-reference/rpc/http/getaccountinfo (example response, 2026-10-29)",
+  "request": {
+    "method": "POST",
+    "path": "getAccountInfo",
+    "query": {},
+    "body": { "address": "86xCnPeV69n6t3DnyGvkKobf9FdN2H9oiVDdaMpo2MMY" }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "result": {
+      "context": { "apiVersion": "2.0.15", "slot": 341197053 },
+      "value": {
+        "lamports": 88849814690250,
+        "owner": "11111111111111111111111111111111",
+        "data": ["", "base64"],
+        "executable": false,
+        "rentEpoch": 18446744073709552000,
+        "space": 0
+      }
+    },
+    "id": 1
+  }
+}

@@ -13,7 +13,7 @@ describe('wallets.csv', () => {
   it('loads the real list and keeps the source column', () => {
     const rows = loadWallets(new URL('../../../data/wallets.csv', import.meta.url).pathname);
     expect(rows.length).toBeGreaterThanOrEqual(5);
-    expect(rows.find((r) => r.address === A)?.source).toBe('discover-2026-10-28');
+    expect(rows.find((r) => r.address === A)?.source).toBe('discover-2026-10-29b');
   });
 
   it('validates base58 addresses that decode to 32 bytes', () => {

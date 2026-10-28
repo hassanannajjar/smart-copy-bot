@@ -4,6 +4,7 @@ import {
   type BirdeyeApi,
   beGainersSchema,
   beIdentitiesSchema,
+  type HeliusAccount,
   type HeliusRpc,
   type HeliusSignature,
   type HeliusStream,
@@ -59,9 +60,14 @@ export const heliusTx = (name: string) => {
 export const fakeHeliusRpc = (
   txs: ReturnType<typeof heliusTx>[],
   signatures: Record<string, HeliusSignature[]> = {},
+  accounts: Record<string, HeliusAccount | null> = {},
 ) => {
   const bySig = new Map(txs.map((t) => [t.tx.transaction.signatures[0], t]));
-  const calls = { getTransaction: [] as string[], signatures: [] as unknown[] };
+  const calls = {
+    getTransaction: [] as string[],
+    signatures: [] as unknown[],
+    accounts: [] as string[],
+  };
   const rpc: HeliusRpc = {
     getTransaction: async (sig) => {
       calls.getTransaction.push(sig);
@@ -71,6 +77,10 @@ export const fakeHeliusRpc = (
     signatures: async (wallet, o) => {
       calls.signatures.push({ wallet, ...o });
       return signatures[wallet] ?? [];
+    },
+    getAccountInfo: async (address) => {
+      calls.accounts.push(address);
+      return accounts[address] ?? null;
     },
   };
   return { rpc, calls };

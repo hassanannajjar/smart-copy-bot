@@ -46,6 +46,7 @@ const cand = (over: Partial<Candidate>): Candidate => ({
   medianHoldS: null,
   verified: true,
   identityChecked: true,
+  identitySource: 'provider',
   lastSwapAt: null,
   solQuotePct: null,
   starter: false,
@@ -189,16 +190,17 @@ describe('csv', () => {
         trades: null,
         verified: false,
         identityChecked: false,
+        identitySource: null,
       }),
     ]);
     const [header, first, second] = csv.trim().split('\n');
     expect(header).toBe(
-      'address,label,source,window,realized_pnl,win_rate,trades,pnl_per_trade,top_token_pct,top_token_partial,verified,trades_per_day,avg_trade_usd,median_hold_s,identity_checked,last_swap_at,sol_quote_pct,starter',
+      'address,label,source,window,realized_pnl,win_rate,trades,pnl_per_trade,top_token_pct,top_token_partial,verified,trades_per_day,avg_trade_usd,median_hold_s,identity_checked,identity_source,last_swap_at,sol_quote_pct,starter',
     );
     expect(first).toBe(
-      `${A(0)},x,solanatracker,30d+90d,1000.00,50.00,50,20.00,12.35,true,true,1.67,250.00,300,true,2026-10-29T01:02:03.000Z,87.50,true`,
+      `${A(0)},x,solanatracker,30d+90d,1000.00,50.00,50,20.00,12.35,true,true,1.67,250.00,300,true,provider,2026-10-29T01:02:03.000Z,87.50,true`,
     );
-    expect(second).toBe(`${A(1)},,birdeye,30d,1000.00,,,,,false,false,,,,false,,,false`);
+    expect(second).toBe(`${A(1)},,birdeye,30d,1000.00,,,,,false,false,,,,false,,,,false`);
   });
 
   it('refuses to write anything but wallets.candidates.csv', () => {

@@ -121,3 +121,56 @@ Current 6 wallets:
 4. **README already said discovery drops average trades "above $10k"**, but `rules.yaml` has used 3,000 since the M0.5 tuning. I left that line alone, out of scope.
 5. **Before the next engine restart:** `rules.yaml` changed shape (`min_days` and `max_pages` are now maps, and there are new sections). `apps/engine/dist` is already rebuilt to match. The running engine has the old config in memory, which is fine until it restarts.
 6. **Backups:** `/tmp/wallets.csv.before-2026-10-29` and `/tmp/wallets.candidates.before.csv`.
+
+## Follow-up (2026-10-29, morning): on-chain identity + cap 55 → wallets.csv written
+Branch `m05-onchain-identity`, fast-forwarded into `main`. **The engine was NOT restarted**, as you asked: M2 merges first and then there will be a single restart. The running engine still has the old 6 wallets in memory.
+
+### Decisions
+1. **On-chain identity substitute.** A row no provider could identify gets one Helius `getAccountInfo` call when enrichment reaches it.
+   - If the address is owned by the System Program, it counts as a plain wallet: `identity_checked=true`, `identity_source=onchain`.
+   - Any other owner (a program, token account or PDA) is dropped as `not_system_owned`.
+   - If the account is missing or the call fails, the row stays unchecked and can't become a starter (fail closed).
+   - The check runs before the Solana Tracker positions call, so non-wallets cost nothing more.
+   - It's documented in the README, `docs/providers/helius.md` and `docs/providers/birdeye.md`. The `getAccountInfo` fixtures are doc-derived.
+2. **The starter `max_trades_per_day` is now 55** (was 40).
+3. **`enrich_top_n` is now 160** (was 80).
+   - With 80, the budget ran out on provider-checked candidates before any unidentified row was reached. That run had 0 on-chain rows and exactly 12 starters.
+   - With 160 there were 9 on-chain rows and 20 starters.
+   - Cost: up to 160 Solana Tracker positions requests per run.
+4. **How `wallets.csv` was written:** by a one-off script outside the repo (`/tmp/scb-write-wallets.mjs`). Discovery code still can't write it.
+   - Labels: the current label for a kept wallet, otherwise the provider label (sanitized), otherwise `st-`/`be-` plus the first 4 characters of the address.
+   - The CSV went through the engine's own `parseWallets` before an atomic rename.
+   - The backup is at `/tmp/wallets.csv.before-2026-10-29b`.
+
+### Runs
+| Run | Change | Helius credits | Starters |
+|---|---|---|---|
+| 4 | on-chain identity + cap 55 | 277 | 12 (0 on-chain) |
+| 5 | + `enrich_top_n` 160 | 555 | **20** (9 on-chain) |
+
+Run 5 drops:
+
+| Reason | Count |
+|---|---|
+| `bot_trade_rate` | 2,393 |
+| `whale_trade_size` | 323 |
+| `one_token_profit` | 90 |
+| `short_hold` | 24 |
+| `low_win_rate` | 15 |
+| `inactive` | 15 |
+| `not_memecoin_trader` | 10 |
+| `implausible_win_rate` | 1 |
+| `not_system_owned` | 0 |
+
+### data/wallets.csv: 20 wallets, source `discover-2026-10-29b`
+- **Kept:** GwSw… (WoolenRoanChamp) and AXmM… (st-AXmM).
+- **Removed:** BRjV…, 6ACu…, 9e6Z… and GWQu….
+- **Added:** 18 new wallets, 9 of them identified on-chain (`be-*` labels with `identity_source=onchain`).
+
+The full table is in the final message of this session and in the `starter=true` rows of `data/wallets.candidates.csv`.
+
+### Check before / after the restart
+- **Very long median holds:** `be-DvyV`, `be-DYXK`, `be-Dsbh`, `st-G2fe`, `st-H19L` and `st-HVPX` have median holds of 13–91 days. They may be holders rather than active flippers. Spot-check them on Solscan.
+- **`st-9rmY` is exactly at the threshold** (`sol_quote_pct` 50.00), from a small swap sample.
+- **On-chain identity can't recognise every exchange or market maker.** Watch the first day's signals from the `be-*` wallets.
+- **After the restart, `subscriptions_acked` in `events_log` should be 20.**

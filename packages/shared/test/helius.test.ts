@@ -6,6 +6,7 @@ import {
   createHeliusStream,
   type SocketLike,
   type StreamStatus,
+  SYSTEM_PROGRAM_ID,
 } from '../src/providers/helius.js';
 import { backoffMs } from '../src/providers/http.js';
 
@@ -205,6 +206,29 @@ describe('Helius RPC', () => {
       json({ jsonrpc: '2.0', id: 1, result: null }),
     ).getTransaction('s');
     expect(res).toEqual({ tx: null, raw: null });
+  });
+
+  it('getAccountInfo: zero-length data slice, returns owner, null when missing', async () => {
+    const wallet = fixture('account-wallet');
+    const fetch = vi.fn(async (_u: URL | RequestInfo, _i?: RequestInit) => json(wallet.response));
+    const acct = await rpcClient(fetch).getAccountInfo(wallet.request.body.address);
+    expect(acct).toEqual({ owner: SYSTEM_PROGRAM_ID, executable: false });
+    const [, init] = fetch.mock.calls[0] ?? [];
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      method: 'getAccountInfo',
+      params: [
+        wallet.request.body.address,
+        { encoding: 'base64', dataSlice: { offset: 0, length: 0 }, commitment: 'confirmed' },
+      ],
+    });
+    const token = await rpcClient(async () =>
+      json(fixture('account-token').response),
+    ).getAccountInfo('x');
+    expect(token?.owner).toBe('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA');
+    const missing = await rpcClient(async () =>
+      json(fixture('account-missing').response),
+    ).getAccountInfo('x');
+    expect(missing).toBeNull();
   });
 
   it('retries JSON-RPC -32005 (rate limited), fails other RPC errors with no key in the message', async () => {

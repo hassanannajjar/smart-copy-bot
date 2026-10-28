@@ -1,8 +1,21 @@
-import { type HeliusSignature, heliusTxSchema, loadConfig } from '@scb/shared';
+import {
+  type HeliusSignature,
+  heliusTxSchema,
+  loadConfig,
+  ProviderError,
+  SYSTEM_PROGRAM_ID,
+} from '@scb/shared';
 import { describe, expect, it } from 'vitest';
 import { activityDrop, checkActivity, discover } from '../src/discover/discover.js';
 import { type Candidate, isStarter } from '../src/discover/rank.js';
-import { fakeHeliusRpc, fakeSolanaTracker, heliusTx, WSOL } from './fakes.js';
+import {
+  beGainers,
+  fakeBirdeye,
+  fakeHeliusRpc,
+  fakeSolanaTracker,
+  heliusTx,
+  WSOL,
+} from './fakes.js';
 
 const config = loadConfig('config/rules.yaml');
 const cfg = config.discovery;
@@ -148,5 +161,52 @@ describe('discover with the Helius activity check', () => {
     expect(r.heliusCalls).toBe((r.dropped.inactive ?? 0) + checked.length + 1);
     for (const c of r.candidates)
       expect(c.starter).toBe(c.lastSwapAt !== null && isStarter(c, cfg.starter));
+  });
+});
+
+describe('on-chain identity substitute', () => {
+  it('System Program-owned => identity_source onchain; other owners dropped; missing stays unchecked', async () => {
+    const st = fakeSolanaTracker();
+    const stWallets = new Set((await st.topTraders({} as never)).traders.map((t) => t.wallet));
+    const beOnly = [
+      ...new Set(
+        beGainers()
+          .data.items.map((i) => i.address)
+          .filter((a) => !stWallets.has(a)),
+      ),
+    ];
+    const [wallet, token, missing] = beOnly as [string, string, string];
+    const { rpc, calls } = fakeHeliusRpc(
+      [],
+      {},
+      {
+        [wallet]: { owner: SYSTEM_PROGRAM_ID, executable: false },
+        [token]: { owner: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA', executable: false },
+      },
+    );
+    const be = {
+      ...fakeBirdeye(),
+      identities: async () => Promise.reject(new ProviderError('birdeye', 401, 'POST', '/x')),
+    };
+    const loose = {
+      ...cfg,
+      max_trades_per_day: 1e9,
+      min_win_rate_pct: 0,
+      max_avg_trade_usd: 1e12,
+      min_median_hold_s: 0,
+      enrich_top_n: 1e6,
+    };
+    const r = await discover({ st, be, helius: { rpc, ...h } }, loose);
+
+    const byAddress = new Map(r.candidates.map((c) => [c.address, c]));
+    expect(calls.accounts).toEqual(expect.arrayContaining([wallet, token, missing]));
+    expect(calls.accounts.some((a) => stWallets.has(a))).toBe(false); // provider-checked: no call
+    expect(r.dropped.not_system_owned).toBe(1);
+    expect(byAddress.has(token)).toBe(false);
+    // The fake has no signatures, so the on-chain wallet is enriched and then dropped as inactive;
+    // the missing account is never identity-checked and stays in the list.
+    expect(byAddress.has(wallet)).toBe(false);
+    expect(byAddress.get(missing)).toMatchObject({ identityChecked: false, identitySource: null });
+    expect(r.dropped.inactive ?? 0).toBeGreaterThan(0);
   });
 });
