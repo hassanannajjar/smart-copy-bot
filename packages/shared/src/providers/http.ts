@@ -1,6 +1,6 @@
 // Minimal JSON-over-HTTP client shared by every provider.
-// Auth lives only in headers; errors and logs carry provider/status/method/path, never headers,
-// so an API key can't leak through a log line or a thrown message.
+// Auth lives in headers (or authQuery for query-param providers); errors and logs carry
+// provider/status/method/path only, so an API key can't leak through a log line or a thrown message.
 import type { z } from 'zod';
 
 export type Query = Record<string, string | number | boolean | undefined>;
@@ -15,6 +15,8 @@ export interface HttpOptions {
   provider: string;
   baseUrl: string;
   headers: Record<string, string>;
+  /** For providers that auth by query param (Helius). Sent on the URL; never recorded or thrown. */
+  authQuery?: Record<string, string>;
   timeoutMs: number;
   retries: number;
   minIntervalMs: number;
@@ -44,6 +46,10 @@ export interface RequestSpec {
   body?: unknown;
 }
 
+/** Exponential backoff with jitter (x0.5..x1.5), capped. Shared by HTTP retries and WS reconnects. */
+export const backoffMs = (attempt: number, baseMs: number, capMs: number, random = Math.random) =>
+  Math.min(capMs, baseMs * 2 ** attempt) * (0.5 + random());
+
 const realSleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
 export const createHttp = (o: HttpOptions) => {
@@ -67,6 +73,7 @@ export const createHttp = (o: HttpOptions) => {
     const url = new URL(req.path, o.baseUrl);
     for (const [k, v] of Object.entries(query))
       if (v !== undefined) url.searchParams.set(k, String(v));
+    for (const [k, v] of Object.entries(o.authQuery ?? {})) url.searchParams.set(k, v);
 
     for (let attempt = 0; ; attempt++) {
       const wait = nextSlot - Date.now();
@@ -107,7 +114,7 @@ export const createHttp = (o: HttpOptions) => {
       if (!retryable || attempt >= o.retries) {
         throw new ProviderError(o.provider, status, req.method, req.path);
       }
-      const backoff = Math.min(30_000, 500 * 2 ** attempt) * (0.5 + Math.random());
+      const backoff = backoffMs(attempt, 500, 30_000);
       // Never retry faster than the provider throttle allows.
       await sleep(Math.max(retryAfterMs ?? backoff, o.minIntervalMs));
     }

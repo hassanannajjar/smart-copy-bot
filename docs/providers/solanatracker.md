@@ -99,3 +99,12 @@ To refresh the fixtures with real data, run `pnpm wallets:discover --record`.
 - **Trade size:** `averages.buy` is the average buy in USD; on the recorded page the median was $214 and the max $50k. It is used for `whale_trade_size`. When it is missing, discovery falls back to `period.volume / counts.trades`.
 - **Hold time:** `positions[].timing.holdTimeSecs` is present on every position. Discovery's `short_hold` filter uses the median across the first page of profitable positions (up to 200, all-time). Profitable-only positions bias the sample toward winning flips.
 - **Leaderboard bias:** sorted by `realized`, the top of the leaderboard is mostly high-frequency wallets. On the first recorded 30d page, 85 of 100 rows had more than 150 trades/day, so `max_pages` was raised to 5.
+
+## Next discovery tuning (not implemented yet)
+The first live scout run (M1, 2026-10-29) showed that leaderboard winners aren't always copyable. One starter wallet traded only USDC ↔ xStocks, and another only USDC-quoted swaps. Neither can produce a signal under the scout's SOL-quoted v1 rule, so both were removed from `data/wallets.csv`.
+
+Discovery should require **recent SOL-quoted memecoin activity**:
+- A majority of recent positions are SOL-quoted, not USDC/USDT or tokenized stocks.
+- The last trade is within 48 h.
+
+Both thresholds belong in the `discovery:` section of `rules.yaml` when this is built.

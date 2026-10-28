@@ -86,6 +86,18 @@ export const configSchema = obj({
     solanatracker: obj(providerLimits),
     birdeye: obj(providerLimits),
   }),
+  scout: obj({
+    commitment: z.enum(['confirmed', 'finalized']), // getTransaction rejects 'processed'
+    quote_mint: z.string().min(32).max(44),
+    ping_interval_ms: num.int().positive(),
+    heartbeat_interval_ms: num.int().positive(),
+    reconnect_base_ms: num.int().positive(),
+    reconnect_max_ms: num.int().positive(),
+    tx_fetch_retries: num.int().min(0).max(20),
+    tx_fetch_delay_ms: num.int().min(0),
+    backfill_limit: num.int().min(1).max(1000),
+    rpc: obj(providerLimits),
+  }),
 });
 
 export type Config = z.infer<typeof configSchema>;

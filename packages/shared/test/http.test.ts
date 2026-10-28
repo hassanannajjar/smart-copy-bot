@@ -41,6 +41,20 @@ describe('createHttp', () => {
     expect(JSON.stringify(record.mock.calls)).not.toContain(KEY);
   });
 
+  it('authQuery goes on the URL but never into the recorded call or an error', async () => {
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(json(200, { ok: 1 }))
+      .mockResolvedValueOnce(json(401));
+    const record = vi.fn();
+    const http = client(fetch, { headers: {}, authQuery: { 'api-key': KEY }, record });
+    await http({ name: 'rpc', method: 'POST', path: '/', body: { a: 1 } });
+    expect(String(fetch.mock.calls[0]?.[0])).toBe(`https://api.example.test/?api-key=${KEY}`);
+    expect(JSON.stringify(record.mock.calls)).not.toContain(KEY);
+    const err = await http({ name: 'rpc', method: 'POST', path: '/' }).catch((e) => e);
+    expect(`${err.message} ${err.stack}`).not.toContain(KEY);
+  });
+
   it('retries a 429 (logging it) and then succeeds', async () => {
     const fetch = vi
       .fn()

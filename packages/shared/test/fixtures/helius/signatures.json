@@ -1,0 +1,80 @@
+{
+  "_provenance": "recorded 2026-10-28T21:07:21.605Z from Helius mainnet getSignaturesForAddress",
+  "wallet": "GwSwopjoSe1nTyBBADzkNKxaCuvJtHTEdWgq4MCfpESh",
+  "request": {
+    "method": "POST",
+    "path": "getSignaturesForAddress",
+    "query": {},
+    "body": {
+      "wallet": "GwSwopjoSe1nTyBBADzkNKxaCuvJtHTEdWgq4MCfpESh",
+      "limit": 6
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": [
+      {
+        "signature": "5syLWZc1DfZttQu7bDZjn4YsCZmo74Sfsrh1bB6L374P1RonAQQThPWgz2zwa58o4jn5WUR1QWWEWDGnob2QTcoH",
+        "slot": 462471691,
+        "err": null,
+        "memo": null,
+        "blockTime": 1793189509,
+        "confirmationStatus": "finalized",
+        "transactionIndex": 251
+      },
+      {
+        "signature": "2y3DHMAb8PWZQwcHVMZjcGbTxQaWnBYhEbTtTaWYrQ7JMrZQgp26Fg6M12ZnGD8mbuBXmUoASxp1u4mbZFtv9EB8",
+        "slot": 462471550,
+        "err": null,
+        "memo": null,
+        "blockTime": 1793189480,
+        "confirmationStatus": "finalized",
+        "transactionIndex": 158
+      },
+      {
+        "signature": "4zyZEBLug5H5uXtCfuHT2m9pLvzTzp5E7h8peLTpiFM6iRMTzQfPpPg3WBuR4SXEnv9Uq4adGEcPWiGn1946DJon",
+        "slot": 462471365,
+        "err": null,
+        "memo": null,
+        "blockTime": 1793189440,
+        "confirmationStatus": "finalized",
+        "transactionIndex": 41
+      },
+      {
+        "signature": "2RNmfm2GmWTyQuzHdRCmgardjELBSW7TYaAtndb28FnGhSmFMHLDgixRQem9UJvcyZ9Un1GFxXSzpkoHFy2PVT15",
+        "slot": 462268691,
+        "err": null,
+        "memo": null,
+        "blockTime": 1793146290,
+        "confirmationStatus": "finalized",
+        "transactionIndex": 265
+      },
+      {
+        "signature": "66SucVE1wpCahBeVKMzHmoVSeVfc7QZJgv8WBur5Yd38QiLv3RkcEUVtMa2Q3G4yqVe1rDtne676v3EbzRR7jRAu",
+        "slot": 462263779,
+        "err": null,
+        "memo": null,
+        "blockTime": 1793145243,
+        "confirmationStatus": "finalized",
+        "transactionIndex": 43
+      },
+      {
+        "signature": "2aQzKynF1MunoYd4g1KLPaJKKYfnXurVbnNdCqjjMb8QBf6vjJNvtFxrJF5XFRZisJV9RMuwzwe2sU3FN2uiib5d",
+        "slot": 462263731,
+        "err": {
+          "InstructionError": [
+            5,
+            {
+              "Custom": 6001
+            }
+          ]
+        },
+        "memo": null,
+        "blockTime": 1793145233,
+        "confirmationStatus": "finalized",
+        "transactionIndex": 242
+      }
+    ]
+  }
+}

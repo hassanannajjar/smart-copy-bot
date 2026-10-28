@@ -1,0 +1,122 @@
+{
+  "_provenance": "recorded 2026-10-28T21:07:21.605Z from Helius mainnet getTransaction (tracked wallet BRjVGhFnXZ7wKcvgHa35hJuzGi8eTmHWcouhfZQKuJZg)",
+  "wallet": "BRjVGhFnXZ7wKcvgHa35hJuzGi8eTmHWcouhfZQKuJZg",
+  "request": {
+    "method": "POST",
+    "path": "getTransaction",
+    "query": {},
+    "body": {
+      "signature": "4B117KA5aehbeCmKytRYn9pf2kNZg5rJ4pbTRvRb18H7MhmDWQ9yQXq6jh7e7vNvz3jAyhdou9bCGy4eMLSS68LC"
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+      "transaction": {
+        "signatures": [
+          "4B117KA5aehbeCmKytRYn9pf2kNZg5rJ4pbTRvRb18H7MhmDWQ9yQXq6jh7e7vNvz3jAyhdou9bCGy4eMLSS68LC",
+          "3WMJMnVxnEuo4XyG1Sf5PSsaJ76AvniMf3TiYnFw3gYc5Jz5agyTZ7c11dCmt2gfjEppC8t8LhwKacktErBo1Zf9"
+        ],
+        "message": {
+          "accountKeys": [
+            {
+              "pubkey": "BRjVGhFnXZ7wKcvgHa35hJuzGi8eTmHWcouhfZQKuJZg",
+              "writable": true,
+              "signer": true,
+              "source": "transaction"
+            },
+            {
+              "pubkey": "F96PKoD21qVZuNg1xQKDYeC2BmzasTA7Su37G5hXiCef",
+              "writable": true,
+              "signer": true,
+              "source": "transaction"
+            },
+            {
+              "pubkey": "8zxkmeqHrpmqyzCSGxLNWZ4W7ZgjwHuo4HV11ALceNAg",
+              "writable": true,
+              "signer": false,
+              "source": "transaction"
+            },
+            {
+              "pubkey": "11111111111111111111111111111111",
+              "writable": false,
+              "signer": false,
+              "source": "transaction"
+            },
+            {
+              "pubkey": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
+              "writable": false,
+              "signer": false,
+              "source": "transaction"
+            }
+          ],
+          "recentBlockhash": "Fmkdu1ftyWxfLPraAgC8Ns3g4BTv18oKZDsNrJdrkgS1",
+          "instructions": [
+            {
+              "program": "system",
+              "programId": "11111111111111111111111111111111",
+              "parsed": {
+                "info": {
+                  "destination": "F96PKoD21qVZuNg1xQKDYeC2BmzasTA7Su37G5hXiCef",
+                  "lamports": 9999990000,
+                  "source": "BRjVGhFnXZ7wKcvgHa35hJuzGi8eTmHWcouhfZQKuJZg"
+                },
+                "type": "transfer"
+              },
+              "stackHeight": 1
+            },
+            {
+              "program": "system",
+              "programId": "11111111111111111111111111111111",
+              "parsed": {
+                "info": {
+                  "destination": "8zxkmeqHrpmqyzCSGxLNWZ4W7ZgjwHuo4HV11ALceNAg",
+                  "lamports": 9999990000,
+                  "source": "F96PKoD21qVZuNg1xQKDYeC2BmzasTA7Su37G5hXiCef"
+                },
+                "type": "transfer"
+              },
+              "stackHeight": 1
+            },
+            {
+              "program": "spl-memo",
+              "programId": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
+              "parsed": "0c4e90e3d7468e533dd36e5dbc41306c",
+              "stackHeight": 1
+            }
+          ]
+        }
+      },
+      "meta": {
+        "err": null,
+        "status": {
+          "Ok": null
+        },
+        "fee": 10000,
+        "preBalances": [10000000000, 0, 93991005957, 1, 523015235],
+        "postBalances": [0, 0, 103990995957, 1, 523015235],
+        "innerInstructions": [],
+        "logMessages": [
+          "Program 11111111111111111111111111111111 invoke [1]",
+          "Program 11111111111111111111111111111111 success",
+          "Program 11111111111111111111111111111111 invoke [1]",
+          "Program 11111111111111111111111111111111 success",
+          "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr invoke [1]",
+          "Program log: Memo (len 32): \"0c4e90e3d7468e533dd36e5dbc41306c\"",
+          "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr consumed 12775 of 205700 compute units",
+          "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr success"
+        ],
+        "preTokenBalances": [],
+        "postTokenBalances": [],
+        "rewards": [],
+        "computeUnitsConsumed": 13075,
+        "costUnits": 15453
+      },
+      "version": "legacy",
+      "slot": 461715372,
+      "transactionIndex": 30,
+      "blockTime": 1793028622
+    }
+  }
+}

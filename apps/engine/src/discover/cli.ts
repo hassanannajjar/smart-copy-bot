@@ -35,14 +35,18 @@ interface Io {
 }
 
 /** --record: keep the first raw response per provider + fixture name, in the fixture envelope. */
-export const fixtureRecorder = (provider: string, dir = FIXTURES_DIR) => {
+export const fixtureRecorder = (
+  provider: string,
+  dir = FIXTURES_DIR,
+  by = 'pnpm wallets:discover --record',
+) => {
   const seen = new Set<string>();
   return (call: RecordedCall) => {
     if (seen.has(call.name)) return;
     seen.add(call.name);
     mkdirSync(join(dir, provider), { recursive: true });
     const envelope = {
-      _provenance: `recorded ${new Date().toISOString()} by pnpm wallets:discover --record`,
+      _provenance: `recorded ${new Date().toISOString()} by ${by}`,
       request: call.request,
       response: call.response,
     };

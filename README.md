@@ -38,7 +38,7 @@ pnpm i
 cp .env.example .env      # fill in provider keys; never commit .env
 pnpm build
 pnpm db:migrate           # creates data/control.db + demo/paper/live.db
-pnpm start                # M0: boots the engine in PAPER and exits
+pnpm start                # boots in PAPER and runs the scout (needs HELIUS_API_KEY); Ctrl-C to stop
 ```
 
 | Command | What it does |
@@ -50,19 +50,35 @@ pnpm start                # M0: boots the engine in PAPER and exits
 | `pnpm db:migrate` | apply migrations to all four DB files |
 | `pnpm wallets:discover` | build `data/wallets.candidates.csv` from provider leaderboards (needs `SOLANATRACKER_API_KEY` and/or `BIRDEYE_API_KEY`) |
 | `pnpm wallets:discover --record` | same, and save the raw responses as test fixtures |
+| `pnpm start [--record]` | run the engine (scout); `--record` saves Helius fixtures |
 
 Every threshold lives in [`config/rules.yaml`](config/rules.yaml). Values marked `placeholder, tune` were not fixed by the plan and still need review.
 
 ## Layout
 
 ```
-apps/engine        pipeline process (M0: boot only) + discover/ (wallet discovery CLI)
+apps/engine        pipeline process: scout/ (M1) + discover/ (wallet discovery CLI)
 docs/providers/    verified notes per external API (endpoints, auth, limits, pricing)
 apps/dashboard     Next.js placeholder (M4)
 packages/shared    zod config/env, Drizzle schemas + migrations, mode/DB paths
 config/rules.yaml  all thresholds
 data/              SQLite files (gitignored), raw/ replay events (gitignored)
 ```
+
+## Scout (M1)
+
+`pnpm start` boots in PAPER, loads `data/wallets.csv`, and streams every wallet's transactions from Helius. It needs `HELIUS_API_KEY` in `.env`.
+
+- **Fails closed:** a bad address, a duplicate or a wrong header in `wallets.csv` stops the engine and names the line. The list is reloaded on restart.
+- **What it writes:**
+  - Each SOL-quoted buy or sell becomes a row in `signals` in `data/paper.db`, with `detect_latency_ms`. The engine writes PAPER data there whatever the dashboard shows.
+  - Every fetched transaction is appended to `data/raw/scout-YYYY-MM-DD.jsonl` for replay.
+  - A heartbeat every 60 s, plus connection status, goes to `events_log` (`stage='scout'`).
+- **Reconnects:** after a drop, it reconnects with exponential backoff and jitter, then backfills missed transactions. On boot it also backfills from each wallet's latest stored signal.
+- **Kill switch:** it does not stop the scout. It only blocks opening positions later.
+- `pnpm start --record` also saves real responses as fixtures in `packages/shared/test/fixtures/helius/`.
+
+Why this design, and what it costs in credits (about 2.5% of the free plan): [docs/providers/helius.md](docs/providers/helius.md).
 
 ## Wallet discovery (M0.5)
 
