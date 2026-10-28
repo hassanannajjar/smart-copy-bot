@@ -1,0 +1,89 @@
+{
+  "_provenance": "recorded 2026-10-28T22:27:30.246Z by pnpm rules:record",
+  "request": {
+    "method": "GET",
+    "path": "/token-pairs/v1/solana/EqRZn9nH4UPb36AVLuigzRfufa1z8b744vWpt5tjpump",
+    "query": {}
+  },
+  "response": [
+    {
+      "chainId": "solana",
+      "dexId": "pumpswap",
+      "url": "https://dexscreener.com/solana/3mgzskxymhktynnutmgrlu3skjbcae9h573rqy2i6ry6",
+      "pairAddress": "3MGzSKXymHKTYnNUtMGRLu3SkjBCaE9h573RQy2i6RY6",
+      "baseToken": {
+        "address": "EqRZn9nH4UPb36AVLuigzRfufa1z8b744vWpt5tjpump",
+        "name": "Stele",
+        "symbol": "STELE"
+      },
+      "quoteToken": {
+        "address": "So11111111111111111111111111111111111111112",
+        "name": "Wrapped SOL",
+        "symbol": "SOL"
+      },
+      "priceNative": "0.0000001740",
+      "priceUsd": "0.00001780",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 12,
+          "sells": 7
+        },
+        "h6": {
+          "buys": 27,
+          "sells": 17
+        },
+        "h24": {
+          "buys": 89,
+          "sells": 87
+        }
+      },
+      "volume": {
+        "h24": 5023.34,
+        "h6": 988.97,
+        "h1": 288.64,
+        "m5": 0
+      },
+      "priceChange": {
+        "h1": 4.73,
+        "h6": 13.53,
+        "h24": -14.97
+      },
+      "liquidity": {
+        "usd": 9534.08,
+        "base": 316556565,
+        "quote": 38.1197
+      },
+      "fdv": 16882,
+      "marketCap": 16882,
+      "pairCreatedAt": 1792973588000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/TM9up9fReHiXq6m0?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/wVdRq-v0lLE5UBps?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/solana/EqRZn9nH4UPb36AVLuigzRfufa1z8b744vWpt5tjpump?timestamp=1793226300000",
+        "websites": [
+          {
+            "url": "https://stelecoin.world/",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/Stelecoin",
+            "type": "twitter"
+          },
+          {
+            "url": "https://t.me/Stelecoin1",
+            "type": "telegram"
+          }
+        ]
+      },
+      "boosts": {
+        "active": 10
+      }
+    }
+  ]
+}

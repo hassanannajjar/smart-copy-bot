@@ -1,0 +1,91 @@
+{
+  "_provenance": "recorded 2026-10-28T22:27:23.702Z by pnpm rules:record",
+  "request": {
+    "method": "GET",
+    "path": "/token-pairs/v1/solana/Bo9fcNZQ8J8BQP69Rbqt6sPpfwqtqh2KMy48ZBWdyvVb",
+    "query": {}
+  },
+  "response": [
+    {
+      "chainId": "solana",
+      "dexId": "raydium",
+      "url": "https://dexscreener.com/solana/azggd1zad1thpodwfcpat2jksnuzzjcx2efgxuzzepx4",
+      "pairAddress": "AzgGD1ZAD1ThpodWfcpAT2jKsnUzzjcX2eFgxUzZEpx4",
+      "labels": ["CPMM"],
+      "baseToken": {
+        "address": "Bo9fcNZQ8J8BQP69Rbqt6sPpfwqtqh2KMy48ZBWdyvVb",
+        "name": "ORVU",
+        "symbol": "ORVU"
+      },
+      "quoteToken": {
+        "address": "So11111111111111111111111111111111111111112",
+        "name": "Wrapped SOL",
+        "symbol": "SOL"
+      },
+      "priceNative": "0.00000005530",
+      "priceUsd": "0.000005651",
+      "txns": {
+        "m5": {
+          "buys": 1,
+          "sells": 2
+        },
+        "h1": {
+          "buys": 138,
+          "sells": 139
+        },
+        "h6": {
+          "buys": 160,
+          "sells": 153
+        },
+        "h24": {
+          "buys": 214,
+          "sells": 199
+        }
+      },
+      "volume": {
+        "h24": 4468.33,
+        "h6": 2286.55,
+        "h1": 657.45,
+        "m5": 243.36
+      },
+      "priceChange": {
+        "m5": -19.32,
+        "h1": -31.57,
+        "h6": 45.18,
+        "h24": 85.79
+      },
+      "liquidity": {
+        "usd": 2506.84,
+        "base": 221794015,
+        "quote": 12.2667
+      },
+      "fdv": 5651,
+      "marketCap": 5651,
+      "pairCreatedAt": 1793126341000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/isRQIrawB8dHWV-u?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/liyVWCSWkvfR-Oi5?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/solana/Bo9fcNZQ8J8BQP69Rbqt6sPpfwqtqh2KMy48ZBWdyvVb?timestamp=1793226300000",
+        "websites": [
+          {
+            "url": "https://orvu.apelaunch.io/",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/orvucoin?s=11",
+            "type": "twitter"
+          },
+          {
+            "url": "https://t.me/Orvucoin",
+            "type": "telegram"
+          }
+        ]
+      },
+      "boosts": {
+        "active": 30
+      }
+    }
+  ]
+}

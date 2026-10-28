@@ -1,0 +1,163 @@
+{
+  "_provenance": "recorded 2026-10-28T22:27:16.280Z by pnpm rules:record",
+  "request": {
+    "method": "GET",
+    "path": "/token-pairs/v1/solana/dyw5fDNv91eknniMG4tGCU1ZrzjuxbpsLiEzih6pump",
+    "query": {}
+  },
+  "response": [
+    {
+      "chainId": "solana",
+      "dexId": "pumpswap",
+      "url": "https://dexscreener.com/solana/9cncbmdshu7p4vvpzoelhbb6rmby3quiaby36kqcswvw",
+      "pairAddress": "9CnCbMdSHu7P4VvPzoELHbB6rmBy3quiAby36KqcswvW",
+      "baseToken": {
+        "address": "dyw5fDNv91eknniMG4tGCU1ZrzjuxbpsLiEzih6pump",
+        "name": "Cat Bot",
+        "symbol": "CATBOT"
+      },
+      "quoteToken": {
+        "address": "So11111111111111111111111111111111111111112",
+        "name": "Wrapped SOL",
+        "symbol": "SOL"
+      },
+      "priceNative": "0.00001223",
+      "priceUsd": "0.001250",
+      "txns": {
+        "m5": {
+          "buys": 1213,
+          "sells": 444
+        },
+        "h1": {
+          "buys": 15101,
+          "sells": 5378
+        },
+        "h6": {
+          "buys": 27413,
+          "sells": 8795
+        },
+        "h24": {
+          "buys": 27413,
+          "sells": 8795
+        }
+      },
+      "volume": {
+        "h24": 1197543.49,
+        "h6": 1197543.49,
+        "h1": 529605.01,
+        "m5": 96633.4
+      },
+      "priceChange": {
+        "m5": 28.41,
+        "h1": 131,
+        "h6": 2347,
+        "h24": 2347
+      },
+      "liquidity": {
+        "usd": 96666.09,
+        "base": 39531713,
+        "quote": 462.2942
+      },
+      "fdv": 1242054,
+      "marketCap": 1242054,
+      "pairCreatedAt": 1793220430000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/Ixc3Cbm6ZIinUXM8?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/hMyjgHbI4Oy0YQYc?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/solana/dyw5fDNv91eknniMG4tGCU1ZrzjuxbpsLiEzih6pump?timestamp=1793226300000",
+        "websites": [
+          {
+            "url": "https://trycatbot.fun",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/trycatbot",
+            "type": "twitter"
+          },
+          {
+            "url": "https://t.me/catbottry",
+            "type": "telegram"
+          }
+        ]
+      },
+      "boosts": {
+        "active": 100
+      }
+    },
+    {
+      "chainId": "solana",
+      "dexId": "pumpfun",
+      "url": "https://dexscreener.com/solana/di4fxxkjxv9wykg2fngfxuzcganp581r7pvvm9gxs5yd",
+      "pairAddress": "Di4FxXKjxv9wYkg2fNgfxUZcgAnp581R7pvVM9GXs5yd",
+      "baseToken": {
+        "address": "dyw5fDNv91eknniMG4tGCU1ZrzjuxbpsLiEzih6pump",
+        "name": "Cat Bot",
+        "symbol": "CATBOT"
+      },
+      "quoteToken": {
+        "address": "So11111111111111111111111111111111111111112",
+        "name": "Wrapped SOL",
+        "symbol": "SOL"
+      },
+      "priceNative": "0.0000001061",
+      "priceUsd": "0.00001083",
+      "txns": {
+        "m5": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h1": {
+          "buys": 0,
+          "sells": 0
+        },
+        "h6": {
+          "buys": 10,
+          "sells": 0
+        },
+        "h24": {
+          "buys": 10,
+          "sells": 0
+        }
+      },
+      "volume": {
+        "h24": 2480.44,
+        "h6": 2480.44,
+        "h1": 0,
+        "m5": 0
+      },
+      "priceChange": {
+        "h6": 278,
+        "h24": 278
+      },
+      "fdv": 10832.41,
+      "marketCap": 10832.41,
+      "pairCreatedAt": 1793220430000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/Ixc3Cbm6ZIinUXM8?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/hMyjgHbI4Oy0YQYc?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/solana/dyw5fDNv91eknniMG4tGCU1ZrzjuxbpsLiEzih6pump?timestamp=1793226300000",
+        "websites": [
+          {
+            "url": "https://trycatbot.fun",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/trycatbot",
+            "type": "twitter"
+          },
+          {
+            "url": "https://t.me/catbottry",
+            "type": "telegram"
+          }
+        ]
+      },
+      "boosts": {
+        "active": 100
+      }
+    }
+  ]
+}

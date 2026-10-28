@@ -117,6 +117,19 @@ export const configSchema = obj({
     backfill_limit: num.int().min(1).max(1000),
     rpc: obj(providerLimits),
   }),
+  // M2 enricher: provider limits and the inputs of the R2/R4/R5 measurements (rules.* holds the
+  // pass/fail thresholds). docs/providers/{dexscreener,rugcheck,geckoterminal,helius}.md
+  enricher: obj({
+    dexscreener: obj(providerLimits),
+    rugcheck: obj(providerLimits),
+    geckoterminal: obj(providerLimits),
+    helius: obj(providerLimits),
+    R2_exclude_known_types: z.array(z.string().min(1)), // RugCheck knownAccounts types, e.g. AMM
+    R2_exclude_owners: z.array(z.string().min(32).max(44)), // burn / incinerator owners
+    R4_slot_cluster_min_buyers: num.int().min(2),
+    R4_max_pages: num.int().min(1).max(20), // x100 launch-window txs, 10 Helius credits each
+    R5_window_min: num.int().positive(),
+  }),
 });
 
 export type Config = z.infer<typeof configSchema>;

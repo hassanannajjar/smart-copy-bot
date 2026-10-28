@@ -15,7 +15,7 @@ const A = buy.wallet;
 const B = transfer.wallet;
 const sigOf = (t: typeof buy) => t.tx.transaction.signatures[0] as string;
 
-const setup = (txs = [buy, pumpBuy, transfer], sigs = {}) => {
+const setup = (txs = [buy, pumpBuy, transfer], sigs = {}, onSignal?: (id: number) => void) => {
   const dir = mkdtempSync(join(tmpdir(), 'scb-scout-'));
   migrateAll(dir);
   const db = openTradingDb(join(dir, 'paper.db'));
@@ -33,6 +33,7 @@ const setup = (txs = [buy, pumpBuy, transfer], sigs = {}) => {
     log,
     rawDir: join(dir, 'raw'),
     sleep: async () => {},
+    onSignal,
   });
   const raw = () =>
     readdirSync(join(dir, 'raw')).flatMap((f) =>
@@ -75,6 +76,24 @@ describe('scout', () => {
     expect(signalLine).toMatchObject({ signal_id: rows[0]?.id, tx_sig: sigOf(buy), wallet: A });
     t.scout.stop();
     expect(t.s.stopped).toBe(true);
+  });
+
+  it('hands every newly stored signal id to onSignal (the rules stage)', async () => {
+    const ids: number[] = [];
+    const t = setup(undefined, {}, (id) => ids.push(id));
+    t.s.logs({ wallet: A, signature: sigOf(buy) });
+    t.s.logs({ wallet: A, signature: sigOf(buy) }); // duplicate: not handed over again
+    t.s.logs({ wallet: B, signature: sigOf(transfer) }); // skipped tx: no signal
+    await t.scout.idle();
+    expect(ids).toEqual(
+      t.db
+        .select()
+        .from(signals)
+        .all()
+        .map((r) => r.id),
+    );
+    expect(ids).toHaveLength(1);
+    t.scout.stop();
   });
 
   it('ignores a duplicate tx_sig without refetching, and skips failed txs without fetching', async () => {

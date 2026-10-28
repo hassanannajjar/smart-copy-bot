@@ -2,13 +2,17 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { z } from 'zod';
 import { beGainersSchema, beIdentitiesSchema } from '../src/providers/birdeye.js';
+import { dsTokenPairsSchema } from '../src/providers/dexscreener.js';
+import { gtOhlcvSchema } from '../src/providers/geckoterminal.js';
 import {
   heliusAccountSchema,
   heliusLogsNotificationSchema,
   heliusSignaturesSchema,
+  heliusTxPageSchema,
   heliusTxSchema,
   rpcResultSchema,
 } from '../src/providers/helius.js';
+import { rcReportSchema } from '../src/providers/rugcheck.js';
 import { stLeaderboardSchema, stPositionsSchema } from '../src/providers/solanatracker.js';
 
 // Every fixture (doc-derived or recorded with --record) must parse through its provider schema.
@@ -20,7 +24,12 @@ const SCHEMAS: Record<string, Record<string, z.ZodType>> = {
     signatures: rpcResultSchema(heliusSignaturesSchema),
     'tx-': rpcResultSchema(heliusTxSchema), // prefix: one file per parse outcome
     'account-': rpcResultSchema(heliusAccountSchema), // prefix: wallet, token, missing
+    'launch-': rpcResultSchema(heliusTxPageSchema), // prefix: one file per mint (M2, R4)
   },
+  // M2 (pnpm rules:record): one file per mint, or per pool for OHLCV.
+  dexscreener: { 'token-pairs-': dsTokenPairsSchema },
+  rugcheck: { 'report-': rcReportSchema },
+  geckoterminal: { 'ohlcv-': gtOhlcvSchema },
 };
 
 const dir = (p: string) => new URL(`./fixtures/${p}/`, import.meta.url);

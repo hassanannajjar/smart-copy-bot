@@ -69,6 +69,12 @@ export const heliusLogsNotificationSchema = z.object({
 /** JSON-RPC envelope as recorded in fixtures: `{ jsonrpc, id, result }`. */
 export const rpcResultSchema = <T extends z.ZodType>(result: T) => z.object({ result });
 
+/** getTransactionsForAddress (Helius-only), transactionDetails "full": one page. */
+export const heliusTxPageSchema = z.object({
+  data: z.array(heliusTxSchema),
+  paginationToken: z.string().nullish(),
+});
+
 export type HeliusTx = z.infer<typeof heliusTxSchema>;
 export type HeliusSignature = z.infer<typeof heliusSignaturesSchema>[number];
 export type HeliusAccount = NonNullable<z.infer<typeof heliusAccountSchema>['value']>;
@@ -85,6 +91,18 @@ export interface HeliusRpc {
   getAccountInfo(address: string): Promise<HeliusAccount | null>;
 }
 
+/** M2 rules (R4 launch window). Separate from HeliusRpc so scout/discovery wrappers stay as-is. */
+export interface HeliusHistoryRpc {
+  /**
+   * Successful txs touching `address` with blockTime in [fromS, toS], oldest first, up to
+   * `maxPages` pages of 100. `truncated` = more txs exist in the window than were returned.
+   */
+  transactionsForAddress(
+    address: string,
+    o: { fromS: number; toS: number; maxPages: number },
+  ): Promise<{ txs: HeliusTx[]; truncated: boolean }>;
+}
+
 const rpcEnvelope = z.object({
   result: z.unknown().optional(), // absent on error responses
   error: z.object({ code: z.number() }).nullish(),
@@ -97,7 +115,11 @@ type RpcOptions = Omit<HttpOptions, 'provider' | 'baseUrl' | 'headers' | 'authQu
   commitment: 'confirmed' | 'finalized';
 };
 
-export const createHeliusRpc = ({ apiKey, commitment, ...o }: RpcOptions): HeliusRpc => {
+export const createHeliusRpc = ({
+  apiKey,
+  commitment,
+  ...o
+}: RpcOptions): HeliusRpc & HeliusHistoryRpc => {
   const http = createHttp({
     ...o,
     provider: 'helius',
@@ -151,6 +173,34 @@ export const createHeliusRpc = ({ apiKey, commitment, ...o }: RpcOptions): Heliu
         ]),
         'getAccountInfo',
       ).value,
+    transactionsForAddress: async (address, { fromS, toS, maxPages }) => {
+      // 10 credits per 100 full txs (docs/providers/helius.md).
+      const txs: HeliusTx[] = [];
+      let paginationToken: string | undefined;
+      for (let page = 0; page < maxPages; page++) {
+        const res = parse(
+          heliusTxPageSchema,
+          await call('getTransactionsForAddress', [
+            address,
+            {
+              transactionDetails: 'full',
+              encoding: 'jsonParsed',
+              maxSupportedTransactionVersion: 1,
+              sortOrder: 'asc',
+              limit: 100,
+              commitment,
+              filters: { blockTime: { gte: fromS, lte: toS }, status: 'succeeded' },
+              paginationToken,
+            },
+          ]),
+          'getTransactionsForAddress',
+        );
+        txs.push(...res.data);
+        paginationToken = res.paginationToken ?? undefined;
+        if (!paginationToken || res.data.length === 0) return { txs, truncated: false };
+      }
+      return { txs, truncated: true };
+    },
   };
 };
 

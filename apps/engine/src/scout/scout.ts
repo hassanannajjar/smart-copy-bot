@@ -28,6 +28,8 @@ export interface ScoutDeps {
   log: Logger;
   rawDir: string;
   record?: (call: RecordedCall) => void;
+  /** Called with the id of every newly stored signal (the rules stage queues it). */
+  onSignal?: (signalId: number) => void;
   now?: () => number;
   sleep?: (ms: number) => Promise<void>;
 }
@@ -135,6 +137,7 @@ export const startScout = (d: ScoutDeps) => {
       },
       'signal',
     );
+    d.onSignal?.(row.id);
   };
 
   const latestStored = (wallet: string) =>

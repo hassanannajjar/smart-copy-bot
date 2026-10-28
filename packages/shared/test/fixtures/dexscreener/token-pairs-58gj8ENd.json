@@ -1,0 +1,81 @@
+{
+  "_provenance": "recorded 2026-10-28T22:27:18.754Z by pnpm rules:record",
+  "request": {
+    "method": "GET",
+    "path": "/token-pairs/v1/solana/58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+    "query": {}
+  },
+  "response": [
+    {
+      "chainId": "solana",
+      "dexId": "pumpfun",
+      "url": "https://dexscreener.com/solana/9dnxrbvlbb6n4bzegzjlzc5br2zasvckhknu4rqpk4oh",
+      "pairAddress": "9DnxRbvLBb6n4bZEgZJLZC5br2ZasvCkHknU4rqpk4oH",
+      "baseToken": {
+        "address": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+        "name": "RecompLauncher",
+        "symbol": "RL"
+      },
+      "quoteToken": {
+        "address": "So11111111111111111111111111111111111111112",
+        "name": "Wrapped SOL",
+        "symbol": "SOL"
+      },
+      "priceNative": "0.0000001230",
+      "priceUsd": "0.00001256",
+      "txns": {
+        "m5": {
+          "buys": 1,
+          "sells": 1
+        },
+        "h1": {
+          "buys": 13,
+          "sells": 12
+        },
+        "h6": {
+          "buys": 189,
+          "sells": 155
+        },
+        "h24": {
+          "buys": 1845,
+          "sells": 1249
+        }
+      },
+      "volume": {
+        "h24": 148621.35,
+        "h6": 16432.06,
+        "h1": 1176.46,
+        "m5": 129.69
+      },
+      "priceChange": {
+        "m5": -2.57,
+        "h1": -14.46,
+        "h6": 10.13,
+        "h24": 225
+      },
+      "fdv": 12569.53,
+      "marketCap": 12569.53,
+      "pairCreatedAt": 1793171638000,
+      "info": {
+        "imageUrl": "https://cdn.dexscreener.com/cms/images/7Hg6kvpV_E8icOFl?width=800&height=800&quality=95&format=auto",
+        "header": "https://cdn.dexscreener.com/cms/images/6lZDw8xaFngmQTT-?width=1500&height=500&quality=95&format=auto",
+        "openGraph": "https://cdn.dexscreener.com/token-images/og/solana/58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX?timestamp=1793226300000",
+        "websites": [
+          {
+            "url": "https://recompstore.com/",
+            "label": "Website"
+          }
+        ],
+        "socials": [
+          {
+            "url": "https://x.com/elripalda",
+            "type": "twitter"
+          }
+        ]
+      },
+      "boosts": {
+        "active": 10
+      }
+    }
+  ]
+}

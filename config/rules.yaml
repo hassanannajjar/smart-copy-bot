@@ -111,3 +111,16 @@ scout: # M1: Helius logsSubscribe per wallet + getTransaction (docs/providers/he
   tx_fetch_delay_ms: 500
   backfill_limit: 25 # signatures per wallet, on boot (since last stored signal) and on reconnect
   rpc: { min_interval_ms: 150, timeout_ms: 10000, retries: 4 } # free plan: 10 rps
+
+enricher: # M2: provider limits + how R2/R4/R5 are measured (thresholds stay in rules:)
+  dexscreener: { min_interval_ms: 250, timeout_ms: 10000, retries: 4 } # 300 req/min on /token-pairs
+  rugcheck: { min_interval_ms: 4500, timeout_ms: 15000, retries: 3 } # keyless: x-rate-limit-limit 15
+  geckoterminal: { min_interval_ms: 6500, timeout_ms: 10000, retries: 3 } # keyless: ~10 calls/min
+  helius: { min_interval_ms: 500, timeout_ms: 15000, retries: 4 } # shares the 10 rps plan with scout.rpc
+  R2_exclude_known_types: [AMM] # pool vaults; lockers and the creator still count (conservative)
+  R2_exclude_owners:
+    - 1nc1nerator11111111111111111111111111111111 # incinerator
+    - "11111111111111111111111111111111" # system program
+  R4_slot_cluster_min_buyers: 3 # placeholder, tune. Distinct buyers in one launch-window slot => cluster
+  R4_max_pages: 5 # placeholder, tune. 100 txs/page; more than this in the window => data_unavailable
+  R5_window_min: 45 # PLAN §4 R5

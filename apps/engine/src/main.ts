@@ -14,6 +14,8 @@ import {
 import pino from 'pino';
 import { bootToPaper } from './boot.js';
 import { fixtureRecorder } from './discover/cli.js';
+import { createProviders } from './rules/enrich.js';
+import { startRules } from './rules/stage.js';
 import { startScout } from './scout/scout.js';
 import { loadWallets, syncWallets } from './scout/wallets.js';
 
@@ -50,6 +52,15 @@ const record = process.argv.includes('--record')
 const onRateLimited = (i: { provider: string; path: string; attempt: number }) =>
   log.warn(i, 'provider 429, backing off');
 
+// Rules stage (M2): every new signal, plus any left undecided by an earlier run.
+const rules = startRules({
+  db,
+  config,
+  providers: createProviders(config, apiKey, onRateLimited),
+  log: log.child({ stage: 'rules' }),
+});
+rules.submitPending();
+
 const scout = startScout({
   stream: createHeliusStream({
     apiKey,
@@ -73,6 +84,7 @@ const scout = startScout({
   log: log.child({ stage: 'scout' }),
   rawDir: join(env.DATA_DIR, 'raw'),
   record,
+  onSignal: (id) => rules.submit(id),
 });
 
 log.info(
@@ -85,12 +97,14 @@ log.info(
     killSwitch,
     record: Boolean(record),
   },
-  'engine booted, scout started',
+  'engine booted, scout and rules started',
 );
 
 const shutdown = async () => {
   scout.stop();
   await scout.idle();
+  rules.stop(); // queued signals stay undecided and are picked up on the next boot
+  await rules.idle();
   db.$client.close();
   log.info('engine stopped');
   process.exit(0);

@@ -252,4 +252,39 @@ describe('Helius RPC', () => {
     expect(err.message).toBe('helius -32602 POST getSignaturesForAddress');
     expect(`${err.message} ${err.stack}`).not.toContain(KEY);
   });
+
+  it('transactionsForAddress: asc + blockTime window + succeeded, follows pages, flags truncation', async () => {
+    const launch = fixture('launch-dyw5fDNv').response.result.data;
+    const page = (data: unknown[], paginationToken: string | null) =>
+      json({ jsonrpc: '2.0', id: 1, result: { data, paginationToken } });
+    const fetch = vi
+      .fn()
+      .mockResolvedValueOnce(page(launch.slice(0, 2), '1:1'))
+      .mockResolvedValueOnce(page(launch.slice(2, 3), null));
+    const res = await rpcClient(fetch).transactionsForAddress('MINT', {
+      fromS: 10,
+      toS: 70,
+      maxPages: 5,
+    });
+    expect(res.txs).toHaveLength(3);
+    expect(res.truncated).toBe(false);
+    const bodies = fetch.mock.calls.map((c) => JSON.parse(String(c[1]?.body)));
+    expect(bodies[0].method).toBe('getTransactionsForAddress');
+    expect(bodies[0].params[1]).toMatchObject({
+      transactionDetails: 'full',
+      sortOrder: 'asc',
+      limit: 100,
+      filters: { blockTime: { gte: 10, lte: 70 }, status: 'succeeded' },
+    });
+    expect(bodies[1].params[1].paginationToken).toBe('1:1');
+
+    const more = vi.fn(async () => page(launch.slice(0, 1), 'next'));
+    const capped = await rpcClient(more).transactionsForAddress('MINT', {
+      fromS: 0,
+      toS: 1,
+      maxPages: 2,
+    });
+    expect(capped).toMatchObject({ truncated: true });
+    expect(more).toHaveBeenCalledTimes(2);
+  });
 });
