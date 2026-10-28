@@ -72,6 +72,14 @@ describe('rules stage', () => {
     expect(JSON.parse(snap?.rawJson ?? '{}').providers.dexscreener).toBeDefined();
 
     expect(t.decision(curve)).toMatchObject({ verdict: 'KILLED', killedBy: 'R1' });
+    // R5 is deferred: killed by R1/R4 first, so GeckoTerminal is never called for it.
+    expect(t.results(curve).find((r) => r.ruleId === 'R5')).toMatchObject({
+      passed: false,
+      value: null,
+      reason: 'not_evaluated',
+    });
+    expect(JSON.parse(t.decision(curve)?.allFailedJson ?? '[]')).toEqual(['R1', 'R4']);
+    expect(t.calls.filter((c) => c === 'geckoterminal')).toHaveLength(1); // only `killed`
     expect(t.decision(sell)).toMatchObject({ verdict: 'SKIPPED', killedBy: 'sell' });
     expect(t.decision(sol)).toMatchObject({ verdict: 'SKIPPED', killedBy: 'ignored_mint' });
     expect(t.decision(dust)).toMatchObject({ verdict: 'SKIPPED', killedBy: 'below_min_buy' });
@@ -102,6 +110,7 @@ describe('rules stage', () => {
     expect(t.results(id)).toHaveLength(6);
     expect(t.results(id).every((r) => r.passed)).toBe(true);
     expect(t.calls.filter((c) => c === 'dexscreener')).toHaveLength(1);
+    expect(t.calls.filter((c) => c === 'geckoterminal')).toHaveLength(1);
   });
 
   it('a provider error => KILLED data_unavailable, never PASSED', async () => {
@@ -116,6 +125,19 @@ describe('rules stage', () => {
     for (const r of ['R2', 'R3', 'R4', 'R6'])
       expect(byRule[r]).toMatchObject({ passed: false, reason: 'data_unavailable' });
     expect(JSON.parse(t.snapshot(id)?.rawJson ?? '{}').derived.errors.rugcheck).toMatch(/503/);
+    expect(byRule.R5).toMatchObject({ reason: 'not_evaluated' });
+    expect(t.calls).not.toContain('geckoterminal');
+  });
+
+  it('GeckoTerminal down on a signal that passed R1-R4/R6 => KILLED data_unavailable (R5)', async () => {
+    const t = setup(['geckoterminal']);
+    const id = t.signal();
+    t.rules.submit(id);
+    await t.rules.idle();
+    expect(t.decision(id)).toMatchObject({ verdict: 'KILLED', killedBy: 'data_unavailable' });
+    expect(t.results(id).find((r) => r.ruleId === 'R5')).toMatchObject({
+      reason: 'data_unavailable',
+    });
   });
 
   it('DexScreener down: no other provider is called, signal KILLED data_unavailable', async () => {

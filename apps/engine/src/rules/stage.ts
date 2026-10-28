@@ -12,7 +12,13 @@ import {
 } from '@scb/shared';
 import { asc, eq, isNull } from 'drizzle-orm';
 import type { Logger } from 'pino';
-import { buildSnapshot, type Fetched, fetchForMint, type Providers } from './enrich.js';
+import {
+  buildSnapshot,
+  type Fetched,
+  fetchCandles,
+  fetchForMint,
+  type Providers,
+} from './enrich.js';
 import {
   type Evaluation,
   evaluate,
@@ -143,14 +149,21 @@ export const startRules = (d: RulesDeps) => {
         return !ageSkip;
       });
     }
-    const s = buildSnapshot(sig.mint, fetched.f, now(), d.config);
-    if (Object.keys(s.errors).length) log.warn({ errors: s.errors }, 'provider data missing');
+    let s = buildSnapshot(sig.mint, fetched.f, now(), d.config);
 
     if (ageSkip) {
       write(sig, { s, raw: fetched.raw }, { verdict: 'SKIPPED', skip: 'token_age' });
       return log.info({ verdict: 'SKIPPED', reason: 'token_age' }, 'decision');
     }
-    const ev = evaluate(s, d.config.rules, d.config.data.max_snapshot_age_s, detectedAt);
+    const maxAgeS = d.config.data.max_snapshot_age_s;
+    // R5 needs GeckoTerminal, the tightest rate limit: only spend it when R5 decides the verdict.
+    let ev = evaluate(s, d.config.rules, maxAgeS, detectedAt, ['R5']);
+    if (ev.verdict === 'PASSED') {
+      await fetchCandles(sig.mint, fetched, d.providers, d.config);
+      s = buildSnapshot(sig.mint, fetched.f, now(), d.config);
+      ev = evaluate(s, d.config.rules, maxAgeS, detectedAt);
+    }
+    if (Object.keys(s.errors).length) log.warn({ errors: s.errors }, 'provider data missing');
     write(sig, { s, raw: fetched.raw }, ev);
     log.info(
       { verdict: ev.verdict, killed_by: ev.killedBy, failed: ev.failed, mint: sig.mint },

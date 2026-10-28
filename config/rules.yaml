@@ -121,6 +121,6 @@ enricher: # M2: provider limits + how R2/R4/R5 are measured (thresholds stay in 
   R2_exclude_owners:
     - 1nc1nerator11111111111111111111111111111111 # incinerator
     - "11111111111111111111111111111111" # system program
-  R4_slot_cluster_min_buyers: 3 # placeholder, tune. Distinct buyers in one launch-window slot => cluster
+  R4_slot_cluster_min_buyers: 5 # placeholder, tune (3 over-counted organic snipers). Distinct buyers in one launch-window slot => cluster
   R4_max_pages: 5 # placeholder, tune. 100 txs/page; more than this in the window => data_unavailable
   R5_window_min: 45 # PLAN §4 R5

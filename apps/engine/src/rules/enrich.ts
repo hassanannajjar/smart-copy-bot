@@ -250,9 +250,18 @@ export const createProviders = (
 
 const errText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
+const safe = async <T>(f: Fetched, name: string, fn: () => Promise<T>) => {
+  try {
+    return await fn();
+  } catch (e) {
+    f.errors[name] = errText(e);
+    return undefined;
+  }
+};
+
 /**
- * DexScreener first (pair + age); then RugCheck, GeckoTerminal and Helius in parallel, each on
- * its own throttle. A failed provider leaves its fields empty, so the rules fail closed.
+ * DexScreener first (pair + age); then RugCheck and Helius in parallel, each on its own
+ * throttle. GeckoTerminal (R5) is separate: fetchCandles. A failed provider leaves its fields empty, so the rules fail closed.
  * `raw` keeps the untouched responses for token_snapshots.raw_json (not the Helius txs: MBs).
  */
 export const fetchForMint = async (
@@ -276,22 +285,11 @@ export const fetchForMint = async (
   // No pair: nothing to trade through, so don't spend the slower providers' budget.
   if (!top || !afterPairs(pairCreatedAt)) return { f, raw };
 
-  const safe = async <T>(name: string, fn: () => Promise<T>) => {
-    try {
-      return await fn();
-    } catch (e) {
-      f.errors[name] = errText(e);
-      return undefined;
-    }
-  };
-  const [rc, gt, launch] = await Promise.all([
-    safe('rugcheck', () => p.rugcheck.report(mint)),
-    safe('geckoterminal', () =>
-      p.geckoterminal.minuteCandles(top.pairAddress, cfg.R5_window_min + 2),
-    ),
+  const [rc, launch] = await Promise.all([
+    safe(f, 'rugcheck', () => p.rugcheck.report(mint)),
     pairCreatedAt === null
       ? undefined
-      : safe('helius', () =>
+      : safe(f, 'helius', () =>
           p.helius.transactionsForAddress(mint, {
             fromS: Math.floor(pairCreatedAt / 1000),
             toS: Math.floor(pairCreatedAt / 1000) + config.rules.R4_window_s,
@@ -300,9 +298,26 @@ export const fetchForMint = async (
         ),
   ]);
   f.report = rc?.report;
-  f.candles = gt?.candles;
   f.launch = launch;
   if (rc) raw.rugcheck = rc.raw;
-  if (gt) raw.geckoterminal = gt.raw;
   return { f, raw };
+};
+
+/**
+ * R5 input, fetched last and only when it can change the verdict: GeckoTerminal (~10 calls/min
+ * keyless) is the tightest limit, so signals already killed by R1-R4/R6 never spend it.
+ */
+export const fetchCandles = async (
+  mint: string,
+  fetched: { f: Fetched; raw: Record<string, unknown> },
+  p: Providers,
+  config: Config,
+) => {
+  const { top } = pickPairs(fetched.f.pairs ?? [], mint);
+  if (!top) return;
+  const gt = await safe(fetched.f, 'geckoterminal', () =>
+    p.geckoterminal.minuteCandles(top.pairAddress, config.enricher.R5_window_min + 2),
+  );
+  fetched.f.candles = gt?.candles;
+  if (gt) fetched.raw.geckoterminal = gt.raw;
 };

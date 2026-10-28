@@ -215,6 +215,27 @@ describe('evaluate', () => {
     const ev = evaluate(snap(MINTS.curve), { ...rules, order }, 60, recorded(MINTS.curve).takenAt);
     expect(ev.killedBy).toBe('R4');
   });
+  it('a deferred rule is stored as not_evaluated and is not a kill', () => {
+    const big = { ...rules, R5_max_price_change_45m_pct: 0 }; // R5 would fail if it ran
+    const ev = evaluate(pass, big, 60, pass.takenAt, ['R5']);
+    expect(ev.results.find((r) => r.ruleId === 'R5')).toMatchObject({
+      passed: false,
+      value: null,
+      reason: 'not_evaluated',
+    });
+    expect(ev).toMatchObject({ verdict: 'PASSED', killedBy: null, failed: [] });
+    const killed = evaluate(snap(MINTS.curve), rules, 60, pass.takenAt, ['R5']);
+    expect(killed).toMatchObject({ killedBy: 'R1', failed: ['R1', 'R4'] });
+  });
+  it('R4 default needs 5 buyers per slot; fewer counts less as bundled', () => {
+    expect(config.enricher.R4_slot_cluster_min_buyers).toBe(5);
+    const at = (n: number) =>
+      snap(MINTS.migrated, () => {}, {
+        ...config,
+        enricher: { ...config.enricher, R4_slot_cluster_min_buyers: n },
+      }).bundle?.slotClusterPct ?? 0;
+    expect(at(5)).toBeLessThanOrEqual(at(3));
+  });
   it('PASSES when all six pass', () => {
     const ev = evaluate(pass, { ...rules, R5_max_price_change_45m_pct: 1000 }, 60, pass.takenAt);
     expect(ev).toMatchObject({ verdict: 'PASSED', killedBy: null, failed: [] });

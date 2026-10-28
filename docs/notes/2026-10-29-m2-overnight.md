@@ -35,7 +35,7 @@ This was an unattended run. Every judgement call below was made on the conservat
 - **`insiderNetworkPct`** is the share of supply that RugCheck's transfer-linked insider networks still hold (`currentHolding`, or `tokenAmount` if missing). It covers "same funder" and part of "fresh wallets".
 - **`slotClusterPct`** is computed from successful txs that reference the mint, in `[pairCreatedAt, pairCreatedAt + rules.R4_window_s]` (60 s):
   - Each tx's **fee payer** is the buyer. A buy is the scout's own `parseSwap`: token up, SOL down.
-  - Bundled buys are those in the **first slot** of the window (the create or launch slot), plus buys in any slot where at least **`enricher.R4_slot_cluster_min_buyers` (3)** distinct wallets bought. That is the "same slot cluster" signal.
+  - Bundled buys are those in the **first slot** of the window (the create or launch slot), plus buys in any slot where at least **`enricher.R4_slot_cluster_min_buyers` (5; raised from 3 on 2026-10-29)** distinct wallets bought. That is the "same slot cluster" signal.
 - We take the max of the two, not the sum, so a wallet in both counts once.
 - Every sub-score goes into `rule_results.value` as JSON, so replay (M5) can retune it: `insiderNetworkPct`, `launchSlotPct`, `slotClusterPct`, `windowBuyPct`, `buyers`, `clusterSlots`, `txs`, `truncated`.
 - If the window holds more than `R4_max_pages × 100` txs, the result is **truncated**, so the percentages are lower bounds. A truncated result can **fail** R4 but never pass it; it gives `data_unavailable`.
@@ -68,6 +68,13 @@ This was an unattended run. Every judgement call below was made on the conservat
 - **Errors:** a provider error leaves its fields empty, so the affected rules give `data_unavailable` and the signal is KILLED. When DexScreener fails, or has no pool for the mint, no other provider is called. A DB or code error leaves the signal **undecided**: it is never PASSED, it is logged with an `events_log` row (`rules_failed`), and the next boot retries it.
 - **`raw_json`** holds `{derived: <snapshot incl. bundle sub-scores and provider errors>, providers: {dexscreener, rugcheck, geckoterminal}}`. That is about 25–30 KB per decided signal. Helius launch txs are not stored; they can be megabytes.
 
+### Follow-up (2026-10-29, after review)
+- **R4:** `R4_slot_cluster_min_buyers` changed from 3 to 5. At 3, organic snipers were counted as bundles.
+- **R5 runs last.** GeckoTerminal is fetched only when R1–R4 and R6 all pass, and then R5 decides the verdict.
+  - When another rule has already killed the signal, R5 is stored as `passed=0`, `value=NULL`, `reason='not_evaluated'`. It is **not** a kill: it isn't in `all_failed_json` and it can't be `killed_by`.
+  - `pnpm rules:record` still fetches the candles every time, so the fixtures stay complete.
+- **Rebased onto main `e6997e1`.** Main's discovery code wraps `HeliusRpc`, so `transactionsForAddress` moved to its own `HeliusHistoryRpc` interface. `createHeliusRpc` returns both, and the discovery code was not touched.
+
 ## Verified vs not
 **Verified (2026-10-29):**
 - **DexScreener:** the OpenAPI spec (paths, rate limits, Pair schema) and live responses.
@@ -95,7 +102,7 @@ This was an unattended run. Every judgement call below was made on the conservat
 | GeckoTerminal | 1 | 6.5 s | ~10/min | free, keyless |
 | Helius | 1–5 pages | 500 ms | 10 rps shared with the scout | 10 credits/page, so ≤50 |
 
-- The enricher handles **about 9 signals a minute** in steady state, limited by GeckoTerminal.
+- RugCheck limits the enricher to **about 13 signals a minute**. GeckoTerminal (~9/min) is now spent only on signals that pass R1–R4 and R6.
 - A burst bigger than that makes the tail exceed 60 s, and those signals get KILLED `data_unavailable` (stale). That's visible on the dashboard as `data_unavailable`. If it happens often, the levers are:
   - raise `prefilters.min_buy_sol`,
   - get a CoinGecko key (a new provider config),

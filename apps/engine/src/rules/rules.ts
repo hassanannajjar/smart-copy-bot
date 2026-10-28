@@ -6,6 +6,8 @@ export type RuleId = 'R1' | 'R2' | 'R3' | 'R4' | 'R5' | 'R6';
 export type RulesConfig = Config['rules'];
 
 export const DATA_UNAVAILABLE = 'data_unavailable';
+/** A deferred rule that wasn't run because another rule already killed the signal. Not a kill. */
+export const NOT_EVALUATED = 'not_evaluated';
 
 /** Launch-window sub-scores for R4 (docs/notes/2026-10-29-m2-overnight.md, "R4"). */
 export interface BundleScores {
@@ -150,14 +152,24 @@ export interface Evaluation {
   failed: string[];
 }
 
-/** Every rule runs and is stored; a snapshot older than max_snapshot_age_s kills on its own. */
+/**
+ * Every rule runs and is stored; a snapshot older than max_snapshot_age_s kills on its own.
+ * `deferred` rules are stored as not_evaluated (passed=false) and never count as failures:
+ * the stage runs them in a second pass only if everything else passed.
+ */
 export const evaluate = (
   s: Snapshot,
   rules: RulesConfig,
   maxSnapshotAgeS: number,
   detectedAt: number,
+  deferred: readonly RuleId[] = [],
 ): Evaluation => {
-  const results = rules.order.map((id) => RULES[id](s, rules));
+  const results = rules.order.map(
+    (id): RuleResult =>
+      deferred.includes(id)
+        ? { ruleId: id, passed: false, value: null, threshold: '', reason: NOT_EVALUATED }
+        : RULES[id](s, rules),
+  );
   const ageS = (s.takenAt - detectedAt) / 1000;
   const stale = ageS > maxSnapshotAgeS;
   if (stale)
@@ -168,7 +180,7 @@ export const evaluate = (
       threshold: `snapshot_age_s<=${maxSnapshotAgeS}`,
       reason: 'stale',
     });
-  const failed = results.filter((r) => !r.passed);
+  const failed = results.filter((r) => !r.passed && r.reason !== NOT_EVALUATED);
   const first = failed[0];
   const killedBy = !first
     ? null

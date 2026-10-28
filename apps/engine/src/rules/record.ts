@@ -5,7 +5,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { type HeliusTx, loadConfig, parseEnv } from '@scb/shared';
 import { FIXTURES_DIR, fixtureRecorder } from '../discover/cli.js';
-import { buildSnapshot, createProviders, fetchForMint } from './enrich.js';
+import { buildSnapshot, createProviders, fetchCandles, fetchForMint } from './enrich.js';
 import { evaluate } from './rules.js';
 
 const BY = 'pnpm rules:record';
@@ -81,7 +81,10 @@ providers.helius = {
 };
 
 for (const mint of mints) {
-  const { f } = await fetchForMint(mint, providers, config);
+  // Always fetch R5's candles here (the engine defers them) so every fixture gets recorded.
+  const fetched = await fetchForMint(mint, providers, config);
+  await fetchCandles(mint, fetched, providers, config);
+  const { f } = fetched;
   const takenAt = Date.now();
   const s = buildSnapshot(mint, f, takenAt, config);
   const ev = evaluate(s, config.rules, config.data.max_snapshot_age_s, takenAt);
