@@ -1,0 +1,7 @@
+{
+  "name": "@scb/dashboard",
+  "private": true,
+  "scripts": {
+    "build": "echo 'dashboard: placeholder until M4'"
+  }
+}

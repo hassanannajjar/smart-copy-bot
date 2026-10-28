@@ -1,0 +1,59 @@
+# All thresholds live here (PLAN §4, §5, §9). Every key is required; unknown keys are rejected.
+# Values marked "placeholder, tune" are not specified by PLAN.md and need review.
+
+data:
+  max_snapshot_age_s: 60 # placeholder, tune. Older snapshot => KILLED data_unavailable
+
+prefilters: # SKIPPED, not counted as kills
+  ignore_sells: true
+  ignored_mints: # SOL / stables / majors
+    - So11111111111111111111111111111111111111112 # wSOL
+    - EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v # USDC
+    - Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB # USDT
+  token_age_min_h: 0 # placeholder, tune
+  token_age_max_h: 72 # placeholder, tune
+  min_buy_sol: 0.5 # placeholder, tune. Drops dust buys
+  mint_cooldown_h: 6 # placeholder, tune
+
+rules: # killed_by = first failing rule in this order
+  order: [R1, R2, R3, R4, R5, R6]
+  R1_min_liquidity_usd: 30000
+  R2_max_top10_pct: 40 # excludes pool/LP, burn, known program addresses
+  R3_max_dev_pct: 8
+  R4_max_bundled_pct: 15 # v1 heuristic, tunable in replay
+  R4_window_s: 60
+  R5_max_price_change_45m_pct: 80
+  R6_require_mint_revoked: true
+  R6_require_freeze_revoked: true
+  R6_min_lp_locked_pct: 90 # only where the venue has LP tokens
+
+paper:
+  position_size_usd: 50
+  simulated_latency_ms: 1500 # home; use 300 on a VPS
+  base_fee_sol: 0.000005
+  # placeholder, deliberately conservative: underestimating costs inflates paper PnL.
+  # M3 replaces this with a live estimate from Helius' priority fee API.
+  priority_fee_sol: 0.001
+  poll_interval_s: 5
+  rug_liquidity_drop_pct: 50 # placeholder, tune. Drop between polls => exit_reason=rug
+
+guard:
+  stop_loss_pct: -30
+  take_profit:
+    - { at_multiple: 2, sell_pct: 50 }
+  trailing_stop_pct: 25 # on the remainder after the TP ladder
+  time_stop_h: 24
+
+analyst:
+  enabled: false
+  shadow: true
+  timeout_ms: 3000
+
+live: # M7 only; enforced by the engine gate
+  max_position_usd: 50 # placeholder, tune
+  max_open_positions: 3 # placeholder, tune
+  max_trades_per_hour: 5 # placeholder, tune
+  daily_loss_limit_usd: 50 # placeholder, tune. Hit => auto-halt
+  max_wallet_balance_sol: 2 # placeholder, tune
+  slippage_cap_bps: 300 # placeholder, tune
+  priority_fee_cap_sol: 0.001 # placeholder, tune

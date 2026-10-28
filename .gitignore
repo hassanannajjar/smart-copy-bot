@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.env
+
+# data/ is tracked (wallets.csv, .gitkeep); only these stay local
+*.db
+*.db-wal
+*.db-shm
+data/raw/
+data/wallets.candidates.csv

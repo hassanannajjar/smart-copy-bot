@@ -1,0 +1,6 @@
+packages:
+  - apps/*
+  - packages/*
+allowBuilds:
+  better-sqlite3: false # v13 ships N-API prebuilds; skip the node-gyp source build
+  esbuild: true

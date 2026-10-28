@@ -1,0 +1,7 @@
+{
+  "files": {
+    "includes": ["**", "!**/dist", "!**/drizzle", "!**/node_modules", "!pnpm-lock.yaml", "!**/*.md"]
+  },
+  "formatter": { "indentStyle": "space", "lineWidth": 100 },
+  "javascript": { "formatter": { "quoteStyle": "single" } }
+}
