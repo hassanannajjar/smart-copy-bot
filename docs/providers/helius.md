@@ -129,3 +129,42 @@ Free plan WebSockets (standard methods only): 5 concurrent connections, 1,000 su
 - A gap while the process is down is covered by the boot backfill only for wallets that already have a stored signal.
 
 Refresh the fixtures with `pnpm start --record`. It saves the first notification and the first tx per parse outcome (`tx-buy`, `tx-sell`, `tx-skip-<reason>`).
+
+## M2: `getTransactionsForAddress` (R4 launch window)
+Verified on **2026-10-29** against the docs, and with our free-plan key the same day: a request with `sortOrder: "asc"` on a mint returned 200.
+
+Sources:
+- https://www.helius.dev/docs/rpc/gettransactionsforaddress
+- https://www.helius.dev/docs/api-reference/rpc/http/gettransactionsforaddress
+
+**What it is.** A Helius-only JSON-RPC method, sent to the same `POST https://mainnet.helius-rpc.com/?api-key=KEY` endpoint. The docs don't state a plan requirement, and it works on our free key.
+
+**Params we send** (`createHeliusRpc().transactionsForAddress`):
+
+```json
+[mint, {"transactionDetails":"full","encoding":"jsonParsed","maxSupportedTransactionVersion":1,
+        "sortOrder":"asc","limit":100,"commitment":"confirmed",
+        "filters":{"blockTime":{"gte":created_s,"lte":created_s+R4_window_s},"status":"succeeded"},
+        "paginationToken":"<from previous page>"}]
+```
+
+**Response.** `result: {data: [ {slot, transactionIndex, blockTime, transaction, meta} ], paginationToken: "slot:pos" | null}`. Each entry parses with the same `heliusTxSchema` as `getTransaction`.
+
+**Pagination.** We follow `paginationToken` for up to `enricher.R4_max_pages` pages. If there are still more pages after that, the result is `truncated: true`, and R4 can then fail but never pass.
+
+**Cost.** Full transactions cost **10 credits per 100 returned txs** (rounded up, 10 minimum); failed calls are free. With `R4_max_pages: 5`, a signal costs **≤ 50 credits**.
+- 300 signals a day that pass the pre-filters cost ≤ 15k credits a day, or ≤ 450k a month. On top of the scout's ~25k a month, that is under the 1M free quota, but **not by a wide margin**.
+- Watch the Helius credits dashboard. Lower `R4_max_pages` or raise `prefilters.min_buy_sol` if needed.
+
+**Throttle.** The enricher has its own client at `enricher.helius.min_interval_ms: 500` (2 req/s). Together with the scout's 6.7 req/s, that stays under the free plan's 10 req/s.
+
+**Gotchas seen while recording:**
+- Querying the **mint** address returns the create tx and the buys and sells that reference the mint account.
+- A busy launch had more than 500 successful txs in its first 60 s, so it came back truncated (fixture `launch-EqRZn9nH`).
+- A full page is about 1.6 MB of JSON. The recorded fixtures keep only the fee payer's account key, lamport balances and token balances, which is everything the heuristic reads.
+
+**Unverified:**
+- Whether a swap routed through an aggregator **always** lists the mint account. Pool swaps normally do, through the vaults' mint and `transferChecked`.
+- Whether the free plan keeps this method long term. The docs only say it is "Helius-exclusive".
+
+Refresh with `pnpm rules:record <mint...>`, which writes `fixtures/helius/launch-<mint8>.json`.
