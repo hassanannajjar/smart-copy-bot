@@ -1,4 +1,4 @@
-// Fake provider APIs that serve the recorded/doc-derived fixtures. No network.
+// Fake provider APIs that serve the committed fixtures (recorded or doc-derived). No network.
 import { readFileSync } from 'node:fs';
 import {
   type BirdeyeApi,
@@ -17,12 +17,17 @@ const fixture = (path: string) =>
     ),
   ).response;
 
+export const stLeaderboard = () =>
+  stLeaderboardSchema.parse(fixture('solanatracker/leaderboard-top'));
+export const stPositions = () => stPositionsSchema.parse(fixture('solanatracker/positions'));
+export const beGainers = () => beGainersSchema.parse(fixture('birdeye/gainers-losers'));
+
 export const fakeSolanaTracker = (): SolanaTrackerApi => ({
-  topTraders: async () => stLeaderboardSchema.parse(fixture('solanatracker/leaderboard-top')),
-  profitablePositions: async () => stPositionsSchema.parse(fixture('solanatracker/positions')),
+  topTraders: async () => stLeaderboard(),
+  profitablePositions: async () => stPositions(),
 });
 
 export const fakeBirdeye = (): BirdeyeApi => ({
-  gainers: async () => beGainersSchema.parse(fixture('birdeye/gainers-losers')),
+  gainers: async () => beGainers(),
   identities: async () => beIdentitiesSchema.parse(fixture('birdeye/identity-multiple')),
 });

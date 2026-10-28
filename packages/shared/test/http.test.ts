@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { z } from 'zod';
 import { createHttp, ProviderError } from '../src/providers/http.js';
 
 const KEY = 'sk_test_SECRET_123';
@@ -78,5 +79,16 @@ describe('createHttp', () => {
     });
     const err = await client(down)({ name: 'x', method: 'GET', path: '/x' }).catch((e) => e);
     expect(err.message).toBe('p network GET /x');
+  });
+
+  it('a response that does not match the schema fails with one short line', async () => {
+    const fetch = vi.fn(async () => json(200, { error: 'Wallet not indexed' }));
+    const err = await client(fetch)(
+      { name: 'x', method: 'GET', path: '/v2/pnl/wallets/W/positions' },
+      z.object({ positions: z.array(z.unknown()) }),
+    ).catch((e) => e);
+    expect(err).toBeInstanceOf(ProviderError);
+    expect(err.message).toBe('p schema GET /v2/pnl/wallets/W/positions');
+    expect(err.message).not.toContain('\n');
   });
 });

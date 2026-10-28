@@ -1,119 +1,5376 @@
 {
-  "_provenance": "doc-derived: official OpenAPI example from https://docs.solanatracker.io/data-api/pnl-v2/openapi.json (GET /v2/pnl/leaderboard/top), fetched 2026-10-28. NOT a real recording; replace via `pnpm wallets:discover --record` once a key exists.",
+  "_provenance": "recorded 2026-10-28T20:35:02.543Z by pnpm wallets:discover --record",
   "request": {
     "method": "GET",
     "path": "/v2/pnl/leaderboard/top",
-    "query": {}
+    "query": {
+      "sort": "realized",
+      "direction": "desc",
+      "days": 30,
+      "minTrades": 50,
+      "minDays": 10,
+      "maxSingleTokenPct": 30,
+      "excludeArbitrage": true,
+      "pnlMode": "strict",
+      "limit": 100
+    }
   },
   "response": {
     "traders": [
       {
-        "wallet": "HkFGQsW8mr8DTC2AE2WcC7MzwSnynfEryGMQSht271nf",
+        "wallet": "DtPtJYDyMA3NLHhGv1sj7ugRFbLA7Q1s3CX3vi3RLypY",
         "period": {
-          "realized": 29253686.75,
-          "realizedRaw": 29511824.12,
-          "volume": 53377270.16,
-          "tradingDays": 79,
-          "roi": 345.12,
+          "realized": 49981442.22,
+          "realizedRaw": 49981442.22,
+          "volume": 50017528.9,
+          "tradingDays": 25,
+          "roi": 156503.11,
           "days": {
-            "profitable": 58,
-            "losing": 21,
-            "maxSinglePnl": 891245.33,
-            "winRate": 73.42
+            "profitable": 13,
+            "losing": 10,
+            "maxSinglePnl": 30093013.78,
+            "winRate": 56.52
           }
         },
         "pnlAdjustments": {
-          "mode": "adjusted",
-          "invalidPnl": 29511824.12,
-          "adjustedCorrection": 258137.37
+          "mode": "strict",
+          "invalidPnl": 49980541.89,
+          "adjustedCorrection": 12370978.81
         },
         "ending": {
           "pnl": {
-            "realized": 29642991.91,
-            "total": 29684935.07
+            "realized": 0,
+            "total": 0
           }
         },
-        "invested": 8476262.08,
-        "proceeds": 38119253.99,
+        "invested": 31936.39,
+        "proceeds": 50022826.07,
         "counts": {
-          "buys": 13842,
-          "sells": 27968,
-          "trades": 41810,
-          "tokensTraded": 4689
+          "buys": 313,
+          "sells": 326,
+          "trades": 639,
+          "tokensTraded": 94
         },
         "averages": {
-          "buy": 1168.23,
-          "sell": 1362.96
+          "buy": 120.56,
+          "sell": 153444.25
         },
         "tokens": {
-          "profitable": 2441,
-          "losing": 159,
-          "closed": 2600
+          "profitable": 38,
+          "losing": 14,
+          "closed": 54
         },
-        "winRate": 93.88,
+        "winRate": 70.37,
         "timing": {
-          "firstTrade": 1736769677989,
-          "lastTrade": 1776617215655
+          "firstTrade": 1734635137000,
+          "lastTrade": 1793118812073
         },
-        "lastSnapshotDate": "2026-04-19",
-        "updatedAt": "2026-04-19T16:46:56.831Z",
+        "lastSnapshotDate": "2026-10-27",
+        "updatedAt": "2026-10-28T20:25:56.514Z",
+        "identity": null
+      },
+      {
+        "wallet": "Fwin1gWxbFAyb1MNPqwETyb4g8oaA2Hdg1ypyxSUsyjE",
+        "period": {
+          "realized": 16343053.28,
+          "realizedRaw": 16343053.28,
+          "volume": 16343419.02,
+          "tradingDays": 30,
+          "roi": 3036461.45,
+          "days": {
+            "profitable": 23,
+            "losing": 7,
+            "maxSinglePnl": 15332840.13,
+            "winRate": 76.67
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 16347333.36,
+          "adjustedCorrection": 8889302.35
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 538.23,
+        "proceeds": 16347720.12,
+        "counts": {
+          "buys": 4122,
+          "sells": 81082,
+          "trades": 85204,
+          "tokensTraded": 72
+        },
+        "averages": {
+          "buy": 0.18,
+          "sell": 201.62
+        },
+        "tokens": {
+          "profitable": 20,
+          "losing": 7,
+          "closed": 36
+        },
+        "winRate": 55.56,
+        "timing": {
+          "firstTrade": 1768805421000,
+          "lastTrade": 1793177713553
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:22:59.541Z",
+        "identity": null
+      },
+      {
+        "wallet": "6ug4s5uoG2dxycww9wBxo7kQq9NPzEf1ZSmGMT6M76Ni",
+        "period": {
+          "realized": 15755607.88,
+          "realizedRaw": 15755607.88,
+          "volume": 42913198.04,
+          "tradingDays": 22,
+          "roi": 74,
+          "days": {
+            "profitable": 22,
+            "losing": 0,
+            "maxSinglePnl": 2423034.28,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 30073668.59,
+          "adjustedCorrection": 30013593.41
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 21290660.37,
+        "proceeds": 53342248.88,
+        "counts": {
+          "buys": 34703,
+          "sells": 70707,
+          "trades": 105410,
+          "tokensTraded": 46
+        },
+        "averages": {
+          "buy": 671.14,
+          "sell": 754.41
+        },
+        "tokens": {
+          "profitable": 17,
+          "losing": 1,
+          "closed": 43
+        },
+        "winRate": 39.53,
+        "timing": {
+          "firstTrade": 1776841913630,
+          "lastTrade": 1793219153555
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:53.612Z",
+        "identity": null
+      },
+      {
+        "wallet": "BM1gXSkormCvFLtRGKSh3i8F6RAqRnbZmrr58iPuvmgd",
+        "period": {
+          "realized": 13051073.71,
+          "realizedRaw": 13051073.71,
+          "volume": 26219760.78,
+          "tradingDays": 18,
+          "roi": 4567.92,
+          "days": {
+            "profitable": 8,
+            "losing": 7,
+            "maxSinglePnl": 13047660.41,
+            "winRate": 53.33
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 13047920.67,
+          "adjustedCorrection": 4671324.1
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 285711.31,
+        "proceeds": 13343737.14,
+        "counts": {
+          "buys": 2695,
+          "sells": 2222,
+          "trades": 4917,
+          "tokensTraded": 1236
+        },
+        "averages": {
+          "buy": 4952.24,
+          "sell": 6005.28
+        },
+        "tokens": {
+          "profitable": 449,
+          "losing": 710,
+          "closed": 1160
+        },
+        "winRate": 38.71,
+        "timing": {
+          "firstTrade": 1733527754821,
+          "lastTrade": 1792609159414
+        },
+        "lastSnapshotDate": "2026-10-21",
+        "updatedAt": "2026-10-28T19:45:30.466Z",
         "identity": {
-          "name": null,
-          "twitter": null,
-          "avatar": "https://kol-avatar.solanatracker.io/HkFGQsW8mr8DTC2AE2WcC7MzwSnynfEryGMQSht271nf"
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
         }
       },
       {
-        "wallet": "ApAKzJEqfnP7F74Za5xdTQxZMK4nD8dFTVBQ9bksTtGM",
+        "wallet": "D7TJZHYzqZxFE8tky39RtgTXKHBuRhD8sdX9Mhdur9Xa",
         "period": {
-          "realized": 19624090.03,
-          "volume": 34214876.02,
-          "tradingDays": 51,
-          "roi": 394.24
+          "realized": 11987777.65,
+          "realizedRaw": 11987777.65,
+          "volume": 11987777.65,
+          "tradingDays": 19,
+          "roi": 999.77,
+          "days": {
+            "profitable": 19,
+            "losing": 0,
+            "maxSinglePnl": 1499947.41,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 17640360.79,
+          "adjustedCorrection": 17640287.51
         },
         "ending": {
           "pnl": {
-            "realized": 19769219.5,
-            "total": 19768875.79
+            "realized": 0,
+            "total": 0
           }
         },
-        "invested": 4977742.44,
-        "proceeds": 24746961.94,
+        "invested": 1199055.17,
+        "proceeds": 20287382.1,
         "counts": {
-          "buys": 8655,
-          "sells": 20887,
-          "trades": 29542,
-          "tokensTraded": 2915
+          "buys": 29,
+          "sells": 501,
+          "trades": 530,
+          "tokensTraded": 1
         },
         "averages": {
-          "buy": 1119.37,
-          "sell": 1184.8
+          "buy": 41346.73,
+          "sell": 40493.78
         },
         "tokens": {
-          "profitable": 1811,
-          "losing": 33,
-          "closed": 1844
+          "profitable": 0,
+          "losing": 0,
+          "closed": 1
         },
-        "winRate": 98.21,
+        "winRate": 0,
         "timing": {
-          "firstTrade": 1772358151760,
-          "lastTrade": 1776607936649
+          "firstTrade": 1785468809950,
+          "lastTrade": 1793213111519
         },
-        "lastSnapshotDate": "2026-04-19",
-        "updatedAt": "2026-04-19T14:12:17.583Z",
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T18:45:11.554Z",
+        "identity": null
+      },
+      {
+        "wallet": "9nXDunV8eNvYSVys7JSBkm2hz9Q79Q3EYeko19srVeMC",
+        "period": {
+          "realized": 11409768.48,
+          "realizedRaw": 11409768.48,
+          "volume": 163186375.47,
+          "tradingDays": 30,
+          "roi": 7.18,
+          "days": {
+            "profitable": 29,
+            "losing": 1,
+            "maxSinglePnl": 2045861.68,
+            "winRate": 96.67
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 19574001.41,
+          "adjustedCorrection": 19149717.17
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 159016521.87,
+        "proceeds": 185119675.71,
+        "counts": {
+          "buys": 2285486,
+          "sells": 2397366,
+          "trades": 4682852,
+          "tokensTraded": 184
+        },
+        "averages": {
+          "buy": 70.47,
+          "sell": 77.22
+        },
+        "tokens": {
+          "profitable": 134,
+          "losing": 42,
+          "closed": 184
+        },
+        "winRate": 72.83,
+        "timing": {
+          "firstTrade": 1774626377897,
+          "lastTrade": 1793219163340
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:26:04.230Z",
+        "identity": null
+      },
+      {
+        "wallet": "DemfvB4iwd3NmVquvWqWbB92yVZWFFqybqBeJGdyEeM6",
+        "period": {
+          "realized": 10022516.82,
+          "realizedRaw": 10022516.82,
+          "volume": 20475410.69,
+          "tradingDays": 28,
+          "roi": 140.21,
+          "days": {
+            "profitable": 16,
+            "losing": 11,
+            "maxSinglePnl": 9973473.26,
+            "winRate": 59.26
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 9993228.82,
+          "adjustedCorrection": 6394761.64
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 7148033.22,
+        "proceeds": 17969497.04,
+        "counts": {
+          "buys": 52538,
+          "sells": 37555,
+          "trades": 90093,
+          "tokensTraded": 12033
+        },
+        "averages": {
+          "buy": 337.88,
+          "sell": 478.48
+        },
+        "tokens": {
+          "profitable": 5884,
+          "losing": 5252,
+          "closed": 11192
+        },
+        "winRate": 52.57,
+        "timing": {
+          "firstTrade": 1732073462284,
+          "lastTrade": 1792990604548
+        },
+        "lastSnapshotDate": "2026-10-26",
+        "updatedAt": "2026-10-28T20:12:58.297Z",
         "identity": {
-          "name": null,
-          "twitter": null,
-          "avatar": "https://kol-avatar.solanatracker.io/ApAKzJEqfnP7F74Za5xdTQxZMK4nD8dFTVBQ9bksTtGM"
+          "platforms": ["gmgn", "photon"],
+          "sns": {
+            "domain": "japanesebitch.sol"
+          },
+          "name": "japanesebitch.sol",
+          "type": "gmgn",
+          "tags": ["gmgn", "photon", "sns"]
         }
+      },
+      {
+        "wallet": "A2rnNKJawkN69U63sNmKhvvZ6ps7Krm8DAGAFMRr7WTg",
+        "period": {
+          "realized": 9907837.03,
+          "realizedRaw": 9907837.03,
+          "volume": 9907844.62,
+          "tradingDays": 30,
+          "roi": 231344.63,
+          "days": {
+            "profitable": 27,
+            "losing": 3,
+            "maxSinglePnl": 9907817.29,
+            "winRate": 90
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 9908763.96,
+          "adjustedCorrection": 2092608.25
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 4282.72,
+        "proceeds": 9913174.67,
+        "counts": {
+          "buys": 857,
+          "sells": 14779,
+          "trades": 15636,
+          "tokensTraded": 241
+        },
+        "averages": {
+          "buy": 5.03,
+          "sell": 670.76
+        },
+        "tokens": {
+          "profitable": 3,
+          "losing": 1,
+          "closed": 5
+        },
+        "winRate": 60,
+        "timing": {
+          "firstTrade": 1761338999000,
+          "lastTrade": 1793208003920
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:18:32.723Z",
+        "identity": null
+      },
+      {
+        "wallet": "Cfb5kdF3TZh5k7Zi94YnDdNRCHR3EpGjXedKons3Fd97",
+        "period": {
+          "realized": 9542970.93,
+          "realizedRaw": 9542970.93,
+          "volume": 9560625.7,
+          "tradingDays": 24,
+          "roi": 110236.79,
+          "days": {
+            "profitable": 15,
+            "losing": 7,
+            "maxSinglePnl": 9541981.52,
+            "winRate": 68.18
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 9542083.88,
+          "adjustedCorrection": 2222816.65
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 8656.79,
+        "proceeds": 9551627.72,
+        "counts": {
+          "buys": 73,
+          "sells": 92,
+          "trades": 165,
+          "tokensTraded": 24
+        },
+        "averages": {
+          "buy": 123.26,
+          "sell": 103822.04
+        },
+        "tokens": {
+          "profitable": 12,
+          "losing": 11,
+          "closed": 24
+        },
+        "winRate": 50,
+        "timing": {
+          "firstTrade": 1790808371710,
+          "lastTrade": 1793046502950
+        },
+        "lastSnapshotDate": "2026-10-26",
+        "updatedAt": "2026-10-28T20:03:18.708Z",
+        "identity": null
+      },
+      {
+        "wallet": "2w3nD9VdShyo1zTuoajtgQKKSRMQNPSHxHPwDwfB5Q3c",
+        "period": {
+          "realized": 8122588.28,
+          "realizedRaw": 8122588.28,
+          "volume": 26835417.97,
+          "tradingDays": 20,
+          "roi": 75.29,
+          "days": {
+            "profitable": 19,
+            "losing": 1,
+            "maxSinglePnl": 742991.17,
+            "winRate": 95
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 42552.18,
+          "adjustedCorrection": 42552.18
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 10787847.98,
+        "proceeds": 20205740.96,
+        "counts": {
+          "buys": 1624,
+          "sells": 2616,
+          "trades": 4240,
+          "tokensTraded": 648
+        },
+        "averages": {
+          "buy": 6852.49,
+          "sell": 7723.91
+        },
+        "tokens": {
+          "profitable": 601,
+          "losing": 30,
+          "closed": 632
+        },
+        "winRate": 95.09,
+        "timing": {
+          "firstTrade": 1789233629265,
+          "lastTrade": 1793173222454
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T08:04:29.670Z",
+        "identity": {
+          "platforms": ["axiom"],
+          "type": "axiom",
+          "tags": ["axiom"]
+        }
+      },
+      {
+        "wallet": "9qZvANPkPE6NHoj5W5BzJ4gb4byaVqvg1V4JCJBfiK2m",
+        "period": {
+          "realized": 6888436.23,
+          "realizedRaw": 6888436.23,
+          "volume": 23818996.93,
+          "tradingDays": 30,
+          "roi": 60.93,
+          "days": {
+            "profitable": 22,
+            "losing": 8,
+            "maxSinglePnl": 641455.47,
+            "winRate": 73.33
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 188468.41,
+          "adjustedCorrection": 188468.41
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 11305386.88,
+        "proceeds": 21215420.35,
+        "counts": {
+          "buys": 43783,
+          "sells": 78409,
+          "trades": 122192,
+          "tokensTraded": 1048
+        },
+        "averages": {
+          "buy": 280.59,
+          "sell": 270.57
+        },
+        "tokens": {
+          "profitable": 806,
+          "losing": 236,
+          "closed": 1045
+        },
+        "winRate": 77.13,
+        "timing": {
+          "firstTrade": 1789367526647,
+          "lastTrade": 1793166381415
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T05:52:35.716Z",
+        "identity": null
+      },
+      {
+        "wallet": "6aNL9e1dtZRrykZDS2pjWzaZowWyThC1q6NCwFFWLYPA",
+        "period": {
+          "realized": 6663407.3,
+          "realizedRaw": 6663407.3,
+          "volume": 13645698.12,
+          "tradingDays": 25,
+          "roi": 4236.33,
+          "days": {
+            "profitable": 18,
+            "losing": 5,
+            "maxSinglePnl": 6315700.95,
+            "winRate": 78.26
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 6639916.21,
+          "adjustedCorrection": 3957069.91
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 157292.01,
+        "proceeds": 6820613.74,
+        "counts": {
+          "buys": 1507,
+          "sells": 988,
+          "trades": 2495,
+          "tokensTraded": 680
+        },
+        "averages": {
+          "buy": 4533.03,
+          "sell": 6903.46
+        },
+        "tokens": {
+          "profitable": 232,
+          "losing": 324,
+          "closed": 566
+        },
+        "winRate": 40.99,
+        "timing": {
+          "firstTrade": 1790633766286,
+          "lastTrade": 1792981486561
+        },
+        "lastSnapshotDate": "2026-10-26",
+        "updatedAt": "2026-10-28T20:23:47.613Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "E46M3Hz3PNeTkxQkxqYpc6xjaAvFHmGb7BZ6BpFfkTZ8",
+        "period": {
+          "realized": 5735007.22,
+          "realizedRaw": 5735007.22,
+          "volume": 9544059.37,
+          "tradingDays": 28,
+          "roi": 187.32,
+          "days": {
+            "profitable": 28,
+            "losing": 0,
+            "maxSinglePnl": 821706.33,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 10854836.48,
+          "adjustedCorrection": 10780346.44
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 3061677.38,
+        "proceeds": 13955471.4,
+        "counts": {
+          "buys": 6244,
+          "sells": 23660,
+          "trades": 29904,
+          "tokensTraded": 29
+        },
+        "averages": {
+          "buy": 502.41,
+          "sell": 589.83
+        },
+        "tokens": {
+          "profitable": 3,
+          "losing": 2,
+          "closed": 26
+        },
+        "winRate": 11.54,
+        "timing": {
+          "firstTrade": 1789662345000,
+          "lastTrade": 1793001862313
+        },
+        "lastSnapshotDate": "2026-10-26",
+        "updatedAt": "2026-10-28T14:43:35.788Z",
+        "identity": null
+      },
+      {
+        "wallet": "Ht6bERjESG3TgqMT4ceJEJLZsmTkmR1Z1WZFtQvddZFZ",
+        "period": {
+          "realized": 4848634.87,
+          "realizedRaw": 4848634.87,
+          "volume": 9906926.03,
+          "tradingDays": 19,
+          "roi": 4510.09,
+          "days": {
+            "profitable": 17,
+            "losing": 1,
+            "maxSinglePnl": 4813729.32,
+            "winRate": 94.44
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 3434414.35,
+          "adjustedCorrection": 1489767.91
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 107506.32,
+        "proceeds": 4956141.19,
+        "counts": {
+          "buys": 1129,
+          "sells": 849,
+          "trades": 1978,
+          "tokensTraded": 544
+        },
+        "averages": {
+          "buy": 4385.11,
+          "sell": 5837.62
+        },
+        "tokens": {
+          "profitable": 216,
+          "losing": 263,
+          "closed": 485
+        },
+        "winRate": 44.54,
+        "timing": {
+          "firstTrade": 1791175941171,
+          "lastTrade": 1792981486477
+        },
+        "lastSnapshotDate": "2026-10-26",
+        "updatedAt": "2026-10-28T20:25:33.867Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "ChtoS2naCjfUvrnsub2ojE8QNku13zBqbHgf8VkRU9AN",
+        "period": {
+          "realized": 4815123.32,
+          "realizedRaw": 4815123.32,
+          "volume": 14799008.36,
+          "tradingDays": 27,
+          "roi": 36.66,
+          "days": {
+            "profitable": 22,
+            "losing": 3,
+            "maxSinglePnl": 500011.29,
+            "winRate": 88
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 22782282.23,
+          "adjustedCorrection": 22781470.77
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 13135553.44,
+        "proceeds": 35917873.51,
+        "counts": {
+          "buys": 281,
+          "sells": 561,
+          "trades": 842,
+          "tokensTraded": 1
+        },
+        "averages": {
+          "buy": 50170.35,
+          "sell": 64024.73
+        },
+        "tokens": {
+          "profitable": 0,
+          "losing": 0,
+          "closed": 1
+        },
+        "winRate": 0,
+        "timing": {
+          "firstTrade": 1782155825000,
+          "lastTrade": 1793206297101
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T16:51:37.397Z",
+        "identity": null
+      },
+      {
+        "wallet": "DdwfjfVurXwujbADY6r11s63hAdiD3P1MN3MSZCSB9io",
+        "period": {
+          "realized": 4775024.33,
+          "realizedRaw": 4775024.33,
+          "volume": 72018216.3,
+          "tradingDays": 30,
+          "roi": 5.43,
+          "days": {
+            "profitable": 30,
+            "losing": 0,
+            "maxSinglePnl": 532553.03,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 2208.58,
+          "adjustedCorrection": 2201.45
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 87979266.78,
+        "proceeds": 109079737.59,
+        "counts": {
+          "buys": 333653,
+          "sells": 353818,
+          "trades": 687471,
+          "tokensTraded": 8817
+        },
+        "averages": {
+          "buy": 304.52,
+          "sell": 308.29
+        },
+        "tokens": {
+          "profitable": 6336,
+          "losing": 1609,
+          "closed": 7947
+        },
+        "winRate": 79.73,
+        "timing": {
+          "firstTrade": 1775633144079,
+          "lastTrade": 1793216236277
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T19:39:42.245Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "9geEeDgp2FpbCbfEx2rxFBTjAb9TrUXAfkBH7UoKknLP",
+        "period": {
+          "realized": 3480255.32,
+          "realizedRaw": 3480255.32,
+          "volume": 10330259.2,
+          "tradingDays": 29,
+          "roi": 19.37,
+          "days": {
+            "profitable": 17,
+            "losing": 12,
+            "maxSinglePnl": 500698.18,
+            "winRate": 58.62
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 276107.93,
+          "adjustedCorrection": 271143.02
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 17967055.32,
+        "proceeds": 25580493.52,
+        "counts": {
+          "buys": 151597,
+          "sells": 166620,
+          "trades": 318217,
+          "tokensTraded": 3929
+        },
+        "averages": {
+          "buy": 150.41,
+          "sell": 153.53
+        },
+        "tokens": {
+          "profitable": 2548,
+          "losing": 918,
+          "closed": 3474
+        },
+        "winRate": 73.34,
+        "timing": {
+          "firstTrade": 1777778389096,
+          "lastTrade": 1793093665304
+        },
+        "lastSnapshotDate": "2026-10-27",
+        "updatedAt": "2026-10-27T10:24:46.247Z",
+        "identity": null
+      },
+      {
+        "wallet": "4p7SeR6361WJ4T4icgsYTnzAUzfA5NwM4CwYD9kMBjuK",
+        "period": {
+          "realized": 3328251.56,
+          "realizedRaw": 3328251.56,
+          "volume": 10062341.18,
+          "tradingDays": 29,
+          "roi": 23.21,
+          "days": {
+            "profitable": 17,
+            "losing": 12,
+            "maxSinglePnl": 481467.84,
+            "winRate": 58.62
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 14340166.82,
+        "proceeds": 19312019.84,
+        "counts": {
+          "buys": 146146,
+          "sells": 162152,
+          "trades": 308298,
+          "tokensTraded": 3912
+        },
+        "averages": {
+          "buy": 126.27,
+          "sell": 119.1
+        },
+        "tokens": {
+          "profitable": 2454,
+          "losing": 974,
+          "closed": 3428
+        },
+        "winRate": 71.59,
+        "timing": {
+          "firstTrade": 1777778082272,
+          "lastTrade": 1793093664329
+        },
+        "lastSnapshotDate": "2026-10-27",
+        "updatedAt": "2026-10-27T10:53:39.054Z",
+        "identity": null
+      },
+      {
+        "wallet": "52Xv94zeTfMhnv9Ns88bWkhpYQdDpKinmJkQYZwkBaiR",
+        "period": {
+          "realized": 2625787.59,
+          "realizedRaw": 2625787.59,
+          "volume": 15942137.18,
+          "tradingDays": 30,
+          "roi": 14.22,
+          "days": {
+            "profitable": 29,
+            "losing": 1,
+            "maxSinglePnl": 392340.62,
+            "winRate": 96.67
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 5882298.59,
+          "adjustedCorrection": 5775229.1
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 18461293.32,
+        "proceeds": 26087834.89,
+        "counts": {
+          "buys": 226471,
+          "sells": 204931,
+          "trades": 431402,
+          "tokensTraded": 108
+        },
+        "averages": {
+          "buy": 152.26,
+          "sell": 127.3
+        },
+        "tokens": {
+          "profitable": 58,
+          "losing": 26,
+          "closed": 99
+        },
+        "winRate": 58.59,
+        "timing": {
+          "firstTrade": 1779527087531,
+          "lastTrade": 1793219131041
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:57.674Z",
+        "identity": null
+      },
+      {
+        "wallet": "GwSwopjoSe1nTyBBADzkNKxaCuvJtHTEdWgq4MCfpESh",
+        "period": {
+          "realized": 2526058.02,
+          "realizedRaw": 2526058.02,
+          "volume": 5323160.44,
+          "tradingDays": 18,
+          "roi": 1689.64,
+          "days": {
+            "profitable": 6,
+            "losing": 12,
+            "maxSinglePnl": 2535127.11,
+            "winRate": 33.33
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 2538625.04,
+          "adjustedCorrection": 1657545.87
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 149502.55,
+        "proceeds": 2670467.38,
+        "counts": {
+          "buys": 913,
+          "sells": 561,
+          "trades": 1474,
+          "tokensTraded": 289
+        },
+        "averages": {
+          "buy": 2962.74,
+          "sell": 4760.19
+        },
+        "tokens": {
+          "profitable": 91,
+          "losing": 179,
+          "closed": 275
+        },
+        "winRate": 33.09,
+        "timing": {
+          "firstTrade": 1789842158206,
+          "lastTrade": 1793189509716
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:21:58.982Z",
+        "identity": {
+          "platforms": ["pumpfun-app"],
+          "platformProfiles": {
+            "pumpfun-app": {
+              "userId": "GwSwopjoSe1nTyBBADzkNKxaCuvJtHTEdWgq4MCfpESh",
+              "handle": "WoolenRoanChamp",
+              "displayName": "WoolenRoanChamp",
+              "avatar": "https://image.solanatracker.io/proxy?url=https%3A%2F%2Fsocialimages.pump.fun%2Fprofile-images%2Fpumpatar%2F2%2FCyan~Body-3-Cyan-wand~Face-4~Sunglasses~Cap-back-green~Bracelet-orange~Empty.webp"
+            }
+          },
+          "name": "WoolenRoanChamp",
+          "avatar": "https://image.solanatracker.io/proxy?url=https%3A%2F%2Fsocialimages.pump.fun%2Fprofile-images%2Fpumpatar%2F2%2FCyan~Body-3-Cyan-wand~Face-4~Sunglasses~Cap-back-green~Bracelet-orange~Empty.webp",
+          "type": "pumpfun-app",
+          "tags": ["pumpfun-app"]
+        }
+      },
+      {
+        "wallet": "6RCvSqvw5djBau4HBniA62tH53BXamYBNPUTHpRoYXHZ",
+        "period": {
+          "realized": 2431422.15,
+          "realizedRaw": 2431422.15,
+          "volume": 6121786.89,
+          "tradingDays": 22,
+          "roi": 10.64,
+          "days": {
+            "profitable": 21,
+            "losing": 1,
+            "maxSinglePnl": 650290.01,
+            "winRate": 95.45
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 16221.07,
+          "adjustedCorrection": 16193.77
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 22858191.69,
+        "proceeds": 28051726.31,
+        "counts": {
+          "buys": 136384,
+          "sells": 130302,
+          "trades": 266686,
+          "tokensTraded": 5553
+        },
+        "averages": {
+          "buy": 189.52,
+          "sell": 215.28
+        },
+        "tokens": {
+          "profitable": 3668,
+          "losing": 1440,
+          "closed": 5110
+        },
+        "winRate": 71.78,
+        "timing": {
+          "firstTrade": 1775642858089,
+          "lastTrade": 1792621725846
+        },
+        "lastSnapshotDate": "2026-10-21",
+        "updatedAt": "2026-10-22T02:51:31.734Z",
+        "identity": null
+      },
+      {
+        "wallet": "AcGLjWVZKRyELgmBbNmEx4DU6TqNDoMj8UM3yTix9yte",
+        "period": {
+          "realized": 2398111.7,
+          "realizedRaw": 2398111.7,
+          "volume": 3604051.04,
+          "tradingDays": 18,
+          "roi": 408.7,
+          "days": {
+            "profitable": 17,
+            "losing": 1,
+            "maxSinglePnl": 440747.44,
+            "winRate": 94.44
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 2360492.06,
+          "adjustedCorrection": 2321952.29
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 586767.85,
+        "proceeds": 2984879.55,
+        "counts": {
+          "buys": 3267,
+          "sells": 3438,
+          "trades": 6705,
+          "tokensTraded": 216
+        },
+        "averages": {
+          "buy": 189.52,
+          "sell": 868.2
+        },
+        "tokens": {
+          "profitable": 106,
+          "losing": 18,
+          "closed": 208
+        },
+        "winRate": 50.96,
+        "timing": {
+          "firstTrade": 1791530910602,
+          "lastTrade": 1793196849177
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T14:15:53.262Z",
+        "identity": null
+      },
+      {
+        "wallet": "9qz7cWBqYBP2TnGfzMmxX64G4PQip7HtogjPBBnMhWpw",
+        "period": {
+          "realized": 2263775.85,
+          "realizedRaw": 2263775.85,
+          "volume": 27858566.84,
+          "tradingDays": 24,
+          "roi": 18.65,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 194936.04,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 7716.9,
+          "adjustedCorrection": 6621.55
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 12138818.95,
+        "proceeds": 14402594.8,
+        "counts": {
+          "buys": 70979,
+          "sells": 136785,
+          "trades": 207764,
+          "tokensTraded": 29044
+        },
+        "averages": {
+          "buy": 189.58,
+          "sell": 105.29
+        },
+        "tokens": {
+          "profitable": 18513,
+          "losing": 8747,
+          "closed": 27295
+        },
+        "winRate": 67.83,
+        "timing": {
+          "firstTrade": 1791202707691,
+          "lastTrade": 1793219064738
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:26:03.272Z",
+        "identity": null
+      },
+      {
+        "wallet": "E4FPggw9yDp9PNJDuRoLYDr6a5HKCsAterw3fygLpZEA",
+        "period": {
+          "realized": 2089307.1,
+          "realizedRaw": 2089307.1,
+          "volume": 6173957.26,
+          "tradingDays": 25,
+          "roi": 86.88,
+          "days": {
+            "profitable": 22,
+            "losing": 2,
+            "maxSinglePnl": 174050.6,
+            "winRate": 91.67
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 195275.97,
+          "adjustedCorrection": 195109.56
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 2404825.21,
+        "proceeds": 5168354.39,
+        "counts": {
+          "buys": 5165,
+          "sells": 23155,
+          "trades": 28320,
+          "tokensTraded": 3464
+        },
+        "averages": {
+          "buy": 581.54,
+          "sell": 223.21
+        },
+        "tokens": {
+          "profitable": 3081,
+          "losing": 236,
+          "closed": 3350
+        },
+        "winRate": 91.97,
+        "timing": {
+          "firstTrade": 1786483869417,
+          "lastTrade": 1792981434725
+        },
+        "lastSnapshotDate": "2026-10-26",
+        "updatedAt": "2026-10-28T20:22:42.227Z",
+        "identity": {
+          "platforms": ["axiom"],
+          "type": "axiom",
+          "tags": ["axiom"]
+        }
+      },
+      {
+        "wallet": "CXjLc3sSJCbsmTnTjUSr9hXi1BGmfy8ExjUs8U7WgkTL",
+        "period": {
+          "realized": 1715752.85,
+          "realizedRaw": 1715752.85,
+          "volume": 1715945.97,
+          "tradingDays": 27,
+          "roi": 166267.48,
+          "days": {
+            "profitable": 14,
+            "losing": 11,
+            "maxSinglePnl": 1715704.01,
+            "winRate": 56
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1715731.29,
+          "adjustedCorrection": 939901.6
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 1031.92,
+        "proceeds": 1717126.44,
+        "counts": {
+          "buys": 1515,
+          "sells": 1265,
+          "trades": 2780,
+          "tokensTraded": 161
+        },
+        "averages": {
+          "buy": 0.78,
+          "sell": 1357.41
+        },
+        "tokens": {
+          "profitable": 73,
+          "losing": 67,
+          "closed": 146
+        },
+        "winRate": 50,
+        "timing": {
+          "firstTrade": 1756468793978,
+          "lastTrade": 1793218438300
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:23:48.729Z",
+        "identity": {
+          "sns": {
+            "domain": "one-2-cool.sol"
+          },
+          "name": "one-2-cool.sol",
+          "type": "sns",
+          "tags": ["sns"]
+        }
+      },
+      {
+        "wallet": "2XqJKxdyRNtKjPiN9LtWmzsJ2C9pMwtNhzGh8EfycXoB",
+        "period": {
+          "realized": 1693172.97,
+          "realizedRaw": 1693172.97,
+          "volume": 7671226.25,
+          "tradingDays": 15,
+          "roi": 17.57,
+          "days": {
+            "profitable": 9,
+            "losing": 6,
+            "maxSinglePnl": 303943.99,
+            "winRate": 60
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 9635677.63,
+        "proceeds": 11516015.11,
+        "counts": {
+          "buys": 16486,
+          "sells": 16267,
+          "trades": 32753,
+          "tokensTraded": 654
+        },
+        "averages": {
+          "buy": 620.66,
+          "sell": 707.94
+        },
+        "tokens": {
+          "profitable": 417,
+          "losing": 234,
+          "closed": 651
+        },
+        "winRate": 64.06,
+        "timing": {
+          "firstTrade": 1787727749343,
+          "lastTrade": 1793093685166
+        },
+        "lastSnapshotDate": "2026-10-27",
+        "updatedAt": "2026-10-27T09:34:45.177Z",
+        "identity": null
+      },
+      {
+        "wallet": "NALUxTJsozrScVNzRWy9LAg2xoC37RXNNZyyem76kmc",
+        "period": {
+          "realized": 1548138.6,
+          "realizedRaw": 1548138.6,
+          "volume": 28754956.4,
+          "tradingDays": 14,
+          "roi": 12.43,
+          "days": {
+            "profitable": 14,
+            "losing": 0,
+            "maxSinglePnl": 565077.55,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1002515.33,
+          "adjustedCorrection": 828739.09
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 12453120.45,
+        "proceeds": 14001249.19,
+        "counts": {
+          "buys": 66653,
+          "sells": 61795,
+          "trades": 128448,
+          "tokensTraded": 226
+        },
+        "averages": {
+          "buy": 221.4,
+          "sell": 226.58
+        },
+        "tokens": {
+          "profitable": 165,
+          "losing": 42,
+          "closed": 212
+        },
+        "winRate": 77.83,
+        "timing": {
+          "firstTrade": 1792063970146,
+          "lastTrade": 1793219155689
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:55.768Z",
+        "identity": null
+      },
+      {
+        "wallet": "7F2m9x3LK1YACgbmpJxEAUx41UxirEknANcoa1gGStmE",
+        "period": {
+          "realized": 1491711.55,
+          "realizedRaw": 1491711.55,
+          "volume": 5778964.03,
+          "tradingDays": 13,
+          "roi": 94.14,
+          "days": {
+            "profitable": 13,
+            "losing": 0,
+            "maxSinglePnl": 264039.35,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 984868.17,
+          "adjustedCorrection": 984864.58
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 1584545.92,
+        "proceeds": 3076257.47,
+        "counts": {
+          "buys": 5778,
+          "sells": 6419,
+          "trades": 12197,
+          "tokensTraded": 34
+        },
+        "averages": {
+          "buy": 468.23,
+          "sell": 479.24
+        },
+        "tokens": {
+          "profitable": 20,
+          "losing": 3,
+          "closed": 31
+        },
+        "winRate": 64.52,
+        "timing": {
+          "firstTrade": 1792109306236,
+          "lastTrade": 1793219155339
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:55.371Z",
+        "identity": null
+      },
+      {
+        "wallet": "BiEHvFqAHu1Z7RqE6tXgpLgsZcAEABq7FqKJZuUKpy1r",
+        "period": {
+          "realized": 1425167.04,
+          "realizedRaw": 1425167.04,
+          "volume": 143953070.85,
+          "tradingDays": 28,
+          "roi": 1.36,
+          "days": {
+            "profitable": 28,
+            "losing": 0,
+            "maxSinglePnl": 139006.81,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 104639897.09,
+        "proceeds": 106360335.05,
+        "counts": {
+          "buys": 162217,
+          "sells": 131781,
+          "trades": 293998,
+          "tokensTraded": 451
+        },
+        "averages": {
+          "buy": 659.29,
+          "sell": 807.1
+        },
+        "tokens": {
+          "profitable": 359,
+          "losing": 20,
+          "closed": 379
+        },
+        "winRate": 94.72,
+        "timing": {
+          "firstTrade": 1789319296725,
+          "lastTrade": 1793219163985
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:26:04.400Z",
+        "identity": null
+      },
+      {
+        "wallet": "HHKuYTFSF4DnZxmUoWrJGwCK2iGVSPoVQF799UnfLKbs",
+        "period": {
+          "realized": 1391484.22,
+          "realizedRaw": 1391484.22,
+          "volume": 1473053.08,
+          "tradingDays": 10,
+          "roi": 149.52,
+          "days": {
+            "profitable": 9,
+            "losing": 0,
+            "maxSinglePnl": 824362.85,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 2949729.23,
+          "adjustedCorrection": 2894520.36
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 930649.74,
+        "proceeds": 3922054.1,
+        "counts": {
+          "buys": 501,
+          "sells": 410,
+          "trades": 911,
+          "tokensTraded": 129
+        },
+        "averages": {
+          "buy": 1979,
+          "sell": 9565.99
+        },
+        "tokens": {
+          "profitable": 19,
+          "losing": 15,
+          "closed": 125
+        },
+        "winRate": 15.2,
+        "timing": {
+          "firstTrade": 1786870466496,
+          "lastTrade": 1793100707382
+        },
+        "lastSnapshotDate": "2026-10-27",
+        "updatedAt": "2026-10-27T11:48:34.531Z",
+        "identity": null
+      },
+      {
+        "wallet": "dKMjeGJ4Mk9S3hxdfTThvZ7exks2xMwWqSM5NvN2CTK",
+        "period": {
+          "realized": 1374522.37,
+          "realizedRaw": 1374522.37,
+          "volume": 6704008.08,
+          "tradingDays": 28,
+          "roi": 2.37,
+          "days": {
+            "profitable": 28,
+            "losing": 0,
+            "maxSinglePnl": 265259.43,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1722.32,
+          "adjustedCorrection": 1162.45
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 58049147.2,
+        "proceeds": 62461292.99,
+        "counts": {
+          "buys": 380741,
+          "sells": 432045,
+          "trades": 812786,
+          "tokensTraded": 378086
+        },
+        "averages": {
+          "buy": 154.34,
+          "sell": 144.57
+        },
+        "tokens": {
+          "profitable": 205185,
+          "losing": 170696,
+          "closed": 376923
+        },
+        "winRate": 54.44,
+        "timing": {
+          "firstTrade": 1718434563488,
+          "lastTrade": 1793218470091
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:40.169Z",
+        "identity": null
+      },
+      {
+        "wallet": "4aWgCnEDx7YnriGShBxSRRNjy6RN8wZrMQGHgzA8sH4M",
+        "period": {
+          "realized": 1363631.75,
+          "realizedRaw": 1363631.75,
+          "volume": 3864701.05,
+          "tradingDays": 24,
+          "roi": 130.42,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 197697.62,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1158069.18,
+          "adjustedCorrection": 1156517.22
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 1045537.68,
+        "proceeds": 2409869.7,
+        "counts": {
+          "buys": 13889,
+          "sells": 15387,
+          "trades": 29276,
+          "tokensTraded": 56
+        },
+        "averages": {
+          "buy": 111.74,
+          "sell": 156.62
+        },
+        "tokens": {
+          "profitable": 38,
+          "losing": 6,
+          "closed": 54
+        },
+        "winRate": 70.37,
+        "timing": {
+          "firstTrade": 1781673055000,
+          "lastTrade": 1793219162784
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:26:03.147Z",
+        "identity": null
+      },
+      {
+        "wallet": "Boe4wz12MXEypZyS1jyv3co7EdimoNnkC6ywPccbuWyq",
+        "period": {
+          "realized": 1333662.64,
+          "realizedRaw": 1333662.64,
+          "volume": 12193034.45,
+          "tradingDays": 30,
+          "roi": 7.88,
+          "days": {
+            "profitable": 30,
+            "losing": 0,
+            "maxSinglePnl": 259297.3,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 16913981.79,
+        "proceeds": 18964802.77,
+        "counts": {
+          "buys": 136430,
+          "sells": 140517,
+          "trades": 276947,
+          "tokensTraded": 8965
+        },
+        "averages": {
+          "buy": 143.89,
+          "sell": 134.96
+        },
+        "tokens": {
+          "profitable": 5902,
+          "losing": 2405,
+          "closed": 8307
+        },
+        "winRate": 71.05,
+        "timing": {
+          "firstTrade": 1771987452102,
+          "lastTrade": 1793219120490
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:21.102Z",
+        "identity": null
+      },
+      {
+        "wallet": "7GyhUnKw2NAjTv9NmpAT3H6VXg7cFHzKA3TFnpiXEAFC",
+        "period": {
+          "realized": 1311204.39,
+          "realizedRaw": 1311204.39,
+          "volume": 6587440.41,
+          "tradingDays": 15,
+          "roi": 75.66,
+          "days": {
+            "profitable": 11,
+            "losing": 4,
+            "maxSinglePnl": 242860.87,
+            "winRate": 73.33
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 892425.27,
+          "adjustedCorrection": 892425.27
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 1733113.93,
+        "proceeds": 3044318.31,
+        "counts": {
+          "buys": 3861,
+          "sells": 3663,
+          "trades": 7524,
+          "tokensTraded": 6
+        },
+        "averages": {
+          "buy": 917.67,
+          "sell": 831.1
+        },
+        "tokens": {
+          "profitable": 1,
+          "losing": 1,
+          "closed": 5
+        },
+        "winRate": 20,
+        "timing": {
+          "firstTrade": 1791863022935,
+          "lastTrade": 1793218990645
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:23:11.065Z",
+        "identity": null
+      },
+      {
+        "wallet": "sssssDdMNAWKingjpEojkTNdVuZrBe7FsJLaGtexe7d",
+        "period": {
+          "realized": 1256209.58,
+          "realizedRaw": 1256209.58,
+          "volume": 43993680.8,
+          "tradingDays": 30,
+          "roi": 4,
+          "days": {
+            "profitable": 30,
+            "losing": 0,
+            "maxSinglePnl": 76836.73,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 229.53,
+          "adjustedCorrection": 104
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 31411759.9,
+        "proceeds": 33223214.56,
+        "counts": {
+          "buys": 313222,
+          "sells": 313099,
+          "trades": 626321,
+          "tokensTraded": 77527
+        },
+        "averages": {
+          "buy": 100.38,
+          "sell": 106.11
+        },
+        "tokens": {
+          "profitable": 36578,
+          "losing": 40431,
+          "closed": 77010
+        },
+        "winRate": 47.5,
+        "timing": {
+          "firstTrade": 1786658919281,
+          "lastTrade": 1793219143920
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:59.906Z",
+        "identity": null
+      },
+      {
+        "wallet": "GuRfuByNZoFb2TJKj3x6SZEwaZzt8rn2MG1PAgEzWizm",
+        "period": {
+          "realized": 1208418.92,
+          "realizedRaw": 1208418.92,
+          "volume": 23646656.43,
+          "tradingDays": 27,
+          "roi": 10.49,
+          "days": {
+            "profitable": 13,
+            "losing": 11,
+            "maxSinglePnl": 507660.85,
+            "winRate": 54.17
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1881023.6,
+          "adjustedCorrection": 1881023.6
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 11517055.35,
+        "proceeds": 13000547.21,
+        "counts": {
+          "buys": 364,
+          "sells": 278,
+          "trades": 642,
+          "tokensTraded": 17
+        },
+        "averages": {
+          "buy": 36362.07,
+          "sell": 46764.56
+        },
+        "tokens": {
+          "profitable": 4,
+          "losing": 11,
+          "closed": 16
+        },
+        "winRate": 25,
+        "timing": {
+          "firstTrade": 1790297579230,
+          "lastTrade": 1793210024940
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T19:54:35.594Z",
+        "identity": null
+      },
+      {
+        "wallet": "dtrzJPj7yDdvm6eRqBAgxsK2sMJeD9HhBEBB3XMedXy",
+        "period": {
+          "realized": 1198706.01,
+          "realizedRaw": 1198706.01,
+          "volume": 4884367.64,
+          "tradingDays": 28,
+          "roi": 11.37,
+          "days": {
+            "profitable": 28,
+            "losing": 0,
+            "maxSinglePnl": 120743.09,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 23283.63,
+          "adjustedCorrection": 23267.52
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 10541486.89,
+        "proceeds": 14442374.26,
+        "counts": {
+          "buys": 30161,
+          "sells": 61189,
+          "trades": 91350,
+          "tokensTraded": 17698
+        },
+        "averages": {
+          "buy": 427.8,
+          "sell": 236.03
+        },
+        "tokens": {
+          "profitable": 10261,
+          "losing": 5977,
+          "closed": 16317
+        },
+        "winRate": 62.89,
+        "timing": {
+          "firstTrade": 1758596438078,
+          "lastTrade": 1793219097635
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:24:58.046Z",
+        "identity": {
+          "platforms": ["terminal", "axiom"],
+          "type": "terminal",
+          "tags": ["terminal", "axiom"]
+        }
+      },
+      {
+        "wallet": "CKuBTzPwzrCisqQMQfAjNn6jKcfny8ny4rJVN3cxLjcf",
+        "period": {
+          "realized": 1155755.04,
+          "realizedRaw": 1155755.04,
+          "volume": 5640698.52,
+          "tradingDays": 30,
+          "roi": 20.29,
+          "days": {
+            "profitable": 29,
+            "losing": 1,
+            "maxSinglePnl": 82937.21,
+            "winRate": 96.67
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 2021170.06,
+          "adjustedCorrection": 1955179.41
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 5696351.05,
+        "proceeds": 8187001.24,
+        "counts": {
+          "buys": 100382,
+          "sells": 138409,
+          "trades": 238791,
+          "tokensTraded": 52
+        },
+        "averages": {
+          "buy": 62.96,
+          "sell": 59.15
+        },
+        "tokens": {
+          "profitable": 28,
+          "losing": 7,
+          "closed": 52
+        },
+        "winRate": 53.85,
+        "timing": {
+          "firstTrade": 1788428908262,
+          "lastTrade": 1793219008255
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:24:01.933Z",
+        "identity": null
+      },
+      {
+        "wallet": "FYTiZbk17NNPQ5j1aRH67mhJZH3ggYcmwbQqqEN9GAk5",
+        "period": {
+          "realized": 1149297.65,
+          "realizedRaw": 1149297.65,
+          "volume": 2343729.21,
+          "tradingDays": 28,
+          "roi": 137.55,
+          "days": {
+            "profitable": 20,
+            "losing": 8,
+            "maxSinglePnl": 1144627.52,
+            "winRate": 71.43
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1149628.31,
+          "adjustedCorrection": 786340.5
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 835535.25,
+        "proceeds": 2301209.63,
+        "counts": {
+          "buys": 54113,
+          "sells": 55180,
+          "trades": 109293,
+          "tokensTraded": 20373
+        },
+        "averages": {
+          "buy": 37.57,
+          "sell": 41.7
+        },
+        "tokens": {
+          "profitable": 10569,
+          "losing": 8470,
+          "closed": 19097
+        },
+        "winRate": 55.34,
+        "timing": {
+          "firstTrade": 1734006433079,
+          "lastTrade": 1793186471394
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:05:41.088Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "5TgtYxvhAQDWrWzwKwo4HFTRPsyfnSNqibkygH2kbjqa",
+        "period": {
+          "realized": 1135717.63,
+          "realizedRaw": 1135717.63,
+          "volume": 26130754.83,
+          "tradingDays": 24,
+          "roi": 3.86,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 156163.26,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 29396573.65,
+        "proceeds": 31395387.06,
+        "counts": {
+          "buys": 149320,
+          "sells": 134264,
+          "trades": 283584,
+          "tokensTraded": 7478
+        },
+        "averages": {
+          "buy": 219.41,
+          "sell": 233.83
+        },
+        "tokens": {
+          "profitable": 5130,
+          "losing": 1697,
+          "closed": 6827
+        },
+        "winRate": 75.14,
+        "timing": {
+          "firstTrade": 1771943488540,
+          "lastTrade": 1792658149652
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "FsDovvWw2FCyXtLFtF529Fgz3zuYPpCNojAv4psvQ2NK",
+        "period": {
+          "realized": 1129732.49,
+          "realizedRaw": 1129732.49,
+          "volume": 25883053.2,
+          "tradingDays": 24,
+          "roi": 3.88,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 156671.43,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 29080244.25,
+        "proceeds": 31098754.53,
+        "counts": {
+          "buys": 151671,
+          "sells": 136577,
+          "trades": 288248,
+          "tokensTraded": 7491
+        },
+        "averages": {
+          "buy": 214.04,
+          "sell": 227.7
+        },
+        "tokens": {
+          "profitable": 5135,
+          "losing": 1700,
+          "closed": 6835
+        },
+        "winRate": 75.13,
+        "timing": {
+          "firstTrade": 1771943411679,
+          "lastTrade": 1792658070724
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "FtFtF8iamFC3gCv5VYUTBd1G4r1XEc1TbcHyuy6hkJPQ",
+        "period": {
+          "realized": 1126418.33,
+          "realizedRaw": 1126418.33,
+          "volume": 23993514.14,
+          "tradingDays": 30,
+          "roi": 2.52,
+          "days": {
+            "profitable": 24,
+            "losing": 6,
+            "maxSinglePnl": 209037.25,
+            "winRate": 80
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 12325455.34,
+          "adjustedCorrection": 12231265.48
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 44760741.12,
+        "proceeds": 57478067.12,
+        "counts": {
+          "buys": 94207,
+          "sells": 99926,
+          "trades": 194133,
+          "tokensTraded": 443
+        },
+        "averages": {
+          "buy": 526.16,
+          "sell": 575.21
+        },
+        "tokens": {
+          "profitable": 395,
+          "losing": 21,
+          "closed": 429
+        },
+        "winRate": 92.07,
+        "timing": {
+          "firstTrade": 1787535246135,
+          "lastTrade": 1793219153784
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:54.672Z",
+        "identity": null
+      },
+      {
+        "wallet": "DBLfpV5Z5UeCSThk2qWiRFZHkmxXzGuyfKPpFfT3CvCc",
+        "period": {
+          "realized": 1107967.28,
+          "realizedRaw": 1107967.28,
+          "volume": 25831092.6,
+          "tradingDays": 24,
+          "roi": 3.86,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 137513.32,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 160.05,
+          "adjustedCorrection": 160.05
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 28681404.63,
+        "proceeds": 30664447.66,
+        "counts": {
+          "buys": 148867,
+          "sells": 133822,
+          "trades": 282689,
+          "tokensTraded": 7504
+        },
+        "averages": {
+          "buy": 215.07,
+          "sell": 229.14
+        },
+        "tokens": {
+          "profitable": 5137,
+          "losing": 1694,
+          "closed": 6832
+        },
+        "winRate": 75.19,
+        "timing": {
+          "firstTrade": 1771943401951,
+          "lastTrade": 1792658306858
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "GG5ATPW7bxGm5y4aGa2uWWZV1JvjETiM2Rabc2fT8Y7f",
+        "period": {
+          "realized": 1099138.77,
+          "realizedRaw": 1099138.77,
+          "volume": 12948537.75,
+          "tradingDays": 30,
+          "roi": 17.36,
+          "days": {
+            "profitable": 30,
+            "losing": 0,
+            "maxSinglePnl": 64234.16,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 6331680.94,
+        "proceeds": 7611772.29,
+        "counts": {
+          "buys": 45043,
+          "sells": 45066,
+          "trades": 90109,
+          "tokensTraded": 32493
+        },
+        "averages": {
+          "buy": 161.87,
+          "sell": 168.9
+        },
+        "tokens": {
+          "profitable": 17406,
+          "losing": 14543,
+          "closed": 31962
+        },
+        "winRate": 54.46,
+        "timing": {
+          "firstTrade": 1790021786022,
+          "lastTrade": 1793219139956
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:40.405Z",
+        "identity": null
+      },
+      {
+        "wallet": "794HyV3SyKY3HoCitpytgJQJk5c6nqyTntBXFVQa8pA1",
+        "period": {
+          "realized": 1088794.6,
+          "realizedRaw": 1088794.6,
+          "volume": 40790888.9,
+          "tradingDays": 30,
+          "roi": 3.2,
+          "days": {
+            "profitable": 29,
+            "losing": 1,
+            "maxSinglePnl": 217066.49,
+            "winRate": 96.67
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 34001995.47,
+        "proceeds": 35462839.98,
+        "counts": {
+          "buys": 126631,
+          "sells": 133374,
+          "trades": 260005,
+          "tokensTraded": 2992
+        },
+        "averages": {
+          "buy": 285.45,
+          "sell": 265.89
+        },
+        "tokens": {
+          "profitable": 2158,
+          "losing": 742,
+          "closed": 2900
+        },
+        "winRate": 74.41,
+        "timing": {
+          "firstTrade": 1788078602029,
+          "lastTrade": 1793219049597
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:28.825Z",
+        "identity": null
+      },
+      {
+        "wallet": "7QfAqsDBoHFNvMEzYm5Z3Pa83J1kqXkzXkjXrwgsWpQ7",
+        "period": {
+          "realized": 1086438.62,
+          "realizedRaw": 1086438.62,
+          "volume": 25301800.2,
+          "tradingDays": 24,
+          "roi": 3.9,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 135649.18,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 129.27,
+          "adjustedCorrection": 127.42
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 27864966.74,
+        "proceeds": 29803593.42,
+        "counts": {
+          "buys": 145198,
+          "sells": 129996,
+          "trades": 275194,
+          "tokensTraded": 7422
+        },
+        "averages": {
+          "buy": 214.34,
+          "sell": 229.27
+        },
+        "tokens": {
+          "profitable": 4981,
+          "losing": 1781,
+          "closed": 6763
+        },
+        "winRate": 73.65,
+        "timing": {
+          "firstTrade": 1771943538130,
+          "lastTrade": 1792658258171
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "9DY29nBppd7QNy6r8jSTPpLrNpJXjtj9T8AHKee8Pfgt",
+        "period": {
+          "realized": 1069912.97,
+          "realizedRaw": 1069912.97,
+          "volume": 2225614.44,
+          "tradingDays": 16,
+          "roi": 174.45,
+          "days": {
+            "profitable": 16,
+            "losing": 0,
+            "maxSinglePnl": 312113.41,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1069813.37,
+          "adjustedCorrection": 1069813.37
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 613297.46,
+        "proceeds": 1675662.84,
+        "counts": {
+          "buys": 4619,
+          "sells": 15497,
+          "trades": 20116,
+          "tokensTraded": 18
+        },
+        "averages": {
+          "buy": 132.82,
+          "sell": 108.13
+        },
+        "tokens": {
+          "profitable": 3,
+          "losing": 10,
+          "closed": 14
+        },
+        "winRate": 21.43,
+        "timing": {
+          "firstTrade": 1762428362648,
+          "lastTrade": 1792045756008
+        },
+        "lastSnapshotDate": "2026-10-15",
+        "updatedAt": "2026-10-25T21:36:46.310Z",
+        "identity": {
+          "platforms": ["axiom"],
+          "type": "axiom",
+          "tags": ["axiom"]
+        }
+      },
+      {
+        "wallet": "5twJ4TMozk4LLQNpinCf4MR7EqxV3P3SEHGNn2bdGbQX",
+        "period": {
+          "realized": 1067287.12,
+          "realizedRaw": 1067287.12,
+          "volume": 25855198.32,
+          "tradingDays": 24,
+          "roi": 3.7,
+          "days": {
+            "profitable": 23,
+            "losing": 1,
+            "maxSinglePnl": 123957.67,
+            "winRate": 95.83
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 28842918.5,
+        "proceeds": 30794595.82,
+        "counts": {
+          "buys": 150446,
+          "sells": 135584,
+          "trades": 286030,
+          "tokensTraded": 7517
+        },
+        "averages": {
+          "buy": 213.49,
+          "sell": 227.13
+        },
+        "tokens": {
+          "profitable": 5103,
+          "losing": 1757,
+          "closed": 6860
+        },
+        "winRate": 74.39,
+        "timing": {
+          "firstTrade": 1771943474303,
+          "lastTrade": 1792658120724
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "FJx61bqznoVfVDFoujYGgJoJsJq4DxDQ8K3YG5kgRm6G",
+        "period": {
+          "realized": 1061179.17,
+          "realizedRaw": 1061179.17,
+          "volume": 16761884.79,
+          "tradingDays": 30,
+          "roi": 2.07,
+          "days": {
+            "profitable": 18,
+            "losing": 12,
+            "maxSinglePnl": 402107.91,
+            "winRate": 60
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 24037190.32,
+          "adjustedCorrection": 23456246
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 51160756.78,
+        "proceeds": 78005839.18,
+        "counts": {
+          "buys": 523749,
+          "sells": 610776,
+          "trades": 1134525,
+          "tokensTraded": 112
+        },
+        "averages": {
+          "buy": 136.22,
+          "sell": 127.72
+        },
+        "tokens": {
+          "profitable": 53,
+          "losing": 11,
+          "closed": 104
+        },
+        "winRate": 50.96,
+        "timing": {
+          "firstTrade": 1779526104494,
+          "lastTrade": 1793219085839
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:24:45.917Z",
+        "identity": null
+      },
+      {
+        "wallet": "DH7hz5x4KpYqwoWtcyK8qm5VSqjvMCrNJoRVdKFDrZSL",
+        "period": {
+          "realized": 1052581.85,
+          "realizedRaw": 1052581.85,
+          "volume": 25452467.84,
+          "tradingDays": 24,
+          "roi": 3.54,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 147043.71,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 29726505.44,
+        "proceeds": 31664566.84,
+        "counts": {
+          "buys": 151540,
+          "sells": 135953,
+          "trades": 287493,
+          "tokensTraded": 7455
+        },
+        "averages": {
+          "buy": 217.9,
+          "sell": 232.91
+        },
+        "tokens": {
+          "profitable": 5033,
+          "losing": 1764,
+          "closed": 6797
+        },
+        "winRate": 74.05,
+        "timing": {
+          "firstTrade": 1771943496974,
+          "lastTrade": 1792658145628
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "AuVozT1QTroQQv5nPKnuZcAGQMm5biued1f2tqEcxNVa",
+        "period": {
+          "realized": 1052316.87,
+          "realizedRaw": 1052316.87,
+          "volume": 2104605.9,
+          "tradingDays": 24,
+          "roi": 14061995.55,
+          "days": {
+            "profitable": 21,
+            "losing": 2,
+            "maxSinglePnl": 1052282.93,
+            "winRate": 91.3
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1052322.57,
+          "adjustedCorrection": 1052297.77
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 7.48,
+        "proceeds": 1052393.87,
+        "counts": {
+          "buys": 212,
+          "sells": 1597,
+          "trades": 1809,
+          "tokensTraded": 34
+        },
+        "averages": {
+          "buy": 4963.66,
+          "sell": 658.98
+        },
+        "tokens": {
+          "profitable": 1,
+          "losing": 0,
+          "closed": 3
+        },
+        "winRate": 33.33,
+        "timing": {
+          "firstTrade": 1788608631522,
+          "lastTrade": 1793154382381
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:17:01.499Z",
+        "identity": null
+      },
+      {
+        "wallet": "GoXdQ4nKhDFBMcSogwkw6TVpedEfSzRsicu8ShD5HN7G",
+        "period": {
+          "realized": 1048017.16,
+          "realizedRaw": 1048017.16,
+          "volume": 2096010.25,
+          "tradingDays": 23,
+          "roi": 12422246.04,
+          "days": {
+            "profitable": 18,
+            "losing": 4,
+            "maxSinglePnl": 1047991.02,
+            "winRate": 81.82
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1048054.4,
+          "adjustedCorrection": 1048035.14
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 8.44,
+        "proceeds": 1048097.5,
+        "counts": {
+          "buys": 177,
+          "sells": 1686,
+          "trades": 1863,
+          "tokensTraded": 25
+        },
+        "averages": {
+          "buy": 5920.88,
+          "sell": 621.65
+        },
+        "tokens": {
+          "profitable": 1,
+          "losing": 0,
+          "closed": 5
+        },
+        "winRate": 20,
+        "timing": {
+          "firstTrade": 1788615994477,
+          "lastTrade": 1793165150906
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:23:10.740Z",
+        "identity": null
+      },
+      {
+        "wallet": "7BWqqEvE3R7kKBkTLG4fZPRuECUdQnAPbh2BPsq6hzQ9",
+        "period": {
+          "realized": 1045091.39,
+          "realizedRaw": 1045091.39,
+          "volume": 23274909.1,
+          "tradingDays": 24,
+          "roi": 4.17,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 143845.98,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 25038406.76,
+        "proceeds": 26783156.75,
+        "counts": {
+          "buys": 127159,
+          "sells": 114675,
+          "trades": 241834,
+          "tokensTraded": 6830
+        },
+        "averages": {
+          "buy": 217.9,
+          "sell": 233.56
+        },
+        "tokens": {
+          "profitable": 4626,
+          "losing": 1535,
+          "closed": 6161
+        },
+        "winRate": 75.09,
+        "timing": {
+          "firstTrade": 1771943371718,
+          "lastTrade": 1792658306839
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "FHxXYnCUJdUeh6wenktwQ8pNTv32mbFSRd6Wtueyk2vZ",
+        "period": {
+          "realized": 1039663.22,
+          "realizedRaw": 1039663.22,
+          "volume": 25658304.23,
+          "tradingDays": 24,
+          "roi": 3.59,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 132706.93,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 87.5,
+          "adjustedCorrection": 87.5
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 28980503.87,
+        "proceeds": 30888842.82,
+        "counts": {
+          "buys": 149708,
+          "sells": 134817,
+          "trades": 284525,
+          "tokensTraded": 7527
+        },
+        "averages": {
+          "buy": 215.38,
+          "sell": 229.12
+        },
+        "tokens": {
+          "profitable": 5115,
+          "losing": 1728,
+          "closed": 6844
+        },
+        "winRate": 74.74,
+        "timing": {
+          "firstTrade": 1771943460093,
+          "lastTrade": 1792658304286
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "DpDFLSq5uao4DZJaT3puPFgKsYGdK8PH4fCnxB6VFU96",
+        "period": {
+          "realized": 1038935.79,
+          "realizedRaw": 1038935.79,
+          "volume": 25380301.83,
+          "tradingDays": 24,
+          "roi": 3.66,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 151377.42,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 28368093.42,
+        "proceeds": 30308207.94,
+        "counts": {
+          "buys": 146733,
+          "sells": 131486,
+          "trades": 278219,
+          "tokensTraded": 7443
+        },
+        "averages": {
+          "buy": 215.61,
+          "sell": 230.51
+        },
+        "tokens": {
+          "profitable": 5009,
+          "losing": 1698,
+          "closed": 6707
+        },
+        "winRate": 74.68,
+        "timing": {
+          "firstTrade": 1771943544283,
+          "lastTrade": 1792658272285
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "AcQsyr63zCquJTMs56EdLSSowZUdqsDd8zch9r4vhQoU",
+        "period": {
+          "realized": 1031739,
+          "realizedRaw": 1031739,
+          "volume": 23672868.13,
+          "tradingDays": 24,
+          "roi": 3.91,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 143943.09,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 105.53,
+          "adjustedCorrection": 105.44
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26354248.41,
+        "proceeds": 28209878.71,
+        "counts": {
+          "buys": 138755,
+          "sells": 124843,
+          "trades": 263598,
+          "tokensTraded": 7237
+        },
+        "averages": {
+          "buy": 210.88,
+          "sell": 225.96
+        },
+        "tokens": {
+          "profitable": 4926,
+          "losing": 1674,
+          "closed": 6601
+        },
+        "winRate": 74.63,
+        "timing": {
+          "firstTrade": 1771943441705,
+          "lastTrade": 1792658288637
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "4YPGt87ZdzdJcVd3mJDnF2QtcKZcBgSZ3VtrhS8qwvqB",
+        "period": {
+          "realized": 1030285.19,
+          "realizedRaw": 1030285.19,
+          "volume": 24347729.36,
+          "tradingDays": 24,
+          "roi": 3.82,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 147034.04,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26949245.77,
+        "proceeds": 28783376.3,
+        "counts": {
+          "buys": 141207,
+          "sells": 127079,
+          "trades": 268286,
+          "tokensTraded": 7296
+        },
+        "averages": {
+          "buy": 211.39,
+          "sell": 226.5
+        },
+        "tokens": {
+          "profitable": 4919,
+          "losing": 1683,
+          "closed": 6602
+        },
+        "winRate": 74.51,
+        "timing": {
+          "firstTrade": 1771943502919,
+          "lastTrade": 1792658286679
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "Bkjhd7QfTtNnqr5kDfmj1qYVSSaE4LPA32neLZLxxCay",
+        "period": {
+          "realized": 1029365.36,
+          "realizedRaw": 1029365.36,
+          "volume": 24597947.39,
+          "tradingDays": 24,
+          "roi": 3.95,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 174587.48,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26029836.63,
+        "proceeds": 27871457.49,
+        "counts": {
+          "buys": 135810,
+          "sells": 121550,
+          "trades": 257360,
+          "tokensTraded": 7098
+        },
+        "averages": {
+          "buy": 212.79,
+          "sell": 229.3
+        },
+        "tokens": {
+          "profitable": 4834,
+          "losing": 1603,
+          "closed": 6437
+        },
+        "winRate": 75.1,
+        "timing": {
+          "firstTrade": 1771943463162,
+          "lastTrade": 1792658283329
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["terminal"],
+          "type": "terminal",
+          "tags": ["terminal"]
+        }
+      },
+      {
+        "wallet": "GLLqNkxkY3iycPS2WqpRKNueQwBsivPoGNqisK9fcM2y",
+        "period": {
+          "realized": 1024925.27,
+          "realizedRaw": 1024925.27,
+          "volume": 25340036.98,
+          "tradingDays": 24,
+          "roi": 3.55,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 145706.95,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 28860712.29,
+        "proceeds": 30769959.49,
+        "counts": {
+          "buys": 148770,
+          "sells": 133760,
+          "trades": 282530,
+          "tokensTraded": 7363
+        },
+        "averages": {
+          "buy": 215.87,
+          "sell": 230.04
+        },
+        "tokens": {
+          "profitable": 5029,
+          "losing": 1712,
+          "closed": 6741
+        },
+        "winRate": 74.6,
+        "timing": {
+          "firstTrade": 1771943583142,
+          "lastTrade": 1792658300354
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "Ak4U7f4SjnWe6oNN3b2zfuEeFHAcAb3fD7d2LdJHuFcL",
+        "period": {
+          "realized": 1022606.54,
+          "realizedRaw": 1022606.54,
+          "volume": 23473646.83,
+          "tradingDays": 24,
+          "roi": 3.94,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 123086,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 186.86,
+          "adjustedCorrection": 176.41
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 25943567.23,
+        "proceeds": 27768462.42,
+        "counts": {
+          "buys": 134559,
+          "sells": 121409,
+          "trades": 255968,
+          "tokensTraded": 7039
+        },
+        "averages": {
+          "buy": 213.91,
+          "sell": 228.72
+        },
+        "tokens": {
+          "profitable": 4799,
+          "losing": 1583,
+          "closed": 6383
+        },
+        "winRate": 75.18,
+        "timing": {
+          "firstTrade": 1771943456067,
+          "lastTrade": 1792658198047
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["terminal"],
+          "type": "terminal",
+          "tags": ["terminal"]
+        }
+      },
+      {
+        "wallet": "5ogrkkDvNpwtzLZkPjEei4ohLBbJCpoEzPDT2up3VDRi",
+        "period": {
+          "realized": 1012054.43,
+          "realizedRaw": 1012054.43,
+          "volume": 25697187.48,
+          "tradingDays": 24,
+          "roi": 3.51,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 129386.94,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 90.05,
+          "adjustedCorrection": 90.05
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 28869137.46,
+        "proceeds": 30740927.55,
+        "counts": {
+          "buys": 148040,
+          "sells": 133047,
+          "trades": 281087,
+          "tokensTraded": 7425
+        },
+        "averages": {
+          "buy": 216.74,
+          "sell": 231.05
+        },
+        "tokens": {
+          "profitable": 4988,
+          "losing": 1755,
+          "closed": 6744
+        },
+        "winRate": 73.96,
+        "timing": {
+          "firstTrade": 1771943281724,
+          "lastTrade": 1792658251525
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "HvwbpPzrMucT13TBu1mGqATu5Mn8nxfNLVWhhWegH6MX",
+        "period": {
+          "realized": 1011608.44,
+          "realizedRaw": 1011608.44,
+          "volume": 23688896.76,
+          "tradingDays": 24,
+          "roi": 3.92,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 142860.13,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 25825958.88,
+        "proceeds": 27644138.18,
+        "counts": {
+          "buys": 134503,
+          "sells": 120368,
+          "trades": 254871,
+          "tokensTraded": 7105
+        },
+        "averages": {
+          "buy": 213.06,
+          "sell": 229.66
+        },
+        "tokens": {
+          "profitable": 4789,
+          "losing": 1627,
+          "closed": 6416
+        },
+        "winRate": 74.64,
+        "timing": {
+          "firstTrade": 1771943458376,
+          "lastTrade": 1792658242206
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "GFhKB9bhhvCSNhFMXa2K4QSpisZSpk9vWWeFrqmU4Cex",
+        "period": {
+          "realized": 1008585.37,
+          "realizedRaw": 1008585.37,
+          "volume": 23522119.59,
+          "tradingDays": 24,
+          "roi": 3.76,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 152712.59,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26858644.79,
+        "proceeds": 28758732.97,
+        "counts": {
+          "buys": 140914,
+          "sells": 126739,
+          "trades": 267653,
+          "tokensTraded": 7328
+        },
+        "averages": {
+          "buy": 211.65,
+          "sell": 226.91
+        },
+        "tokens": {
+          "profitable": 5004,
+          "losing": 1636,
+          "closed": 6640
+        },
+        "winRate": 75.36,
+        "timing": {
+          "firstTrade": 1771943554670,
+          "lastTrade": 1792658298307
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "8hjeVX2213Ep2WAihKJjhCUSKCph2oUEFLmeBzqX18X7",
+        "period": {
+          "realized": 1000993.12,
+          "realizedRaw": 1000993.12,
+          "volume": 146079154.5,
+          "tradingDays": 28,
+          "roi": 0.94,
+          "days": {
+            "profitable": 28,
+            "losing": 0,
+            "maxSinglePnl": 84730.07,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 1989.57,
+          "adjustedCorrection": 1987.98
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 106589373.81,
+        "proceeds": 107876363.7,
+        "counts": {
+          "buys": 163973,
+          "sells": 135152,
+          "trades": 299125,
+          "tokensTraded": 451
+        },
+        "averages": {
+          "buy": 659.83,
+          "sell": 798.19
+        },
+        "tokens": {
+          "profitable": 353,
+          "losing": 24,
+          "closed": 379
+        },
+        "winRate": 93.14,
+        "timing": {
+          "firstTrade": 1789319298714,
+          "lastTrade": 1793219164351
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:26:04.402Z",
+        "identity": null
+      },
+      {
+        "wallet": "GrYofXoksYLbgUzWpwwwKDxu2q8cE8uoRmkmwwC7yjMg",
+        "period": {
+          "realized": 998522.25,
+          "realizedRaw": 998522.25,
+          "volume": 23809731.46,
+          "tradingDays": 24,
+          "roi": 3.74,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 139294.14,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26716834.82,
+        "proceeds": 28559219.95,
+        "counts": {
+          "buys": 140564,
+          "sells": 126060,
+          "trades": 266624,
+          "tokensTraded": 7276
+        },
+        "averages": {
+          "buy": 210.67,
+          "sell": 226.55
+        },
+        "tokens": {
+          "profitable": 5002,
+          "losing": 1608,
+          "closed": 6610
+        },
+        "winRate": 75.67,
+        "timing": {
+          "firstTrade": 1771943544286,
+          "lastTrade": 1792658276703
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "DGxaJih4hzbKmVVvstHzhx1MHN335qJzS9mFATer9o1N",
+        "period": {
+          "realized": 996712.84,
+          "realizedRaw": 996712.84,
+          "volume": 23048047.3,
+          "tradingDays": 24,
+          "roi": 4,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 119820.4,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 24903501.5,
+        "proceeds": 26691367.57,
+        "counts": {
+          "buys": 128871,
+          "sells": 116104,
+          "trades": 244975,
+          "tokensTraded": 6845
+        },
+        "averages": {
+          "buy": 214.48,
+          "sell": 229.89
+        },
+        "tokens": {
+          "profitable": 4609,
+          "losing": 1562,
+          "closed": 6171
+        },
+        "winRate": 74.69,
+        "timing": {
+          "firstTrade": 1771943467420,
+          "lastTrade": 1792658286265
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "AxhJYzyYXEqofNdpxUtJSBkqEkg9Du6dnwUa5pFX4oU3",
+        "period": {
+          "realized": 993669.77,
+          "realizedRaw": 993669.77,
+          "volume": 24090433.26,
+          "tradingDays": 24,
+          "roi": 3.87,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 158465.77,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 25654087.06,
+        "proceeds": 27456946.88,
+        "counts": {
+          "buys": 132628,
+          "sells": 119180,
+          "trades": 251808,
+          "tokensTraded": 6991
+        },
+        "averages": {
+          "buy": 214.6,
+          "sell": 230.38
+        },
+        "tokens": {
+          "profitable": 4732,
+          "losing": 1606,
+          "closed": 6338
+        },
+        "winRate": 74.66,
+        "timing": {
+          "firstTrade": 1771943482033,
+          "lastTrade": 1792658253327
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "3zJEcri6sBopiAoHvBhUW2xPVeZdS1Z3AE9seJK6vzhg",
+        "period": {
+          "realized": 992601.55,
+          "realizedRaw": 992601.55,
+          "volume": 23922072.14,
+          "tradingDays": 24,
+          "roi": 3.87,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 146226.78,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 25670225.76,
+        "proceeds": 27444431.95,
+        "counts": {
+          "buys": 134926,
+          "sells": 121415,
+          "trades": 256341,
+          "tokensTraded": 7093
+        },
+        "averages": {
+          "buy": 211,
+          "sell": 226.04
+        },
+        "tokens": {
+          "profitable": 4803,
+          "losing": 1661,
+          "closed": 6464
+        },
+        "winRate": 74.3,
+        "timing": {
+          "firstTrade": 1771943496725,
+          "lastTrade": 1792658291674
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["terminal"],
+          "type": "terminal",
+          "tags": ["terminal"]
+        }
+      },
+      {
+        "wallet": "96JYcf2ufLo4ER9cWMgb8dCYrSiEd7Qs79TJtG3ZFwsf",
+        "period": {
+          "realized": 987567.36,
+          "realizedRaw": 987567.36,
+          "volume": 23599960.92,
+          "tradingDays": 24,
+          "roi": 3.85,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 126761.56,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 25618966.51,
+        "proceeds": 27444720.18,
+        "counts": {
+          "buys": 134355,
+          "sells": 120860,
+          "trades": 255215,
+          "tokensTraded": 7052
+        },
+        "averages": {
+          "buy": 211.76,
+          "sell": 227.08
+        },
+        "tokens": {
+          "profitable": 4795,
+          "losing": 1568,
+          "closed": 6363
+        },
+        "winRate": 75.36,
+        "timing": {
+          "firstTrade": 1771943466587,
+          "lastTrade": 1792658270091
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["terminal"],
+          "type": "terminal",
+          "tags": ["terminal"]
+        }
+      },
+      {
+        "wallet": "FHvjgbUePYmpVoqx4EUqEcgpWzq4bRwNnJnXZwMbgVvE",
+        "period": {
+          "realized": 983986.6,
+          "realizedRaw": 983986.6,
+          "volume": 23679886.23,
+          "tradingDays": 24,
+          "roi": 3.82,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 121128.25,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 25762371.72,
+        "proceeds": 27489729.63,
+        "counts": {
+          "buys": 133277,
+          "sells": 119997,
+          "trades": 253274,
+          "tokensTraded": 7037
+        },
+        "averages": {
+          "buy": 213.94,
+          "sell": 229.09
+        },
+        "tokens": {
+          "profitable": 4775,
+          "losing": 1596,
+          "closed": 6371
+        },
+        "winRate": 74.95,
+        "timing": {
+          "firstTrade": 1771943502920,
+          "lastTrade": 1792658185973
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "2Z2hSE7bzMYDMXTJu4GT7UZkN84yMdR5siLwMKN3zr2h",
+        "period": {
+          "realized": 975969.89,
+          "realizedRaw": 975969.89,
+          "volume": 2072922.56,
+          "tradingDays": 16,
+          "roi": 177.96,
+          "days": {
+            "profitable": 14,
+            "losing": 1,
+            "maxSinglePnl": 323518.4,
+            "winRate": 93.33
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 941369.94,
+          "adjustedCorrection": 875543.27
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 548431.21,
+        "proceeds": 1524401.1,
+        "counts": {
+          "buys": 3145,
+          "sells": 13496,
+          "trades": 16641,
+          "tokensTraded": 2
+        },
+        "averages": {
+          "buy": 174.41,
+          "sell": 112.95
+        },
+        "tokens": {
+          "profitable": 0,
+          "losing": 0,
+          "closed": 1
+        },
+        "winRate": 0,
+        "timing": {
+          "firstTrade": 1791932888157,
+          "lastTrade": 1793219109469
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:09.882Z",
+        "identity": {
+          "platforms": ["axiom"],
+          "type": "axiom",
+          "tags": ["axiom"]
+        }
+      },
+      {
+        "wallet": "29CwZXhpU8TFTvkDp7khP7CVBJsSgPcaSSEGNeRh4JYs",
+        "period": {
+          "realized": 975622.43,
+          "realizedRaw": 975622.43,
+          "volume": 21634402.64,
+          "tradingDays": 24,
+          "roi": 4.12,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 124762.41,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 23688675.32,
+        "proceeds": 25415299.63,
+        "counts": {
+          "buys": 123108,
+          "sells": 110380,
+          "trades": 233488,
+          "tokensTraded": 6733
+        },
+        "averages": {
+          "buy": 213.93,
+          "sell": 230.25
+        },
+        "tokens": {
+          "profitable": 4561,
+          "losing": 1506,
+          "closed": 6067
+        },
+        "winRate": 75.18,
+        "timing": {
+          "firstTrade": 1771943557331,
+          "lastTrade": 1792658278444
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "CnTeYCBA7Hzj9r2s99SaEXKYpiWixtMUkqZWHwyNbm3g",
+        "period": {
+          "realized": 965922.7,
+          "realizedRaw": 965922.7,
+          "volume": 13239105.04,
+          "tradingDays": 30,
+          "roi": 16.01,
+          "days": {
+            "profitable": 30,
+            "losing": 0,
+            "maxSinglePnl": 56378.89,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 2735.53,
+          "adjustedCorrection": 2735.53
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 6033652.7,
+        "proceeds": 7072615.12,
+        "counts": {
+          "buys": 40998,
+          "sells": 42580,
+          "trades": 83578,
+          "tokensTraded": 28216
+        },
+        "averages": {
+          "buy": 167.05,
+          "sell": 166.1
+        },
+        "tokens": {
+          "profitable": 14716,
+          "losing": 12869,
+          "closed": 27592
+        },
+        "winRate": 53.33,
+        "timing": {
+          "firstTrade": 1790280794000,
+          "lastTrade": 1793219140759
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:26:03.569Z",
+        "identity": {
+          "platforms": ["axiom"],
+          "type": "axiom",
+          "tags": ["axiom"]
+        }
+      },
+      {
+        "wallet": "Hfy1ettvX6dv2xEhxtM7RithXYam3QCV6fHWfsLzdKA5",
+        "period": {
+          "realized": 965306.83,
+          "realizedRaw": 965306.83,
+          "volume": 24423435.54,
+          "tradingDays": 24,
+          "roi": 3.58,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 131849.34,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 146.23,
+          "adjustedCorrection": 61.23
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26935260.49,
+        "proceeds": 28717519.01,
+        "counts": {
+          "buys": 141351,
+          "sells": 127162,
+          "trades": 268513,
+          "tokensTraded": 7347
+        },
+        "averages": {
+          "buy": 210.68,
+          "sell": 225.83
+        },
+        "tokens": {
+          "profitable": 4987,
+          "losing": 1666,
+          "closed": 6654
+        },
+        "winRate": 74.95,
+        "timing": {
+          "firstTrade": 1771943491162,
+          "lastTrade": 1792658124486
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "oCgzcVzxvvNQY4JoSwr9mgHSxdPn95hZH6gBgn17a7j",
+        "period": {
+          "realized": 958041.8,
+          "realizedRaw": 958041.8,
+          "volume": 23136654.08,
+          "tradingDays": 24,
+          "roi": 3.74,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 135272.23,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 25603377.98,
+        "proceeds": 27351792.69,
+        "counts": {
+          "buys": 133925,
+          "sells": 120523,
+          "trades": 254448,
+          "tokensTraded": 6933
+        },
+        "averages": {
+          "buy": 211.88,
+          "sell": 226.94
+        },
+        "tokens": {
+          "profitable": 4706,
+          "losing": 1570,
+          "closed": 6276
+        },
+        "winRate": 74.98,
+        "timing": {
+          "firstTrade": 1771943476798,
+          "lastTrade": 1792658290268
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["terminal"],
+          "type": "terminal",
+          "tags": ["terminal"]
+        }
+      },
+      {
+        "wallet": "BW42QBt6PbBs7fqkaWGoxSUGHuKtTq7R6L3zaDay7Q8A",
+        "period": {
+          "realized": 953458.33,
+          "realizedRaw": 953458.33,
+          "volume": 22606020.02,
+          "tradingDays": 24,
+          "roi": 3.93,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 153280.15,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 24281489.81,
+        "proceeds": 25980745.12,
+        "counts": {
+          "buys": 125673,
+          "sells": 113179,
+          "trades": 238852,
+          "tokensTraded": 6723
+        },
+        "averages": {
+          "buy": 213.97,
+          "sell": 229.55
+        },
+        "tokens": {
+          "profitable": 4533,
+          "losing": 1529,
+          "closed": 6062
+        },
+        "winRate": 74.78,
+        "timing": {
+          "firstTrade": 1771943562089,
+          "lastTrade": 1792658254962
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "9ip4GVh8AU5TM2tvAfRsrv6d21tX6xrxoNhHtmr8tcMJ",
+        "period": {
+          "realized": 952460,
+          "realizedRaw": 952460,
+          "volume": 23459902.5,
+          "tradingDays": 24,
+          "roi": 3.83,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 141873.83,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 24875370.01,
+        "proceeds": 26583024.16,
+        "counts": {
+          "buys": 128629,
+          "sells": 115472,
+          "trades": 244101,
+          "tokensTraded": 6853
+        },
+        "averages": {
+          "buy": 214.11,
+          "sell": 230.21
+        },
+        "tokens": {
+          "profitable": 4613,
+          "losing": 1561,
+          "closed": 6174
+        },
+        "winRate": 74.72,
+        "timing": {
+          "firstTrade": 1771943492585,
+          "lastTrade": 1792658244125
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "DQFGAqsfLzx8mEdtcG6gYTJnqms9poJfWNQc3pkqcWs",
+        "period": {
+          "realized": 948702.02,
+          "realizedRaw": 948702.02,
+          "volume": 22315625.05,
+          "tradingDays": 24,
+          "roi": 3.99,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 120704.22,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 23792455.38,
+        "proceeds": 25442220.04,
+        "counts": {
+          "buys": 122840,
+          "sells": 111025,
+          "trades": 233865,
+          "tokensTraded": 6724
+        },
+        "averages": {
+          "buy": 214.34,
+          "sell": 229.16
+        },
+        "tokens": {
+          "profitable": 4619,
+          "losing": 1454,
+          "closed": 6073
+        },
+        "winRate": 76.06,
+        "timing": {
+          "firstTrade": 1771943462197,
+          "lastTrade": 1792658202346
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "3HB71Q5JXnbKBRLkzrEtzp8u9Cbk1J4mp2o26t4Cszs1",
+        "period": {
+          "realized": 940719.8,
+          "realizedRaw": 940719.8,
+          "volume": 23896228.21,
+          "tradingDays": 24,
+          "roi": 3.54,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 141581.51,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 127.74,
+          "adjustedCorrection": 109.72
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26572857.18,
+        "proceeds": 28340168.68,
+        "counts": {
+          "buys": 139823,
+          "sells": 126265,
+          "trades": 266088,
+          "tokensTraded": 7227
+        },
+        "averages": {
+          "buy": 210.13,
+          "sell": 224.45
+        },
+        "tokens": {
+          "profitable": 4986,
+          "losing": 1559,
+          "closed": 6546
+        },
+        "winRate": 76.17,
+        "timing": {
+          "firstTrade": 1771944104049,
+          "lastTrade": 1792658261220
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "FEanU7XEENVKWup8jnJrq2DRuuUnowCkpncQa4xHVm1Y",
+        "period": {
+          "realized": 940358.61,
+          "realizedRaw": 940358.61,
+          "volume": 23274597.95,
+          "tradingDays": 24,
+          "roi": 3.78,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 124040.98,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 24857334.46,
+        "proceeds": 26596280.05,
+        "counts": {
+          "buys": 127867,
+          "sells": 115180,
+          "trades": 243047,
+          "tokensTraded": 6787
+        },
+        "averages": {
+          "buy": 215.33,
+          "sell": 230.91
+        },
+        "tokens": {
+          "profitable": 4636,
+          "losing": 1471,
+          "closed": 6107
+        },
+        "winRate": 75.91,
+        "timing": {
+          "firstTrade": 1771943549008,
+          "lastTrade": 1792658301726
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "EKkMH7fw8rqyYHn6drFVduiQczRKLTrLGo9SW2YacigW",
+        "period": {
+          "realized": 936028.2,
+          "realizedRaw": 936028.2,
+          "volume": 23785219.93,
+          "tradingDays": 24,
+          "roi": 3.53,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 130305.01,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26547219.69,
+        "proceeds": 28330258.29,
+        "counts": {
+          "buys": 139311,
+          "sells": 125230,
+          "trades": 264541,
+          "tokensTraded": 7219
+        },
+        "averages": {
+          "buy": 210.85,
+          "sell": 226.23
+        },
+        "tokens": {
+          "profitable": 4932,
+          "losing": 1627,
+          "closed": 6559
+        },
+        "winRate": 75.19,
+        "timing": {
+          "firstTrade": 1771943508511,
+          "lastTrade": 1792658288641
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "7acAHPXdaKNpjogBdPDbSR3U3WjE5T19gVC18pXR1BF7",
+        "period": {
+          "realized": 935841.45,
+          "realizedRaw": 935841.45,
+          "volume": 24040557.74,
+          "tradingDays": 24,
+          "roi": 3.46,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 125724.3,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 27008885.42,
+        "proceeds": 28758108.56,
+        "counts": {
+          "buys": 139248,
+          "sells": 125201,
+          "trades": 264449,
+          "tokensTraded": 7125
+        },
+        "averages": {
+          "buy": 213.94,
+          "sell": 229.7
+        },
+        "tokens": {
+          "profitable": 4871,
+          "losing": 1629,
+          "closed": 6500
+        },
+        "winRate": 74.94,
+        "timing": {
+          "firstTrade": 1771943509687,
+          "lastTrade": 1792658262171
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "3azG8rmtPnNUz77a6UqBKt1ykpk3JQpLLNTaoXW31b34",
+        "period": {
+          "realized": 927228.61,
+          "realizedRaw": 927228.61,
+          "volume": 50002688.51,
+          "tradingDays": 30,
+          "roi": 2.17,
+          "days": {
+            "profitable": 30,
+            "losing": 0,
+            "maxSinglePnl": 173570.42,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 42662577.25,
+        "proceeds": 43966043.85,
+        "counts": {
+          "buys": 177269,
+          "sells": 184331,
+          "trades": 361600,
+          "tokensTraded": 5117
+        },
+        "averages": {
+          "buy": 252.97,
+          "sell": 238.52
+        },
+        "tokens": {
+          "profitable": 3574,
+          "losing": 1259,
+          "closed": 4833
+        },
+        "winRate": 73.95,
+        "timing": {
+          "firstTrade": 1770012071333,
+          "lastTrade": 1793219105218
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:05.365Z",
+        "identity": null
+      },
+      {
+        "wallet": "2pSSSc7ZBtrxZJHSKyfQ2EsMQw1Yk3HCPuxmmsaVXtM3",
+        "period": {
+          "realized": 925135.12,
+          "realizedRaw": 925135.12,
+          "volume": 23794876.18,
+          "tradingDays": 24,
+          "roi": 3.34,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 131568.99,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 69.68,
+          "adjustedCorrection": 65.8
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 27692458.11,
+        "proceeds": 29446142.92,
+        "counts": {
+          "buys": 143024,
+          "sells": 128681,
+          "trades": 271705,
+          "tokensTraded": 7244
+        },
+        "averages": {
+          "buy": 213.32,
+          "sell": 228.83
+        },
+        "tokens": {
+          "profitable": 4980,
+          "losing": 1626,
+          "closed": 6607
+        },
+        "winRate": 75.37,
+        "timing": {
+          "firstTrade": 1771943346605,
+          "lastTrade": 1792658238085
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["axiom"],
+          "type": "axiom",
+          "tags": ["axiom"]
+        }
+      },
+      {
+        "wallet": "GRoDLHVrMiY3758gP5ts35wQAP2or61jdCiEuhGPdSRz",
+        "period": {
+          "realized": 914533.63,
+          "realizedRaw": 914533.63,
+          "volume": 23239102.11,
+          "tradingDays": 24,
+          "roi": 3.62,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 139075.26,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 75.01,
+          "adjustedCorrection": 36.86
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 25254415.8,
+        "proceeds": 26930926.12,
+        "counts": {
+          "buys": 131653,
+          "sells": 118547,
+          "trades": 250200,
+          "tokensTraded": 7033
+        },
+        "averages": {
+          "buy": 212.14,
+          "sell": 227.18
+        },
+        "tokens": {
+          "profitable": 4714,
+          "losing": 1642,
+          "closed": 6357
+        },
+        "winRate": 74.15,
+        "timing": {
+          "firstTrade": 1771943726124,
+          "lastTrade": 1792658116681
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "CfhrBs6JKCASisX679CAi8kFoi1j5KDf5DvTKh5m6bh6",
+        "period": {
+          "realized": 906567.6,
+          "realizedRaw": 906567.6,
+          "volume": 23293106.19,
+          "tradingDays": 24,
+          "roi": 3.43,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 126431.46,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26466469.3,
+        "proceeds": 28178481.24,
+        "counts": {
+          "buys": 139591,
+          "sells": 124412,
+          "trades": 264003,
+          "tokensTraded": 7225
+        },
+        "averages": {
+          "buy": 209.93,
+          "sell": 226.49
+        },
+        "tokens": {
+          "profitable": 4825,
+          "losing": 1680,
+          "closed": 6505
+        },
+        "winRate": 74.17,
+        "timing": {
+          "firstTrade": 1771943552208,
+          "lastTrade": 1792658284309
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "GwYCPm5Bb3DRoSkZjjLHrj6mop7PhYSVUQdZA1GnUEH8",
+        "period": {
+          "realized": 905571.34,
+          "realizedRaw": 905571.34,
+          "volume": 23555866.95,
+          "tradingDays": 24,
+          "roi": 3.44,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 141778.73,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 26340682.77,
+        "proceeds": 28099163.51,
+        "counts": {
+          "buys": 137958,
+          "sells": 124489,
+          "trades": 262447,
+          "tokensTraded": 7257
+        },
+        "averages": {
+          "buy": 211.15,
+          "sell": 225.72
+        },
+        "tokens": {
+          "profitable": 4902,
+          "losing": 1728,
+          "closed": 6630
+        },
+        "winRate": 73.94,
+        "timing": {
+          "firstTrade": 1771943586093,
+          "lastTrade": 1792658298386
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "43ct8xujTFsjJWDL6Kvp4fJxf1PhSvdYuewPmTys44Dh",
+        "period": {
+          "realized": 904022.2,
+          "realizedRaw": 904022.2,
+          "volume": 22049023.39,
+          "tradingDays": 24,
+          "roi": 3.82,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 107252.97,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 23691129.8,
+        "proceeds": 25314162.55,
+        "counts": {
+          "buys": 123347,
+          "sells": 110306,
+          "trades": 233653,
+          "tokensTraded": 6795
+        },
+        "averages": {
+          "buy": 212.32,
+          "sell": 229.49
+        },
+        "tokens": {
+          "profitable": 4586,
+          "losing": 1499,
+          "closed": 6085
+        },
+        "winRate": 75.37,
+        "timing": {
+          "firstTrade": 1771943492198,
+          "lastTrade": 1792658294362
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "GFR5eecA5yL8N2WGXcdLwiUeWreXZc4sXAuuzLANRPVu",
+        "period": {
+          "realized": 878947.03,
+          "realizedRaw": 878947.03,
+          "volume": 21662554.75,
+          "tradingDays": 24,
+          "roi": 3.68,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 117700.73,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 59.65,
+          "adjustedCorrection": 59.65
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 23881765.95,
+        "proceeds": 25503011.85,
+        "counts": {
+          "buys": 123478,
+          "sells": 111068,
+          "trades": 234546,
+          "tokensTraded": 6732
+        },
+        "averages": {
+          "buy": 213.52,
+          "sell": 229.62
+        },
+        "tokens": {
+          "profitable": 4560,
+          "losing": 1517,
+          "closed": 6078
+        },
+        "winRate": 75.02,
+        "timing": {
+          "firstTrade": 1771943540842,
+          "lastTrade": 1792658180193
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "BXkqueKpobuN8YwZjC2X6sijjjDgYrF9WJYocvxuEVk8",
+        "period": {
+          "realized": 867635.78,
+          "realizedRaw": 867635.78,
+          "volume": 21619252.72,
+          "tradingDays": 24,
+          "roi": 3.93,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 107344.91,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 22050449.92,
+        "proceeds": 23622336.04,
+        "counts": {
+          "buys": 118638,
+          "sells": 106714,
+          "trades": 225352,
+          "tokensTraded": 6740
+        },
+        "averages": {
+          "buy": 206.37,
+          "sell": 221.36
+        },
+        "tokens": {
+          "profitable": 4515,
+          "losing": 1539,
+          "closed": 6054
+        },
+        "winRate": 74.58,
+        "timing": {
+          "firstTrade": 1771943426646,
+          "lastTrade": 1792658292269
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": {
+          "platforms": ["photon"],
+          "type": "photon",
+          "tags": ["photon"]
+        }
+      },
+      {
+        "wallet": "9ujTBf3N5UEeAWBWW5ecn4kVnXEPNpLRyGNPFhoivmnt",
+        "period": {
+          "realized": 864542.75,
+          "realizedRaw": 864542.75,
+          "volume": 2050393,
+          "tradingDays": 11,
+          "roi": 167.93,
+          "days": {
+            "profitable": 11,
+            "losing": 0,
+            "maxSinglePnl": 209806.9,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 749063.14,
+          "adjustedCorrection": 749052.94
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 514825.45,
+        "proceeds": 1379368.2,
+        "counts": {
+          "buys": 1428,
+          "sells": 2767,
+          "trades": 4195,
+          "tokensTraded": 25
+        },
+        "averages": {
+          "buy": 469.91,
+          "sell": 498.51
+        },
+        "tokens": {
+          "profitable": 14,
+          "losing": 3,
+          "closed": 25
+        },
+        "winRate": 56,
+        "timing": {
+          "firstTrade": 1790932206141,
+          "lastTrade": 1792090962753
+        },
+        "lastSnapshotDate": "2026-10-15",
+        "updatedAt": "2026-10-28T19:59:33.384Z",
+        "identity": null
+      },
+      {
+        "wallet": "BRjVGhFnXZ7wKcvgHa35hJuzGi8eTmHWcouhfZQKuJZg",
+        "period": {
+          "realized": 854490.72,
+          "realizedRaw": 854490.72,
+          "volume": 1103364.45,
+          "tradingDays": 14,
+          "roi": 234.46,
+          "days": {
+            "profitable": 13,
+            "losing": 1,
+            "maxSinglePnl": 338552.09,
+            "winRate": 92.86
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 2022651.95,
+          "adjustedCorrection": 1945910.14
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 364451.06,
+        "proceeds": 2457509.22,
+        "counts": {
+          "buys": 708,
+          "sells": 379,
+          "trades": 1087,
+          "tokensTraded": 143
+        },
+        "averages": {
+          "buy": 536.33,
+          "sell": 6484.19
+        },
+        "tokens": {
+          "profitable": 38,
+          "losing": 37,
+          "closed": 138
+        },
+        "winRate": 27.54,
+        "timing": {
+          "firstTrade": 1788333034754,
+          "lastTrade": 1792825693728
+        },
+        "lastSnapshotDate": "2026-10-24",
+        "updatedAt": "2026-10-28T20:21:41.691Z",
+        "identity": {
+          "platforms": ["gmgn"],
+          "type": "gmgn",
+          "tags": ["gmgn"]
+        }
+      },
+      {
+        "wallet": "7czCypCpx5bSeS9PPtJAy6hU7MrqjHxYk26coq89kyJJ",
+        "period": {
+          "realized": 848948.09,
+          "realizedRaw": 848948.09,
+          "volume": 18121768.29,
+          "tradingDays": 24,
+          "roi": 4.35,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 101777.5,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 19494631.12,
+        "proceeds": 20974014.51,
+        "counts": {
+          "buys": 106210,
+          "sells": 95148,
+          "trades": 201358,
+          "tokensTraded": 6386
+        },
+        "averages": {
+          "buy": 203.93,
+          "sell": 220.44
+        },
+        "tokens": {
+          "profitable": 4286,
+          "losing": 1404,
+          "closed": 5690
+        },
+        "winRate": 75.33,
+        "timing": {
+          "firstTrade": 1771943487207,
+          "lastTrade": 1792658191996
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "5yM7ZW7hkVcafuiKyWHZUxb3j3bnVfXoAQ26xz4NkYnU",
+        "period": {
+          "realized": 815488.38,
+          "realizedRaw": 815488.38,
+          "volume": 143506383.85,
+          "tradingDays": 28,
+          "roi": 0.77,
+          "days": {
+            "profitable": 28,
+            "losing": 0,
+            "maxSinglePnl": 71220.54,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 105242415.3,
+        "proceeds": 106331299.77,
+        "counts": {
+          "buys": 161846,
+          "sells": 134048,
+          "trades": 295894,
+          "tokensTraded": 451
+        },
+        "averages": {
+          "buy": 661.01,
+          "sell": 793.23
+        },
+        "tokens": {
+          "profitable": 350,
+          "losing": 29,
+          "closed": 379
+        },
+        "winRate": 92.35,
+        "timing": {
+          "firstTrade": 1789319299901,
+          "lastTrade": 1793219163289
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:26:03.669Z",
+        "identity": null
+      },
+      {
+        "wallet": "D2wQKiE724cfcKstKHhar3FxmXXN6AnSsjxBCqbopJAz",
+        "period": {
+          "realized": 810220.88,
+          "realizedRaw": 810220.88,
+          "volume": 17610005.84,
+          "tradingDays": 24,
+          "roi": 4.18,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 108370.89,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 19388776.8,
+        "proceeds": 20872711.35,
+        "counts": {
+          "buys": 106340,
+          "sells": 95767,
+          "trades": 202107,
+          "tokensTraded": 6354
+        },
+        "averages": {
+          "buy": 203.33,
+          "sell": 217.95
+        },
+        "tokens": {
+          "profitable": 4237,
+          "losing": 1411,
+          "closed": 5648
+        },
+        "winRate": 75.02,
+        "timing": {
+          "firstTrade": 1771943446710,
+          "lastTrade": 1792658305078
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "9kojcBF2tw88BDmNx4R4h1FsPwq9uuDmu6yqzARJN8Jg",
+        "period": {
+          "realized": 799025.77,
+          "realizedRaw": 799025.77,
+          "volume": 5535885.54,
+          "tradingDays": 30,
+          "roi": 32.53,
+          "days": {
+            "profitable": 30,
+            "losing": 0,
+            "maxSinglePnl": 71682.21,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 12338.48,
+          "adjustedCorrection": 12094.34
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 2456458.48,
+        "proceeds": 3267351.05,
+        "counts": {
+          "buys": 28934,
+          "sells": 42841,
+          "trades": 71775,
+          "tokensTraded": 18840
+        },
+        "averages": {
+          "buy": 90.56,
+          "sell": 76.27
+        },
+        "tokens": {
+          "profitable": 9450,
+          "losing": 8768,
+          "closed": 18367
+        },
+        "winRate": 51.45,
+        "timing": {
+          "firstTrade": 1789566557000,
+          "lastTrade": 1793219144560
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:49.528Z",
+        "identity": null
+      },
+      {
+        "wallet": "GPvyj8Z9Bq5bqqWCyGeewkdMRCFTSTUcLJF9yaKJ5v6S",
+        "period": {
+          "realized": 797446.45,
+          "realizedRaw": 797446.45,
+          "volume": 17574366.66,
+          "tradingDays": 24,
+          "roi": 4.31,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 125103.47,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 18504858.73,
+        "proceeds": 19874823.74,
+        "counts": {
+          "buys": 103602,
+          "sells": 92972,
+          "trades": 196574,
+          "tokensTraded": 6436
+        },
+        "averages": {
+          "buy": 198.31,
+          "sell": 213.77
+        },
+        "tokens": {
+          "profitable": 4288,
+          "losing": 1419,
+          "closed": 5707
+        },
+        "winRate": 75.14,
+        "timing": {
+          "firstTrade": 1771943586746,
+          "lastTrade": 1792658281820
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
+      },
+      {
+        "wallet": "4wkzxPB2XGb632rbyE8ZPm9mTNN23aWKiYPxWssSg9un",
+        "period": {
+          "realized": 791253.27,
+          "realizedRaw": 791253.27,
+          "volume": 39756341.69,
+          "tradingDays": 30,
+          "roi": 1.85,
+          "days": {
+            "profitable": 28,
+            "losing": 2,
+            "maxSinglePnl": 95596.73,
+            "winRate": 93.33
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 42666381.78,
+        "proceeds": 46211977.25,
+        "counts": {
+          "buys": 142060,
+          "sells": 155743,
+          "trades": 297803,
+          "tokensTraded": 3097
+        },
+        "averages": {
+          "buy": 328.69,
+          "sell": 296.72
+        },
+        "tokens": {
+          "profitable": 2449,
+          "losing": 550,
+          "closed": 2999
+        },
+        "winRate": 81.66,
+        "timing": {
+          "firstTrade": 1788078532789,
+          "lastTrade": 1793219151857
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:25:52.169Z",
+        "identity": null
+      },
+      {
+        "wallet": "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
+        "period": {
+          "realized": 784331.56,
+          "realizedRaw": 784331.56,
+          "volume": 7756056.26,
+          "tradingDays": 29,
+          "roi": 1.15,
+          "days": {
+            "profitable": 29,
+            "losing": 0,
+            "maxSinglePnl": 57268.72,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 441108.85,
+          "adjustedCorrection": 369696.95
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 68332007.82,
+        "proceeds": 83083460.25,
+        "counts": {
+          "buys": 369097,
+          "sells": 205233,
+          "trades": 574330,
+          "tokensTraded": 110754
+        },
+        "averages": {
+          "buy": 190.7,
+          "sell": 404.83
+        },
+        "tokens": {
+          "profitable": 67216,
+          "losing": 42860,
+          "closed": 110312
+        },
+        "winRate": 60.93,
+        "timing": {
+          "firstTrade": 1738348560665,
+          "lastTrade": 1793219163380
+        },
+        "lastSnapshotDate": "2026-10-28",
+        "updatedAt": "2026-10-28T20:26:03.667Z",
+        "identity": {
+          "name": "Cented",
+          "twitter": "@Cented7",
+          "avatar": "https://kol-avatar.solanatracker.io/CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
+          "platforms": ["terminal", "axiom", "photon", "pumpfun-app", "bloom"],
+          "platformProfiles": {
+            "pumpfun-app": {
+              "userId": "CyaE1VxvBrahnPWkqm5VsdCvyS2QmNht2UFrKJHga54o",
+              "handle": "cented69420",
+              "displayName": "cented69420",
+              "avatar": "https://image.solanatracker.io/proxy?url=https%3A%2F%2Fpump.mypinata.cloud%2Fipfs%2FQmahGs4ngA155orCoo6gCZJuKf6r7sKZJZnWtXjbsZxaYb"
+            }
+          },
+          "sns": {
+            "domain": "popscandle.sol"
+          },
+          "type": "kol",
+          "tags": ["kol", "terminal", "axiom", "photon", "pumpfun-app", "bloom", "sns"]
+        }
+      },
+      {
+        "wallet": "Cb6NRp1DpcBXXCD3DMNGopM41fJFSAUeZQheUqDRarxo",
+        "period": {
+          "realized": 783183.39,
+          "realizedRaw": 783183.39,
+          "volume": 18763453.66,
+          "tradingDays": 24,
+          "roi": 3.93,
+          "days": {
+            "profitable": 24,
+            "losing": 0,
+            "maxSinglePnl": 104997.86,
+            "winRate": 100
+          }
+        },
+        "pnlAdjustments": {
+          "mode": "strict",
+          "invalidPnl": 0,
+          "adjustedCorrection": 0
+        },
+        "ending": {
+          "pnl": {
+            "realized": 0,
+            "total": 0
+          }
+        },
+        "invested": 19933418.72,
+        "proceeds": 21333526.23,
+        "counts": {
+          "buys": 109012,
+          "sells": 98188,
+          "trades": 207200,
+          "tokensTraded": 6424
+        },
+        "averages": {
+          "buy": 202.15,
+          "sell": 217.27
+        },
+        "tokens": {
+          "profitable": 4367,
+          "losing": 1370,
+          "closed": 5737
+        },
+        "winRate": 76.12,
+        "timing": {
+          "firstTrade": 1771943785499,
+          "lastTrade": 1792658256557
+        },
+        "lastSnapshotDate": "2026-10-22",
+        "updatedAt": "2026-10-25T19:26:02.166Z",
+        "identity": null
       }
     ],
     "pagination": {
       "hasMore": true,
-      "nextCursor": "eyJzb3J0VmFsdWUiOjE5NjI0MDkwLjAyODk1MTU5MywidGllQnJlYWtlciI6IkFwQUt6SkVxZm5QN0Y3NFphNXhkVFF4Wk1LNG5EOGRGVFZCUTlia3NUdEdNIn0=",
-      "count": 2,
-      "total": 2,
-      "pnlMode": "adjusted"
+      "nextCursor": "eyJzb3J0VmFsdWUiOjc4MzE4My4zOTM4NzI2NDczLCJ0aWVCcmVha2VyIjoiQ2I2TlJwMURwY0JYWENEM0RNTkdvcE00MWZKRlNBVWVaUWhlVXFEUmFyeG8ifQ==",
+      "count": 100,
+      "total": 100,
+      "pnlMode": "strict"
     }
   }
 }

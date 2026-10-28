@@ -1,10 +1,13 @@
 // Wallet discovery: provider leaderboards -> filtered, merged, enriched, ranked candidates.
 // One provider failing never discards the other's results.
 import {
+  type BeGainers,
   BIRDEYE_IDENTITY_BATCH,
   type BirdeyeApi,
+  ProviderError,
   type SolanaTrackerApi,
   type StIdentity,
+  type StLeaderboard,
 } from '@scb/shared';
 import {
   type Candidate,
@@ -12,6 +15,7 @@ import {
   type DiscoveryConfig,
   type DropCounts,
   filterRows,
+  median,
   mergeRows,
   type Source,
   topTokenShare,
@@ -31,6 +35,7 @@ export interface DiscoveryResult {
   dropped: DropCounts;
   providers: ProviderRun[];
   warnings: string[];
+  notes: string[];
 }
 
 const lower = (xs: (string | null | undefined)[]) =>
@@ -52,6 +57,47 @@ export const stLabels = (id: StIdentity | null | undefined) =>
 
 const errorText = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
+const perTrade = (usd: number | null | undefined, trades: number | null | undefined) =>
+  typeof usd === 'number' && trades ? usd / trades : null;
+
+type StTrader = StLeaderboard['traders'][number];
+type BeItem = BeGainers['data']['items'][number];
+
+/**
+ * Solana Tracker reports winRate 0 for wallets with positive realized PnL when strict mode
+ * leaves no closed tokens to count. That 0 means "unknown", not "never wins".
+ */
+export const stWinRate = (t: StTrader) =>
+  t.winRate === 0 && (t.period?.realized ?? 0) > 0 ? null : (t.winRate ?? null);
+
+/** Normalizes one Solana Tracker leaderboard row (exported for fixture-driven tests). */
+export const stRow = (t: StTrader, days: number): WindowRow => ({
+  address: t.wallet,
+  source: 'solanatracker',
+  windowDays: days,
+  realizedPnl: t.period?.realized ?? null,
+  // Token win rate (profitable/closed tokens). period.days.winRate is the share of
+  // profitable *days*, a different and much rosier number.
+  winRate: stWinRate(t),
+  trades: t.counts?.trades ?? null,
+  avgTradeUsd: t.averages?.buy ?? perTrade(t.period?.volume, t.counts?.trades),
+  label: t.identity?.name ?? null,
+  labels: stLabels(t.identity),
+});
+
+/** Normalizes one Birdeye gainers row (exported for fixture-driven tests). */
+export const beRow = (i: BeItem, days: number): WindowRow => ({
+  address: i.address,
+  source: 'birdeye',
+  windowDays: days,
+  realizedPnl: i.realized_pnl ?? null,
+  winRate: null, // not provided by Birdeye
+  trades: i.trade_count ?? null,
+  avgTradeUsd: perTrade(i.volume, i.trade_count),
+  label: null,
+  labels: [],
+});
+
 const fetchSolanaTracker = async (st: SolanaTrackerApi, cfg: DiscoveryConfig) => {
   const rows: WindowRow[] = [];
   for (const days of cfg.windows_days) {
@@ -67,18 +113,7 @@ const fetchSolanaTracker = async (st: SolanaTrackerApi, cfg: DiscoveryConfig) =>
         limit: cfg.page_limit,
         cursor,
       });
-      for (const t of res.traders) {
-        rows.push({
-          address: t.wallet,
-          source: 'solanatracker',
-          windowDays: days,
-          realizedPnl: t.period?.realized ?? null,
-          winRate: t.period?.days?.winRate ?? t.winRate ?? null,
-          trades: t.counts?.trades ?? null,
-          label: t.identity?.name ?? null,
-          labels: stLabels(t.identity),
-        });
-      }
+      for (const t of res.traders) rows.push(stRow(t, days));
       if (!res.pagination.hasMore || !res.pagination.nextCursor) break;
       cursor = res.pagination.nextCursor;
     }
@@ -96,29 +131,23 @@ const fetchBirdeye = async (be: BirdeyeApi, cfg: DiscoveryConfig) => {
         offset: page * cfg.page_limit,
         limit: cfg.page_limit,
       });
-      for (const i of res.data.items) {
-        rows.push({
-          address: i.address,
-          source: 'birdeye',
-          windowDays: days,
-          realizedPnl: i.realized_pnl ?? null,
-          winRate: null, // not provided by Birdeye
-          trades: i.trade_count ?? null,
-          label: null,
-          labels: [],
-        });
-      }
+      for (const i of res.data.items) rows.push(beRow(i, days));
       if (res.data.items.length < cfg.page_limit) break;
     }
   }
   return rows;
 };
 
-/** Adds Birdeye identity (type, label) to every row of each known address. */
-const applyBirdeyeIdentity = async (be: BirdeyeApi, rows: WindowRow[]) => {
+/**
+ * Adds Birdeye identity (type, label) to rows and records which addresses were checked.
+ * Throws on the first failure; addresses checked before it stay in `checked`.
+ */
+const applyBirdeyeIdentity = async (be: BirdeyeApi, rows: WindowRow[], checked: Set<string>) => {
   const addresses = [...new Set(rows.map((r) => r.address))];
   for (let i = 0; i < addresses.length; i += BIRDEYE_IDENTITY_BATCH) {
-    const { data } = await be.identities(addresses.slice(i, i + BIRDEYE_IDENTITY_BATCH));
+    const batch = addresses.slice(i, i + BIRDEYE_IDENTITY_BATCH);
+    const { data } = await be.identities(batch);
+    for (const a of batch) checked.add(a);
     for (const r of rows) {
       const id = data[r.address];
       if (!id) continue;
@@ -133,6 +162,7 @@ export const discover = async (
   cfg: DiscoveryConfig,
 ): Promise<DiscoveryResult> => {
   const warnings: string[] = [];
+  const notes: string[] = [];
   const providers: ProviderRun[] = [];
   const rows: WindowRow[] = [];
 
@@ -150,19 +180,36 @@ export const discover = async (
   await run('solanatracker', st ? () => fetchSolanaTracker(st, cfg) : null);
   await run('birdeye', be ? () => fetchBirdeye(be, cfg) : null);
 
+  // Solana Tracker leaderboard rows carry identity (exchange/pool/bot/tags), so they count as checked.
+  const identityChecked = new Set(
+    rows.filter((r) => r.source === 'solanatracker').map((r) => r.address),
+  );
+  let identityProblem: { error: unknown } | null = null;
   if (be && rows.length) {
     try {
-      await applyBirdeyeIdentity(be, rows);
+      await applyBirdeyeIdentity(be, rows, identityChecked);
     } catch (e) {
-      warnings.push(
-        `birdeye identity lookup failed (${errorText(e)}); exchange/program check incomplete`,
-      );
+      identityProblem = { error: e };
     }
   }
 
   const { kept, dropped } = filterRows(rows, cfg);
   const compare = compareCandidates(cfg.windows_days.length);
-  const merged = mergeRows(kept).sort(compare);
+  const merged = mergeRows(kept, identityChecked).sort(compare);
+
+  if (identityProblem) {
+    const e = identityProblem.error;
+    const unchecked = merged.filter((c) => !c.identityChecked).length;
+    if (e instanceof ProviderError && (e.status === 401 || e.status === 403)) {
+      notes.push(
+        `Birdeye identity unavailable on this plan (${e.status}); ${unchecked} rows identity_checked=false`,
+      );
+    } else {
+      warnings.push(
+        `birdeye identity lookup failed (${errorText(e)}); ${unchecked} rows identity_checked=false`,
+      );
+    }
+  }
 
   // Enrich the top N Solana Tracker-backed candidates with a top-token share.
   // Anything not enriched stays unverified (kept, ranked below verified): this is a review list.
@@ -173,6 +220,13 @@ export const discover = async (
       enriched++;
       try {
         const res = await st.profitablePositions(c.address, cfg.enrich_period);
+        const hold = median(res.positions.map((p) => p.timing?.holdTimeSecs));
+        // Sub-2-minute median holds are sniping/flipping we cannot follow with copy latency.
+        if (hold !== null && hold < cfg.min_median_hold_s) {
+          dropped.short_hold = (dropped.short_hold ?? 0) + 1;
+          continue;
+        }
+        c.medianHoldS = hold;
         const pct = topTokenShare(res.positions.map((p) => p.pnl.realized));
         if (pct !== null) {
           if (pct > cfg.max_single_token_pct) {
@@ -196,5 +250,6 @@ export const discover = async (
     dropped,
     providers,
     warnings,
+    notes,
   };
 };

@@ -1,6 +1,7 @@
 // Minimal JSON-over-HTTP client shared by every provider.
 // Auth lives only in headers; errors and logs carry provider/status/method/path, never headers,
 // so an API key can't leak through a log line or a thrown message.
+import type { z } from 'zod';
 
 export type Query = Record<string, string | number | boolean | undefined>;
 
@@ -26,7 +27,7 @@ export interface HttpOptions {
 export class ProviderError extends Error {
   constructor(
     readonly provider: string,
-    readonly status: number | 'network',
+    readonly status: number | 'network' | 'schema', // schema = response shape didn't match
     readonly method: string,
     readonly path: string,
   ) {
@@ -50,7 +51,18 @@ export const createHttp = (o: HttpOptions) => {
   const sleep = o.sleep ?? realSleep;
   let nextSlot = 0; // ponytail: per-client interval throttle, swap for bottleneck if calls go concurrent
 
-  return async (req: RequestSpec): Promise<unknown> => {
+  /** With a schema, a shape mismatch throws a one-line ProviderError (status 'schema'). */
+  async function request(req: RequestSpec): Promise<unknown>;
+  async function request<T>(req: RequestSpec, schema: z.ZodType<T>): Promise<T>;
+  async function request(req: RequestSpec, schema?: z.ZodType) {
+    const json = await send(req);
+    if (!schema) return json;
+    const parsed = schema.safeParse(json);
+    if (!parsed.success) throw new ProviderError(o.provider, 'schema', req.method, req.path);
+    return parsed.data;
+  }
+
+  const send = async (req: RequestSpec): Promise<unknown> => {
     const query = req.query ?? {};
     const url = new URL(req.path, o.baseUrl);
     for (const [k, v] of Object.entries(query))
@@ -96,7 +108,10 @@ export const createHttp = (o: HttpOptions) => {
         throw new ProviderError(o.provider, status, req.method, req.path);
       }
       const backoff = Math.min(30_000, 500 * 2 ** attempt) * (0.5 + Math.random());
-      await sleep(retryAfterMs ?? backoff);
+      // Never retry faster than the provider throttle allows.
+      await sleep(Math.max(retryAfterMs ?? backoff, o.minIntervalMs));
     }
   };
+
+  return request;
 };

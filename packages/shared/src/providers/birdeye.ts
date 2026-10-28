@@ -11,6 +11,7 @@ export const beGainersSchema = z.object({
         address: z.string(),
         realized_pnl: z.number().nullish(),
         trade_count: z.number().nullish(),
+        volume: z.number().nullish(), // USD, buys + sells
       }),
     ),
   }),
@@ -60,25 +61,27 @@ export const createBirdeyeApi = ({ apiKey, ...o }: ClientOptions): BirdeyeApi =>
   });
   return {
     gainers: async (q) =>
-      beGainersSchema.parse(
-        await http({
+      http(
+        {
           name: 'gainers-losers',
           method: 'GET',
           path: '/trader/gainers-losers',
           query: { sort_by: 'realized_pnl', ...q },
-        }),
+        },
+        beGainersSchema,
       ),
     identities: async (addresses) => {
       if (addresses.length > BIRDEYE_IDENTITY_BATCH) {
         throw new Error(`birdeye identities: max ${BIRDEYE_IDENTITY_BATCH} addresses per call`);
       }
-      return beIdentitiesSchema.parse(
-        await http({
+      return http(
+        {
           name: 'identity-multiple',
           method: 'POST',
           path: '/identity/v1/multiple',
           body: { addresses },
-        }),
+        },
+        beIdentitiesSchema,
       );
     },
   };

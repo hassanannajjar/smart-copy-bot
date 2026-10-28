@@ -91,3 +91,11 @@ We read `positions[].pnl.realized` and `pagination.hasMore`.
 - Whether `maxSingleTokenPct` measures the same thing as our all-time `top_token_pct`.
 
 To refresh the fixtures with real data, run `pnpm wallets:discover --record`.
+
+## Field notes from the first real recording (2026-10-28)
+- **Win rate:** the top-level `winRate` is the **token** win rate, i.e. `tokens.profitable / tokens.closed`. For example, 38/54 gives 70.37.
+  - `period.days.winRate` is the share of **profitable days**, a different and much rosier number. It's often 100%.
+  - Discovery uses `winRate`.
+- **Trade size:** `averages.buy` is the average buy in USD; on the recorded page the median was $214 and the max $50k. It is used for `whale_trade_size`. When it is missing, discovery falls back to `period.volume / counts.trades`.
+- **Hold time:** `positions[].timing.holdTimeSecs` is present on every position. Discovery's `short_hold` filter uses the median across the first page of profitable positions (up to 200, all-time). Profitable-only positions bias the sample toward winning flips.
+- **Leaderboard bias:** sorted by `realized`, the top of the leaderboard is mostly high-frequency wallets. On the first recorded 30d page, 85 of 100 rows had more than 150 trades/day, so `max_pages` was raised to 5.

@@ -18,6 +18,7 @@ import {
   CANDIDATES_FILE,
   type Candidate,
   type DiscoveryConfig,
+  median,
   pnlPerTrade,
   toCsv,
   writeCandidates,
@@ -101,9 +102,27 @@ const reportRow = (c: Candidate, rank: number) =>
     pct(c.winRate).padStart(6),
     String(c.trades ?? '-').padStart(6),
     money(pnlPerTrade(c)).padStart(9),
+    num1(c.tradesPerDay).padStart(6),
+    money(c.avgTradeUsd).padStart(7),
+    (c.medianHoldS === null ? '-' : String(Math.round(c.medianHoldS))).padStart(6),
     `${pct(c.topTokenPct)}${c.topTokenPartial ? '~' : ''}`.padStart(7),
-    c.verified ? 'yes' : 'no',
+    (c.verified ? 'yes' : 'no').padEnd(3),
+    c.identityChecked ? 'yes' : 'no',
   ].join('  ');
+
+const num1 = (v: number | null) => (v === null ? '-' : v.toFixed(1));
+
+/** Medians over the final list: a quick read on whether it looks like humans or bots. */
+export const humanLikeness = (cs: Candidate[]) => {
+  const holds = cs.map((c) => c.medianHoldS);
+  return [
+    `median trades/day ${num1(median(cs.map((c) => c.tradesPerDay)))}`,
+    `median win% ${pct(median(cs.map((c) => c.winRate)))}`,
+    `median pnl/trade $${money(median(cs.map(pnlPerTrade)))}`,
+    `median avg trade $${money(median(cs.map((c) => c.avgTradeUsd)))}`,
+    `median hold ${num1(median(holds))}s (n=${holds.filter((h) => h !== null).length} enriched)`,
+  ].join(', ');
+};
 
 export const formatReport = (r: DiscoveryResult, cfg: DiscoveryConfig, outPath: string) => {
   const verified = r.candidates.filter((c) => c.verified).length;
@@ -120,8 +139,12 @@ export const formatReport = (r: DiscoveryResult, cfg: DiscoveryConfig, outPath: 
     'win%'.padStart(6),
     'trades'.padStart(6),
     'pnl/trade'.padStart(9),
+    'tr/day'.padStart(6),
+    'avg_tr$'.padStart(7),
+    'hold_s'.padStart(6),
     'top_tok'.padStart(7),
-    'verified',
+    'ver',
+    'id',
   ].join('  ');
   const dropped = Object.entries(r.dropped)
     .sort((a, b) => b[1] - a[1])
@@ -136,7 +159,9 @@ export const formatReport = (r: DiscoveryResult, cfg: DiscoveryConfig, outPath: 
     `fetched rows: ${r.fetched}; dropped: ${dropped || 'none'}`,
     `candidates: ${r.candidates.length}; profitable in all windows: ${bothWindows}`,
     `VERIFIED: ${verified}   UNVERIFIED: ${r.candidates.length - verified} (no top-token check; ranked below verified)`,
-    'Scopes: realized/win% = leaderboard window; top_tok = all-time profitable positions; "~" = partial (first page only).',
+    `human-likeness: ${humanLikeness(r.candidates)}`,
+    ...r.notes.map((n) => `note: ${n}`),
+    'Scopes: realized/win%/tr/day = leaderboard window; win% = token win rate; top_tok + hold_s = all-time profitable positions, first page ("~" = partial).',
     `Wrote ${outPath}. Review by hand; copy chosen rows into data/wallets.csv yourself.`,
   ].join('\n');
 };

@@ -73,18 +73,22 @@ data/              SQLite files (gitignored), raw/ replay events (gitignored)
   - Birdeye trader gainers, plus Birdeye wallet identity to filter out exchanges and programs
   - Birdeye has no `smart_trader` leaderboard filter; see [docs/providers/birdeye.md](docs/providers/birdeye.md).
 - **Drops:**
-  - arbitrage/MEV bots, by tag or by more than `max_trades_per_day` trades/day
+  - arbitrage/MEV bots, by tag or by more than `max_trades_per_day` trades/day (`bot_trade_rate`)
+  - a token win rate ≥ 90% over ≥ 300 trades (`implausible_win_rate`)
+  - an average trade above $10k (`whale_trade_size`), since we copy about $50
+  - a median position hold under 120s, for enriched wallets (`short_hold`)
   - exchange, pool and program addresses
   - unprofitable rows
   - wallets whose top token makes up more than 30% of their profit
 - **Rank:**
   1. verified (top-token check done)
-  2. profitable in both windows
-  3. seen by both providers
-  4. win rate
-  5. realized PnL
-- **Output:** `data/wallets.candidates.csv` (gitignored) with these columns: `address, label, source, window, realized_pnl, win_rate, trades, pnl_per_trade, top_token_pct, top_token_partial, verified`.
+  2. identity checked (Birdeye identity returns 401 on the free plan, so Birdeye-only rows are unchecked)
+  3. profitable in both windows
+  4. seen by both providers
+  5. win rate
+  6. realized PnL
+- **Output:** `data/wallets.candidates.csv` (gitignored) with these columns: `address, label, source, window, realized_pnl, win_rate, trades, pnl_per_trade, top_token_pct, top_token_partial, verified, trades_per_day, avg_trade_usd, median_hold_s, identity_checked`. The report ends with a human-likeness line giving the medians of the final list.
 - **Scopes:**
-  - `realized_pnl` and `win_rate` cover the leaderboard window.
-  - `top_token_pct` covers all-time profitable positions, and only the first page of them when `top_token_partial=true`.
+  - `realized_pnl`, `win_rate` (token win rate) and `trades_per_day` cover the leaderboard window.
+  - `top_token_pct` and `median_hold_s` cover all-time profitable positions, and only the first page of them when `top_token_partial=true`.
 - **Fixtures:** the test fixtures in `packages/shared/test/fixtures/` are **doc-derived** (official OpenAPI examples) until you run once with `--record` and a real key.

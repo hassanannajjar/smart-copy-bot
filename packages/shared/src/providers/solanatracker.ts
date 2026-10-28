@@ -27,12 +27,14 @@ export const stLeaderboardSchema = z.object({
       period: z
         .object({
           realized: num,
+          volume: num,
           tradingDays: num,
           days: z.object({ winRate: num }).nullish(),
         })
         .nullish(),
       counts: z.object({ trades: num }).nullish(),
-      winRate: num,
+      averages: z.object({ buy: num }).nullish(), // average buy size, USD
+      winRate: num, // token win rate: profitable / closed tokens (NOT period.days.winRate)
       identity: stIdentitySchema.nullish(),
     }),
   ),
@@ -40,7 +42,13 @@ export const stLeaderboardSchema = z.object({
 });
 
 export const stPositionsSchema = z.object({
-  positions: z.array(z.object({ token: z.string(), pnl: z.object({ realized: num }) })),
+  positions: z.array(
+    z.object({
+      token: z.string(),
+      pnl: z.object({ realized: num }),
+      timing: z.object({ holdTimeSecs: num }).nullish(),
+    }),
+  ),
   pagination,
 });
 
@@ -80,22 +88,24 @@ export const createSolanaTrackerApi = ({ apiKey, ...o }: ClientOptions): SolanaT
   });
   return {
     topTraders: async (q) =>
-      stLeaderboardSchema.parse(
-        await http({
+      http(
+        {
           name: 'leaderboard-top',
           method: 'GET',
           path: '/v2/pnl/leaderboard/top',
           query: { sort: 'realized', direction: 'desc', ...q },
-        }),
+        },
+        stLeaderboardSchema,
       ),
     profitablePositions: async (wallet, period) =>
-      stPositionsSchema.parse(
-        await http({
+      http(
+        {
           name: 'positions',
           method: 'GET',
           path: `/v2/pnl/wallets/${encodeURIComponent(wallet)}/positions`,
           query: { filter: 'profitable', sort: 'realized', direction: 'desc', period, limit: 200 },
-        }),
+        },
+        stPositionsSchema,
       ),
   };
 };

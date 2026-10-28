@@ -14,6 +14,7 @@ export interface WindowRow {
   realizedPnl: number | null;
   winRate: number | null; // percent, 0..100
   trades: number | null;
+  avgTradeUsd: number | null;
   label: string | null;
   labels: string[]; // identity type/tags, lowercased
 }
@@ -26,9 +27,13 @@ export interface Candidate {
   realizedPnl: number;
   winRate: number | null;
   trades: number | null;
+  tradesPerDay: number | null;
+  avgTradeUsd: number | null;
   topTokenPct: number | null;
   topTokenPartial: boolean;
+  medianHoldS: number | null;
   verified: boolean;
+  identityChecked: boolean;
 }
 
 export type DropCounts = Record<string, number>;
@@ -56,6 +61,17 @@ export const filterRows = (rows: WindowRow[], cfg: DiscoveryConfig) => {
     // Arbitrage/MEV bots trade far more often than any human copy target.
     if (r.trades !== null && r.trades / r.windowDays > cfg.max_trades_per_day)
       return 'bot_trade_rate';
+    // 90%+ token win rate over hundreds of trades: bots, or wallets that never sell losers.
+    if (
+      r.winRate !== null &&
+      r.trades !== null &&
+      r.winRate >= cfg.suspicious_win_rate_pct &&
+      r.trades >= cfg.suspicious_win_rate_min_trades
+    )
+      return 'implausible_win_rate';
+    if (r.winRate !== null && r.winRate < cfg.min_win_rate_pct) return 'low_win_rate';
+    // Whales move the price themselves; their entries are not reproducible at ~$50.
+    if (r.avgTradeUsd !== null && r.avgTradeUsd > cfg.max_avg_trade_usd) return 'whale_trade_size';
     return null;
   };
 
@@ -73,7 +89,8 @@ export const filterRows = (rows: WindowRow[], cfg: DiscoveryConfig) => {
 const preferred = (a: WindowRow, b: WindowRow) =>
   b.windowDays - a.windowDays || (a.source === 'solanatracker' ? -1 : 1);
 
-export const mergeRows = (rows: WindowRow[]): Candidate[] => {
+/** `identityChecked`: addresses whose identity some provider actually checked. */
+export const mergeRows = (rows: WindowRow[], identityChecked: Set<string>): Candidate[] => {
   const byAddress = Map.groupBy(rows, (r) => r.address);
   return [...byAddress.entries()].map(([address, group]) => {
     const best = [...group].sort(preferred)[0] as WindowRow;
@@ -85,15 +102,20 @@ export const mergeRows = (rows: WindowRow[]): Candidate[] => {
       realizedPnl: best.realizedPnl ?? 0,
       winRate: best.winRate ?? group.find((r) => r.winRate !== null)?.winRate ?? null,
       trades: best.trades,
+      tradesPerDay: best.trades === null ? null : best.trades / best.windowDays,
+      avgTradeUsd:
+        best.avgTradeUsd ?? group.find((r) => r.avgTradeUsd !== null)?.avgTradeUsd ?? null,
       topTokenPct: null,
       topTokenPartial: false,
+      medianHoldS: null,
       verified: false,
+      identityChecked: identityChecked.has(address),
     };
   });
 };
 
 /**
- * Tiers first (verified, profitable in every window, confirmed by both sources), then
+ * Tiers first (verified, identity checked, profitable in every window, both sources), then
  * consistency: win rate desc (missing last), then realized PnL desc. At ~$50 copy size,
  * consistency matters more than absolute PnL, which mostly reflects the wallet's size.
  */
@@ -102,6 +124,7 @@ export const compareCandidates =
   (a: Candidate, b: Candidate): number => {
     const tier = (c: Candidate) => [
       c.verified ? 1 : 0,
+      c.identityChecked ? 1 : 0,
       c.windows.length >= windowCount ? 1 : 0,
       c.sources.length > 1 ? 1 : 0,
       c.winRate === null ? 0 : 1,
@@ -122,6 +145,13 @@ export const topTokenShare = (realized: (number | null | undefined)[]) => {
   return total > 0 ? (Math.max(...wins) / total) * 100 : null;
 };
 
+export const median = (xs: (number | null | undefined)[]) => {
+  const s = xs.filter((x): x is number => typeof x === 'number').sort((a, b) => a - b);
+  if (!s.length) return null;
+  const mid = s.length >> 1;
+  return s.length % 2 ? (s[mid] as number) : ((s[mid - 1] as number) + (s[mid] as number)) / 2;
+};
+
 export const pnlPerTrade = (c: Candidate) => (c.trades ? c.realizedPnl / c.trades : null);
 
 export const CSV_COLUMNS = [
@@ -136,6 +166,10 @@ export const CSV_COLUMNS = [
   'top_token_pct',
   'top_token_partial',
   'verified',
+  'trades_per_day',
+  'avg_trade_usd',
+  'median_hold_s',
+  'identity_checked',
 ] as const;
 
 const fixed = (v: number | null) => (v === null ? '' : v.toFixed(2));
@@ -162,6 +196,10 @@ export const toCsv = (candidates: Candidate[]) =>
         fixed(c.topTokenPct),
         String(c.topTokenPartial),
         String(c.verified),
+        fixed(c.tradesPerDay),
+        fixed(c.avgTradeUsd),
+        c.medianHoldS === null ? '' : String(Math.round(c.medianHoldS)),
+        String(c.identityChecked),
       ]
         .map(csvCell)
         .join(','),
