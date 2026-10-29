@@ -35,3 +35,14 @@ export const bootToPaper = (db: ControlDb, now = new Date()) =>
     }
     return { previous, killSwitch: get('kill_switch') === 'on' };
   });
+
+/** M3: read on every entry (the dashboard toggles it live). Unreadable => on: fail closed. */
+export const readKillSwitch = (db: ControlDb) => {
+  try {
+    return (
+      db.select().from(appSettings).where(eq(appSettings.key, 'kill_switch')).get()?.value === 'on'
+    );
+  } catch {
+    return true;
+  }
+};

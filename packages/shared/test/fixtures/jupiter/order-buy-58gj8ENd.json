@@ -1,0 +1,63 @@
+{
+  "_provenance": "recorded 2026-10-29T06:48:02.578Z keyless (curl-equivalent fetch)",
+  "request": {
+    "method": "GET",
+    "path": "/swap/v2/order",
+    "query": {
+      "inputMint": "So11111111111111111111111111111111111111112",
+      "outputMint": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+      "amount": "500000000"
+    }
+  },
+  "response": {
+    "swapType": "aggregator",
+    "inAmount": "500000000",
+    "outAmount": "3685977243346",
+    "otherAmountThreshold": "3685977243346",
+    "swapMode": "ExactIn",
+    "slippageBps": 0,
+    "priceImpactPct": "-0.018771416275751792",
+    "routePlan": [
+      {
+        "percent": 100,
+        "bps": 10000,
+        "usdValue": 49.907428558618825,
+        "swapInfo": {
+          "ammKey": "9DnxRbvLBb6n4bZEgZJLZC5br2ZasvCkHknU4rqpk4oH",
+          "label": "Pump.fun",
+          "inputMint": "So11111111111111111111111111111111111111112",
+          "outputMint": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+          "inAmount": "500000000",
+          "outAmount": "3689666910256"
+        }
+      }
+    ],
+    "feeMint": "So11111111111111111111111111111111111111112",
+    "feeBps": 10,
+    "platformFee": {
+      "feeBps": 10,
+      "feeMint": "So11111111111111111111111111111111111111112"
+    },
+    "signatureFeeLamports": 0,
+    "signatureFeePayer": null,
+    "prioritizationFeeLamports": 0,
+    "prioritizationFeePayer": null,
+    "rentFeeLamports": 0,
+    "rentFeePayer": null,
+    "transaction": null,
+    "gasless": false,
+    "jitOptimized": false,
+    "taker": null,
+    "inputMint": "So11111111111111111111111111111111111111112",
+    "outputMint": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+    "router": "metis",
+    "guaranteedPrice": false,
+    "requestId": "01a1866a-673b-727a-8534-450bcd230e74",
+    "inUsdValue": 49.907428558618825,
+    "outUsdValue": 48.97059544189265,
+    "swapUsdValue": 49.907428558618825,
+    "priceImpact": -1.877141627575179,
+    "mode": "ultra",
+    "totalTime": 26
+  }
+}

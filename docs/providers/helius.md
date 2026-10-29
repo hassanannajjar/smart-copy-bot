@@ -168,3 +168,16 @@ Sources:
 - Whether the free plan keeps this method long term. The docs only say it is "Helius-exclusive".
 
 Refresh with `pnpm rules:record <mint...>`, which writes `fixtures/helius/launch-<mint8>.json`.
+
+## M3: `getPriorityFeeEstimate` (paper fees)
+Verified on 2026-10-29 at https://www.helius.dev/docs/priority-fee-api and https://www.helius.dev/docs/api-reference/priority-fee/getpriorityfeeestimate.
+
+- It is a JSON-RPC call on the same URL and key: `params: [{ accountKeys, options: { priorityLevel } }]`. The alternative is passing a serialized `transaction` instead of `accountKeys`. Other options: `includeAllPriorityFeeLevels`, `lookbackSlots` (1–150), `recommended`, `includeVote`, `evaluateEmptySlotAsZero`.
+- `priorityLevel` is one of `Min`, `Low`, `Medium`, `High`, `VeryHigh` or `UnsafeMax`. `VeryHigh` and `UnsafeMax` are not outlier-trimmed, and `UnsafeMax` can reach billions.
+- `result.priorityFeeEstimate` is in **micro-lamports per compute unit**. The docs say total priority fee = price × compute units consumed.
+- With no `accountKeys` you get a global estimate, which the docs say is "not a fee to pay". We pass the quote route's pool `ammKey`s, which are the writable accounts the swap would lock.
+- The credit cost isn't stated on either page. We make one call per paper fill, so it's negligible next to the scout.
+
+How the executor uses it: network fee in SOL = `paper.base_fee_sol` + estimate × `executor.compute_units` / 1e15, at `executor.priority_fee_level` (High). **On any error it falls back to the static `paper.priority_fee_sol`** (0.001 SOL, conservative). The fill's `events_log` row records `priority_fee_source: helius|static`. Limits: `executor.helius` (500 ms, shared 10 rps plan).
+
+Fixture: `fixtures/helius/priority-fee.json`, recorded 2026-10-29: High = 116,765 µL/CU, so about 0.000035 SOL at 300k CU. The static fallback, 0.001 SOL, is about 28x more conservative.

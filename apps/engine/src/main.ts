@@ -4,6 +4,7 @@ import {
   controlDbPath,
   createHeliusRpc,
   createHeliusStream,
+  createJupiterApi,
   isLiveArmed,
   loadConfig,
   modeDbPath,
@@ -12,8 +13,9 @@ import {
   parseEnv,
 } from '@scb/shared';
 import pino from 'pino';
-import { bootToPaper } from './boot.js';
+import { bootToPaper, readKillSwitch } from './boot.js';
 import { fixtureRecorder } from './discover/cli.js';
+import { startPaper } from './paper/executor.js';
 import { createProviders } from './rules/enrich.js';
 import { startRules } from './rules/stage.js';
 import { startScout } from './scout/scout.js';
@@ -37,8 +39,8 @@ const walletRows = loadWallets(join(env.DATA_DIR, 'wallets.csv'));
 
 const control = openControlDb(controlDbPath(env.DATA_DIR));
 const { previous, killSwitch } = bootToPaper(control);
-control.$client.close();
-// The scout keeps recording with the kill switch on; it only blocks opening positions (M3+).
+// Kept open (read-only from here on) so the paper executor sees kill-switch changes live.
+// The scout keeps recording with the kill switch on; it only blocks opening positions.
 if (killSwitch) log.warn('kill_switch is ON: no positions will be opened until it is cleared');
 
 // The engine always writes PAPER data to paper.db. DEMO is dashboard-only; LIVE is M7.
@@ -52,12 +54,39 @@ const record = process.argv.includes('--record')
 const onRateLimited = (i: { provider: string; path: string; attempt: number }) =>
   log.warn(i, 'provider 429, backing off');
 
+// Paper executor + PositionManager (M3): PASSED decisions -> paper positions; open ones resume.
+const ex = config.executor;
+const paper = startPaper({
+  db,
+  config,
+  jupiter: createJupiterApi({
+    apiKey: env.JUPITER_API_KEY, // x-api-key header only; never logged
+    minIntervalMs: env.JUPITER_API_KEY
+      ? ex.jupiter.keyed_min_interval_ms
+      : ex.jupiter.min_interval_ms,
+    timeoutMs: ex.jupiter.timeout_ms,
+    retries: ex.jupiter.retries,
+    onRateLimited,
+  }),
+  fees: createHeliusRpc({
+    apiKey,
+    commitment: cfg.commitment,
+    minIntervalMs: ex.helius.min_interval_ms,
+    timeoutMs: ex.helius.timeout_ms,
+    retries: ex.helius.retries,
+    onRateLimited,
+  }),
+  killSwitch: () => readKillSwitch(control),
+  log: log.child({ stage: 'paper' }),
+});
+
 // Rules stage (M2): every new signal, plus any left undecided by an earlier run.
 const rules = startRules({
   db,
   config,
   providers: createProviders(config, apiKey, onRateLimited),
   log: log.child({ stage: 'rules' }),
+  onPassed: (id) => paper.submit(id),
 });
 rules.submitPending();
 
@@ -87,6 +116,7 @@ const scout = startScout({
   record,
   onSignal: (id) => rules.submit(id),
 });
+const openPositions = paper.start();
 
 log.info(
   {
@@ -97,8 +127,10 @@ log.info(
     liveArmed: isLiveArmed(env),
     killSwitch,
     record: Boolean(record),
+    openPositions,
+    jupiterKey: Boolean(env.JUPITER_API_KEY),
   },
-  'engine booted, scout and rules started',
+  'engine booted, scout, rules and paper started',
 );
 
 const shutdown = async () => {
@@ -106,7 +138,10 @@ const shutdown = async () => {
   await scout.idle();
   rules.stop(); // queued signals stay undecided and are picked up on the next boot
   await rules.idle();
+  paper.stop(); // open positions stay open in the DB and resume on the next boot
+  await paper.idle();
   db.$client.close();
+  control.$client.close();
   log.info('engine stopped');
   process.exit(0);
 };

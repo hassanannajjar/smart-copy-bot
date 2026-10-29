@@ -1,0 +1,28 @@
+{
+  "_provenance": "recorded 2026-10-29T06:58:19.757Z from Helius mainnet getPriorityFeeEstimate",
+  "request": {
+    "method": "POST",
+    "path": "getPriorityFeeEstimate",
+    "query": {},
+    "body": {
+      "jsonrpc": "2.0",
+      "id": 1,
+      "method": "getPriorityFeeEstimate",
+      "params": [
+        {
+          "accountKeys": ["9DnxRbvLBb6n4bZEgZJLZC5br2ZasvCkHknU4rqpk4oH"],
+          "options": {
+            "priorityLevel": "High"
+          }
+        }
+      ]
+    }
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "result": {
+      "priorityFeeEstimate": 116765
+    },
+    "id": 1
+  }
+}

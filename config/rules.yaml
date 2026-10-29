@@ -131,3 +131,13 @@ enricher: # M2: provider limits + how R2/R4/R5 are measured (thresholds stay in 
   R4_slot_cluster_min_buyers: 5 # placeholder, tune (3 over-counted organic snipers). Distinct buyers in one launch-window slot => cluster
   R4_max_pages: 5 # placeholder, tune. 100 txs/page; more than this in the window => data_unavailable
   R5_window_min: 45 # PLAN §4 R5
+
+executor: # M3 paper executor + PositionManager (docs/providers/jupiter.md)
+  max_entry_delay_s: 60 # placeholder, tune. PASSED signal older than this at entry => skipped stale
+  price_batch_size: 49 # Price V3 takes 50 ids; wSOL is added to every batch
+  no_route_max_polls: 3 # placeholder, tune. Consecutive no-route sell quotes => close at 0, exit_reason=no_route
+  priority_fee_level: High # Helius getPriorityFeeEstimate; paper.priority_fee_sol is the fallback
+  compute_units: 300000 # placeholder, tune. Priority fee = micro-lamports/CU x this
+  # keyless 0.5 rps => 2100; with JUPITER_API_KEY (free tier 1 rps) => keyed_min_interval_ms
+  jupiter: { min_interval_ms: 2100, keyed_min_interval_ms: 1100, timeout_ms: 10000, retries: 3 }
+  helius: { min_interval_ms: 500, timeout_ms: 10000, retries: 3 } # shares the 10 rps plan with scout/enricher

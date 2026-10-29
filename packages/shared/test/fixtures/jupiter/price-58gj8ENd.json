@@ -1,0 +1,29 @@
+{
+  "_provenance": "recorded 2026-10-29T06:48:09.472Z keyless (curl-equivalent fetch)",
+  "request": {
+    "method": "GET",
+    "path": "/price/v3",
+    "query": {
+      "ids": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX,So11111111111111111111111111111111111111112"
+    }
+  },
+  "response": {
+    "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX": {
+      "createdAt": "2026-10-28T07:13:58Z",
+      "liquidity": 6535.4768498303565,
+      "usdPrice": 0.000013285647796739752,
+      "blockId": 462785086,
+      "decimals": 6,
+      "priceChange24h": 205.0730293411382,
+      "launchpad": "pump.fun"
+    },
+    "So11111111111111111111111111111111111111112": {
+      "createdAt": "2024-06-05T08:55:25.527Z",
+      "liquidity": 920463960.8615423,
+      "usdPrice": 99.81355041675947,
+      "blockId": 462785452,
+      "decimals": 9,
+      "priceChange24h": -1.9857312068661457
+    }
+  }
+}

@@ -10,5 +10,6 @@ export * from './providers/dexscreener.js';
 export * from './providers/geckoterminal.js';
 export * from './providers/helius.js';
 export * from './providers/http.js';
+export * from './providers/jupiter.js';
 export * from './providers/rugcheck.js';
 export * from './providers/solanatracker.js';

@@ -15,6 +15,7 @@ export const envSchema = z.object({
   HELIUS_API_KEY: optionalKey,
   SOLANATRACKER_API_KEY: optionalKey,
   BIRDEYE_API_KEY: optionalKey,
+  JUPITER_API_KEY: optionalKey, // M3, optional: keyless works at 0.5 rps
   LIVE_ENABLED: z.string().default('false'),
   LIVE_CONFIRM: z.string().default(''),
 });

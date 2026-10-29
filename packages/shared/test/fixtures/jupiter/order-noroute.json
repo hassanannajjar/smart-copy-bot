@@ -1,0 +1,21 @@
+{
+  "_provenance": "doc-derived 2026-10-29 from developers.jup.ag /swap/v2/order reference: errorCode + errorMessage set when no order could be built; the no-route shape for a valid mint is undocumented",
+  "request": {
+    "method": "GET",
+    "path": "/swap/v2/order",
+    "query": {
+      "inputMint": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+      "outputMint": "So11111111111111111111111111111111111111112",
+      "amount": "3600000000000"
+    }
+  },
+  "response": {
+    "inputMint": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+    "outputMint": "So11111111111111111111111111111111111111112",
+    "inAmount": "3600000000000",
+    "outAmount": "0",
+    "transaction": null,
+    "errorCode": 3,
+    "errorMessage": "No route found"
+  }
+}

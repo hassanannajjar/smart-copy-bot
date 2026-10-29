@@ -7,11 +7,15 @@ import {
   dsTokenPairsSchema,
   gtOhlcvSchema,
   type HeliusAccount,
+  type HeliusFeeRpc,
   type HeliusRpc,
   type HeliusSignature,
   type HeliusStream,
   heliusTxPageSchema,
   heliusTxSchema,
+  type JupiterApi,
+  type JupPrices,
+  jupPriceSchema,
   type LogsEvent,
   rcReportSchema,
   type SolanaTrackerApi,
@@ -161,7 +165,7 @@ export const fakeProviders = (fail: string[] = []) => {
     rugcheck: {
       report: async (mint) => {
         guard('rugcheck');
-        return { report: recorded(mint).report, raw: {} };
+        return { report: recorded(mint).report, raw: rugcheckRaw(mint) };
       },
     },
     geckoterminal: {
@@ -178,4 +182,76 @@ export const fakeProviders = (fail: string[] = []) => {
     },
   };
   return { providers, calls };
+};
+
+/** The rugcheck report raw JSON for a mint, as the rules stage stores it in token_snapshots. */
+export const rugcheckRaw = (mint: string) => fixture(`rugcheck/report-${mint.slice(0, 8)}`);
+
+/**
+ * A Jupiter market the test moves by hand. Starts at the recorded Price V3 values; quotes fill at
+ * mid minus `impactBps` (both sides), net of feeBps like the real /order. 6-decimals mints only.
+ */
+export const fakeJupiter = () => {
+  const price = jupPriceSchema.parse(fixture('jupiter/price-58gj8ENd'));
+  const m = {
+    solUsd: price[WSOL]?.usdPrice ?? 100,
+    mid: new Map<string, number>(),
+    liq: new Map<string, number>(),
+    impactBps: 200,
+    feeBps: 10,
+    omit: new Set<string>(), // absent from Price V3
+    noRoute: new Set<string>(),
+    failPrices: false,
+    failQuotes: false,
+    quotes: [] as { in: string; out: string; amount: bigint; at: number }[],
+    priceCalls: [] as string[][],
+    now: () => 0,
+  };
+  const take = (usd: number) => usd * (1 - m.impactBps / 10_000) * (1 - m.feeBps / 10_000);
+  const jupiter: JupiterApi = {
+    prices: async (ids) => {
+      m.priceCalls.push(ids);
+      if (m.failPrices) throw new Error('jupiter 503 GET /price/v3');
+      const out: JupPrices = {};
+      for (const id of ids) {
+        if (id === WSOL) out[id] = { usdPrice: m.solUsd, liquidity: 9e8, decimals: 9 };
+        else if (m.mid.has(id) && !m.omit.has(id))
+          out[id] = { usdPrice: m.mid.get(id) ?? 0, liquidity: m.liq.get(id) ?? null, decimals: 6 };
+      }
+      return out;
+    },
+    quote: async (inputMint, outputMint, amount) => {
+      m.quotes.push({ in: inputMint, out: outputMint, amount, at: m.now() });
+      if (m.failQuotes) throw new Error('jupiter 503 GET /swap/v2/order');
+      const mint = inputMint === WSOL ? outputMint : inputMint;
+      const mid = m.mid.get(mint);
+      if (m.noRoute.has(mint) || !mid) return null;
+      const outAmount =
+        inputMint === WSOL
+          ? BigInt(Math.floor((take((Number(amount) / 1e9) * m.solUsd) / mid) * 1e6))
+          : BigInt(Math.floor((take((Number(amount) / 1e6) * mid) / m.solUsd) * 1e9));
+      return {
+        inAmount: amount,
+        outAmount,
+        feeBps: m.feeBps,
+        priceImpactPct: -m.impactBps / 100,
+        router: 'metis',
+        ammKeys: ['9DnxRbvLBb6n4bZEgZJLZC5br2ZasvCkHknU4rqpk4oH'],
+      };
+    },
+  };
+  return { jupiter, m };
+};
+
+/** Helius priority fees: a fixed micro-lamports/CU, or throws when `fail` is set. */
+export const fakeFees = (microLamportsPerCu = 120_000) => {
+  const f = { fail: false, calls: 0 };
+  const fees: HeliusFeeRpc = {
+    priorityFeeEstimate: async () => {
+      f.calls++;
+      if (f.fail) throw new Error('helius 503 POST getPriorityFeeEstimate');
+      return microLamportsPerCu;
+    },
+  };
+  return { fees, f };
 };

@@ -103,6 +103,15 @@ export interface HeliusHistoryRpc {
   ): Promise<{ txs: HeliusTx[]; truncated: boolean }>;
 }
 
+/** M3 paper fees: getPriorityFeeEstimate (docs/providers/helius.md). */
+export type PriorityLevel = 'Min' | 'Low' | 'Medium' | 'High' | 'VeryHigh' | 'UnsafeMax';
+export interface HeliusFeeRpc {
+  /** Micro-lamports per compute unit for a tx that writes `accountKeys`. */
+  priorityFeeEstimate(accountKeys: string[], level: PriorityLevel): Promise<number>;
+}
+
+export const heliusPriorityFeeSchema = z.object({ priorityFeeEstimate: z.number().min(0) });
+
 const rpcEnvelope = z.object({
   result: z.unknown().optional(), // absent on error responses
   error: z.object({ code: z.number() }).nullish(),
@@ -119,7 +128,7 @@ export const createHeliusRpc = ({
   apiKey,
   commitment,
   ...o
-}: RpcOptions): HeliusRpc & HeliusHistoryRpc => {
+}: RpcOptions): HeliusRpc & HeliusHistoryRpc & HeliusFeeRpc => {
   const http = createHttp({
     ...o,
     provider: 'helius',
@@ -201,6 +210,12 @@ export const createHeliusRpc = ({
       }
       return { txs, truncated: true };
     },
+    priorityFeeEstimate: async (accountKeys, priorityLevel) =>
+      parse(
+        heliusPriorityFeeSchema,
+        await call('getPriorityFeeEstimate', [{ accountKeys, options: { priorityLevel } }]),
+        'getPriorityFeeEstimate',
+      ).priorityFeeEstimate,
   };
 };
 

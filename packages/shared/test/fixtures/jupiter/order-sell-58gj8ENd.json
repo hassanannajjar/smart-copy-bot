@@ -1,0 +1,63 @@
+{
+  "_provenance": "recorded 2026-10-29T06:48:06.135Z keyless (curl-equivalent fetch)",
+  "request": {
+    "method": "GET",
+    "path": "/swap/v2/order",
+    "query": {
+      "inputMint": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+      "outputMint": "So11111111111111111111111111111111111111112",
+      "amount": "3600000000000"
+    }
+  },
+  "response": {
+    "swapType": "aggregator",
+    "inAmount": "3600000000000",
+    "outAmount": "468339732",
+    "otherAmountThreshold": "468339732",
+    "swapMode": "ExactIn",
+    "slippageBps": 0,
+    "priceImpactPct": "-0.022603101333635814",
+    "routePlan": [
+      {
+        "percent": 100,
+        "bps": 10000,
+        "usdValue": 46.747263431905374,
+        "swapInfo": {
+          "ammKey": "9DnxRbvLBb6n4bZEgZJLZC5br2ZasvCkHknU4rqpk4oH",
+          "label": "Pump.fun",
+          "inputMint": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+          "outputMint": "So11111111111111111111111111111111111111112",
+          "inAmount": "3600000000000",
+          "outAmount": "468808540"
+        }
+      }
+    ],
+    "feeMint": "So11111111111111111111111111111111111111112",
+    "feeBps": 10,
+    "platformFee": {
+      "feeBps": 10,
+      "feeMint": "So11111111111111111111111111111111111111112"
+    },
+    "signatureFeeLamports": 0,
+    "signatureFeePayer": null,
+    "prioritizationFeeLamports": 0,
+    "prioritizationFeePayer": null,
+    "rentFeeLamports": 0,
+    "rentFeePayer": null,
+    "transaction": null,
+    "gasless": false,
+    "jitOptimized": false,
+    "taker": null,
+    "inputMint": "58gj8ENdAg6pvEuaro6GrgZtRv4tpnsPJJcYMzCpjWmX",
+    "outputMint": "So11111111111111111111111111111111111111112",
+    "router": "metis",
+    "guaranteedPrice": false,
+    "requestId": "01a1866a-7528-731d-adb6-00a62b93a9af",
+    "inUsdValue": 47.82833206826311,
+    "outUsdValue": 46.747263431905374,
+    "swapUsdValue": 46.747263431905374,
+    "priceImpact": -2.2603101333635816,
+    "mode": "ultra",
+    "totalTime": 13
+  }
+}

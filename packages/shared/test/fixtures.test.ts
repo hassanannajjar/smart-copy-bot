@@ -1,4 +1,5 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { parseEnv } from 'node:util';
 import { describe, expect, it } from 'vitest';
 import type { z } from 'zod';
 import { beGainersSchema, beIdentitiesSchema } from '../src/providers/birdeye.js';
@@ -7,11 +8,13 @@ import { gtOhlcvSchema } from '../src/providers/geckoterminal.js';
 import {
   heliusAccountSchema,
   heliusLogsNotificationSchema,
+  heliusPriorityFeeSchema,
   heliusSignaturesSchema,
   heliusTxPageSchema,
   heliusTxSchema,
   rpcResultSchema,
 } from '../src/providers/helius.js';
+import { jupOrderSchema, jupPriceSchema } from '../src/providers/jupiter.js';
 import { rcReportSchema } from '../src/providers/rugcheck.js';
 import { stLeaderboardSchema, stPositionsSchema } from '../src/providers/solanatracker.js';
 
@@ -25,7 +28,10 @@ const SCHEMAS: Record<string, Record<string, z.ZodType>> = {
     'tx-': rpcResultSchema(heliusTxSchema), // prefix: one file per parse outcome
     'account-': rpcResultSchema(heliusAccountSchema), // prefix: wallet, token, missing
     'launch-': rpcResultSchema(heliusTxPageSchema), // prefix: one file per mint (M2, R4)
+    'priority-fee': rpcResultSchema(heliusPriorityFeeSchema), // M3 paper fees
   },
+  // M3 paper executor: quotes (buy/sell/no-route) and Price V3.
+  jupiter: { 'order-': jupOrderSchema, 'price-': jupPriceSchema },
   // M2 (pnpm rules:record): one file per mint, or per pool for OHLCV.
   dexscreener: { 'token-pairs-': dsTokenPairsSchema },
   rugcheck: { 'report-': rcReportSchema },
@@ -58,4 +64,20 @@ describe('provider fixtures', () => {
       });
     }
   }
+
+  it('no fixture contains an API key', () => {
+    // Real key values from a local .env (when present), plus the auth markers they'd ride on.
+    const envFile = new URL('../../../.env', import.meta.url);
+    const env = existsSync(envFile) ? parseEnv(readFileSync(envFile, 'utf8')) : {};
+    const secrets = Object.entries(env)
+      .filter(([k, v]) => k.endsWith('_API_KEY') && v && v.length >= 8)
+      .map(([, v]) => v as string);
+    for (const provider of readdirSync(dir('.'))) {
+      for (const file of readdirSync(dir(provider)).filter((f) => f.endsWith('.json'))) {
+        const text = readFileSync(new URL(file, dir(provider)), 'utf8');
+        expect(text, `${provider}/${file}`).not.toMatch(/api-key=|x-api-key|"apiKey"/i);
+        for (const s of secrets) expect(text.includes(s), `${provider}/${file}`).toBe(false);
+      }
+    }
+  });
 });

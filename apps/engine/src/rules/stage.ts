@@ -46,6 +46,8 @@ export interface RulesDeps {
   providers: Providers;
   log: Logger;
   now?: () => number;
+  /** M3: called after a PASSED decision is committed (the paper executor). */
+  onPassed?: (signalId: number) => void;
 }
 
 type Signal = typeof signals.$inferSelect;
@@ -229,6 +231,7 @@ export const startRules = (d: RulesDeps) => {
       { verdict: ev.verdict, killed_by: ev.killedBy, failed: ev.failed, mint: sig.mint },
       'decision',
     );
+    if (ev.verdict === 'PASSED') d.onPassed?.(sig.id);
   };
 
   const submit = (id: number) => {

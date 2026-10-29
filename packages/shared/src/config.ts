@@ -136,6 +136,18 @@ export const configSchema = obj({
     R4_max_pages: num.int().min(1).max(20), // x100 launch-window txs, 10 Helius credits each
     R5_window_min: num.int().positive(),
   }),
+  // M3 paper executor + PositionManager (docs/providers/jupiter.md). Size, fees, latency and polling
+  // stay in paper:, exits in guard:, the cooldown in prefilters.mint_cooldown_h.
+  executor: obj({
+    max_entry_delay_s: positive, // PASSED signal older than this at entry => skipped stale
+    price_batch_size: num.int().min(1).max(49), // Price V3 takes <= 50 ids; wSOL rides along
+    no_route_max_polls: num.int().min(1),
+    priority_fee_level: z.enum(['Min', 'Low', 'Medium', 'High', 'VeryHigh', 'UnsafeMax']),
+    compute_units: num.int().positive(),
+    // min_interval_ms applies keyless; keyed_min_interval_ms when JUPITER_API_KEY is set.
+    jupiter: obj({ ...providerLimits, keyed_min_interval_ms: num.int().min(0) }),
+    helius: obj(providerLimits),
+  }),
 });
 
 export type Config = z.infer<typeof configSchema>;
