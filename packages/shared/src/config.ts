@@ -23,7 +23,10 @@ export const configSchema = obj({
     token_age_max_h: positive,
     min_buy_sol: positive,
     mint_cooldown_h: num.min(0),
+    repeat_buy_cooldown_h: num.min(0), // same wallet + mint already evaluated => repeat_buy
   }),
+  // Recorded on decisions for later scoring; no rule reads these yet.
+  scoring: obj({ confluence_window_min: positive }),
   rules: obj({
     order: z
       .array(z.enum(['R1', 'R2', 'R3', 'R4', 'R5', 'R6']))
@@ -90,6 +93,8 @@ export const configSchema = obj({
       tx_sample: num.int().min(1),
       max_inactive_h: positive,
       min_sol_quote_pct: pct,
+      min_median_swap_sol: num.min(0),
+      min_distinct_mint_ratio: num.min(0).max(1),
     }),
     // The `starter` CSV column. Unknown win rate / top-token share pass; unknown activity fails.
     starter: obj({
@@ -110,6 +115,7 @@ export const configSchema = obj({
     quote_mint: z.string().min(32).max(44),
     ping_interval_ms: num.int().positive(),
     heartbeat_interval_ms: num.int().positive(),
+    liveness_timeout_s: positive,
     reconnect_base_ms: num.int().positive(),
     reconnect_max_ms: num.int().positive(),
     tx_fetch_retries: num.int().min(0).max(20),

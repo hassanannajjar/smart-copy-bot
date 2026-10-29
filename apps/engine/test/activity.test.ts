@@ -7,7 +7,8 @@ import {
 } from '@scb/shared';
 import { describe, expect, it } from 'vitest';
 import { activityDrop, checkActivity, discover } from '../src/discover/discover.js';
-import { type Candidate, isStarter } from '../src/discover/rank.js';
+import { type Candidate, isStarter, median } from '../src/discover/rank.js';
+import { parseSwap } from '../src/scout/parse.js';
 import {
   beGainers,
   fakeBirdeye,
@@ -44,12 +45,20 @@ describe('checkActivity (recorded mainnet txs)', () => {
       [wallet]: [jupBuy, pumpSell, failed, pumpBuy].map(sigOf),
     });
     const a = await checkActivity(rpc, wallet, cfg.activity, h, timeOf(jupBuy) + HOUR);
+    const swaps = [jupBuy, pumpSell, pumpBuy].flatMap((t) => {
+      const p = parseSwap(t.tx, wallet, WSOL, h.ignoredMints);
+      return 'skip' in p ? [] : [p];
+    });
+    expect(swaps).toHaveLength(3);
     expect(a).toEqual({
       lastSwapAt: timeOf(jupBuy),
       solQuotedSwaps: 3,
       nonSolQuoteSwaps: 0,
       solQuotePct: 100,
+      medianSwapSol: median(swaps.map((s) => s.amountSol)),
+      distinctMintRatio: new Set(swaps.map((s) => s.mint)).size / 3,
     });
+    expect(a.medianSwapSol).toBeGreaterThan(0);
     expect(calls.getTransaction).not.toContain(sigOf(failed).signature);
     expect(calls.signatures).toEqual([{ wallet, limit: cfg.activity.signatures_limit }]);
   });
@@ -84,7 +93,14 @@ describe('checkActivity (recorded mainnet txs)', () => {
 
 describe('activityDrop', () => {
   const now = 1_800_000_000_000;
-  const a = { lastSwapAt: now - HOUR, solQuotedSwaps: 3, nonSolQuoteSwaps: 1, solQuotePct: 75 };
+  const a = {
+    lastSwapAt: now - HOUR,
+    solQuotedSwaps: 3,
+    nonSolQuoteSwaps: 1,
+    solQuotePct: 75,
+    medianSwapSol: 1,
+    distinctMintRatio: 1,
+  };
   it('keeps a recent SOL-quoted trader', () => {
     expect(activityDrop(a, cfg.activity, now)).toBeNull();
   });
@@ -97,6 +113,18 @@ describe('activityDrop', () => {
   });
   it('mostly stable-quoted => not_memecoin_trader', () => {
     expect(activityDrop({ ...a, solQuotePct: 40 }, cfg.activity, now)).toBe('not_memecoin_trader');
+  });
+  it('median SOL swap below min_median_swap_sol => dust_trader', () => {
+    const m = cfg.activity.min_median_swap_sol;
+    expect(activityDrop({ ...a, medianSwapSol: m / 2 }, cfg.activity, now)).toBe('dust_trader');
+    expect(activityDrop({ ...a, medianSwapSol: m }, cfg.activity, now)).toBeNull();
+  });
+  it('few distinct mints per swap => single_token_scalper', () => {
+    const r = cfg.activity.min_distinct_mint_ratio;
+    expect(activityDrop({ ...a, distinctMintRatio: r - 0.01 }, cfg.activity, now)).toBe(
+      'single_token_scalper',
+    );
+    expect(activityDrop({ ...a, distinctMintRatio: r }, cfg.activity, now)).toBeNull();
   });
 });
 

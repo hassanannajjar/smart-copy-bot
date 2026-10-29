@@ -52,6 +52,7 @@ const setup = () => {
     apiKey: KEY,
     commitment: 'confirmed',
     pingIntervalMs: 30_000,
+    livenessTimeoutMs: 180_000,
     reconnectBaseMs: 1000,
     reconnectMaxMs: 30_000,
     random: () => 0.5, // jitter factor 1.0
@@ -146,6 +147,28 @@ describe('Helius stream', () => {
     expect(t.statuses).toContainEqual({ event: 'ws_closed', code: 1006 });
     await vi.advanceTimersByTimeAsync(1000);
     expect(t.sockets).toHaveLength(2);
+  });
+
+  it('a silent socket that still pongs is terminated after the liveness timeout and reconnects', async () => {
+    const t = setup();
+    await vi.advanceTimersByTimeAsync(0);
+    const first = t.last();
+    first.ackAll();
+    const n = fixture('logs-notification').response;
+    // Pong every tick; one notification at 120s resets the silence clock.
+    for (let i = 1; i <= 10; i++) {
+      await vi.advanceTimersByTimeAsync(30_000);
+      first.emit('pong');
+      if (i === 4) first.message({ ...n, params: { ...n.params, subscription: 100 } });
+    }
+    // 120s + 180s => the tick at 330s is the first past the timeout.
+    expect(t.statuses.filter((s) => s.event === 'liveness_timeout')).toEqual([]);
+    await vi.advanceTimersByTimeAsync(30_000);
+    expect(t.statuses).toContainEqual({ event: 'liveness_timeout', silentMs: 210_000 });
+    expect(t.statuses).toContainEqual({ event: 'ws_closed', code: 1006 });
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(t.sockets).toHaveLength(2);
+    expect(t.last().sent.map((s) => s.params[0])).toEqual([{ mentions: [W1] }, { mentions: [W2] }]);
   });
 
   it('redacts the key from socket errors; stop() does not reconnect', async () => {

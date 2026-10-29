@@ -80,6 +80,8 @@ export const decisions = sqliteTable('decisions', {
   verdict: text('verdict', { enum: ['PASSED', 'KILLED', 'SKIPPED'] }).notNull(),
   killedBy: text('killed_by'),
   allFailedJson: text('all_failed_json'),
+  // Distinct tracked wallets that bought this mint within scoring.confluence_window_min; null for sells.
+  confluence: integer('confluence'),
   decidedAt: ts('decided_at').notNull(),
 });
 

@@ -219,6 +219,7 @@ export type StreamStatus =
   | { event: 'subscribe_failed'; wallet: string; code: number | null }
   | { event: 'ws_closed'; code: number }
   | { event: 'reconnecting'; attempt: number; delayMs: number }
+  | { event: 'liveness_timeout'; silentMs: number }
   | { event: 'ws_error'; message: string };
 
 export interface HeliusStream {
@@ -242,6 +243,8 @@ export interface StreamOptions {
   apiKey: string;
   commitment: 'confirmed' | 'finalized';
   pingIntervalMs: number;
+  /** No logs notification for this long => terminate and reconnect (checked on each ping tick). */
+  livenessTimeoutMs: number;
   reconnectBaseMs: number;
   reconnectMaxMs: number;
   connect?: (url: string) => SocketLike;
@@ -264,6 +267,7 @@ export const createHeliusStream = (o: StreamOptions): HeliusStream => {
         socket = ws;
         const walletBySub = new Map<number, string>();
         let alive = true;
+        let lastNotificationAt = Date.now();
         let acked = 0;
         let failed = 0;
         const settle = () => {
@@ -280,8 +284,15 @@ export const createHeliusStream = (o: StreamOptions): HeliusStream => {
             ws.send(JSON.stringify({ jsonrpc: '2.0', id, method: 'logsSubscribe', params }));
           });
           // Helius drops idle sockets after 10 min; a missed pong by the next tick means dead.
+          // A socket can also keep ponging while delivering no notifications (seen overnight:
+          // ~14 min silent before a 1006), so silence past the liveness timeout is dead too.
           pingTimer = setInterval(() => {
             if (!alive) return ws.terminate();
+            const silentMs = Date.now() - lastNotificationAt;
+            if (silentMs > o.livenessTimeoutMs) {
+              on.status({ event: 'liveness_timeout', silentMs });
+              return ws.terminate();
+            }
             alive = false;
             ws.ping();
           }, o.pingIntervalMs);
@@ -311,6 +322,7 @@ export const createHeliusStream = (o: StreamOptions): HeliusStream => {
           const n = heliusLogsNotificationSchema.safeParse(msg);
           const subWallet = n.success ? walletBySub.get(n.data.params.subscription) : undefined;
           if (!n.success || !subWallet) return;
+          lastNotificationAt = Date.now();
           const { context, value } = n.data.params.result;
           on.logs({
             wallet: subWallet,

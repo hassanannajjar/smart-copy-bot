@@ -42,6 +42,7 @@ export const startScout = (d: ScoutDeps) => {
   const lastSig = new Map<string, string>(); // wallet -> newest signature seen, for reconnect backfill
   let booted = false;
   let reconnects = 0;
+  let lastNotificationAt: number | null = null;
   let chain: Promise<unknown> = Promise.resolve();
   mkdirSync(d.rawDir, { recursive: true });
 
@@ -196,6 +197,9 @@ export const startScout = (d: ScoutDeps) => {
         if (reconnects % 10 === 0) d.log.warn({ reconnects }, 'reconnecting often; check credits');
         d.log.info({ attempt: s.attempt, reconnect_in_ms: s.delayMs }, 'reconnecting');
         return event('reconnecting', { attempt: s.attempt, delay_ms: s.delayMs });
+      case 'liveness_timeout':
+        d.log.warn({ silent_s: Math.round(s.silentMs / 1000) }, 'ws silent too long; reconnecting');
+        return event('liveness_timeout', { silent_ms: s.silentMs }, 'warn');
       case 'ws_error':
         return d.log.warn({ err: s.message }, 'ws error'); // already redacted by the stream
     }
@@ -204,6 +208,7 @@ export const startScout = (d: ScoutDeps) => {
   let recordedNotification = false;
   d.stream.start(d.wallets, {
     logs: (e) => {
+      lastNotificationAt = now();
       lastSig.set(e.wallet, e.signature);
       if (d.record && !recordedNotification) {
         recordedNotification = true;
@@ -218,8 +223,14 @@ export const startScout = (d: ScoutDeps) => {
     status: onStatus,
   });
 
-  event('heartbeat');
-  const heartbeat = setInterval(() => event('heartbeat'), d.cfg.heartbeat_interval_ms);
+  // The heartbeat is a local timer: last_notification_age_s is what shows the ws is delivering.
+  const beat = () =>
+    event('heartbeat', {
+      last_notification_age_s:
+        lastNotificationAt === null ? null : Math.round((now() - lastNotificationAt) / 1000),
+    });
+  beat();
+  const heartbeat = setInterval(beat, d.cfg.heartbeat_interval_ms);
 
   return {
     stop: () => {

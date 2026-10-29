@@ -66,6 +66,7 @@ const scout = startScout({
     apiKey,
     commitment: cfg.commitment,
     pingIntervalMs: cfg.ping_interval_ms,
+    livenessTimeoutMs: cfg.liveness_timeout_s * 1000,
     reconnectBaseMs: cfg.reconnect_base_ms,
     reconnectMaxMs: cfg.reconnect_max_ms,
   }),

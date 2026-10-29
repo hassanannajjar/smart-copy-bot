@@ -10,7 +10,19 @@ import {
   type TradingDb,
   tokenSnapshots,
 } from '@scb/shared';
-import { asc, eq, isNull } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  between,
+  countDistinct,
+  eq,
+  inArray,
+  isNull,
+  lt,
+  ne,
+  or,
+  sql,
+} from 'drizzle-orm';
 import type { Logger } from 'pino';
 import {
   buildSnapshot,
@@ -37,6 +49,11 @@ export interface RulesDeps {
 }
 
 type Signal = typeof signals.$inferSelect;
+
+/** The moment the wallet traded: backfilled signals get detected_at = fetch time, block_time doesn't. */
+const tradedAt = (sig: Signal) =>
+  Math.min(sig.blockTime?.getTime() ?? Infinity, sig.detectedAt.getTime());
+const tradedAtSql = sql<number>`min(coalesce(${signals.blockTime}, ${signals.detectedAt}), ${signals.detectedAt})`;
 
 export const startRules = (d: RulesDeps) => {
   const now = d.now ?? Date.now;
@@ -65,6 +82,7 @@ export const startRules = (d: RulesDeps) => {
     // SKIPPED rows carry the pre-filter reason in killed_by; dashboard kill charts read KILLED only.
     const killedBy = 'skip' in outcome ? outcome.skip : outcome.killedBy;
     const failed = 'skip' in outcome ? null : outcome.failed;
+    const confluence = sig.side === 'buy' ? countConfluence(sig) : null;
     d.db.transaction((tx) => {
       if (snap) {
         const { s, raw } = snap;
@@ -101,6 +119,7 @@ export const startRules = (d: RulesDeps) => {
           verdict,
           killedBy,
           allFailedJson: failed?.length ? JSON.stringify(failed) : null,
+          confluence,
           decidedAt: new Date(now()),
         })
         .onConflictDoNothing({ target: decisions.signalId })
@@ -122,6 +141,47 @@ export const startRules = (d: RulesDeps) => {
     });
   };
 
+  /** Distinct tracked wallets (this one included) that bought the mint within the window. */
+  const countConfluence = (sig: Signal) => {
+    const t = tradedAt(sig);
+    const from = t - d.config.scoring.confluence_window_min * 60_000;
+    return (
+      d.db
+        .select({ n: countDistinct(signals.wallet) })
+        .from(signals)
+        .where(
+          and(eq(signals.mint, sig.mint), eq(signals.side, 'buy'), between(tradedAtSql, from, t)),
+        )
+        .get()?.n ?? 0
+    );
+  };
+
+  /**
+   * An earlier buy of this mint by this wallet, evaluated (KILLED/PASSED, not data_unavailable)
+   * within the cooldown. Anchored on evaluated buys, so a stream of repeats can't slide the window,
+   * and a stale or provider-outage kill doesn't block a later fresh buy.
+   */
+  const isRepeatBuy = (sig: Signal) => {
+    const t = tradedAt(sig);
+    const from = t - d.config.prefilters.repeat_buy_cooldown_h * 3_600_000;
+    return !!d.db
+      .select({ id: signals.id })
+      .from(signals)
+      .innerJoin(decisions, eq(decisions.signalId, signals.id))
+      .where(
+        and(
+          eq(signals.wallet, sig.wallet),
+          eq(signals.mint, sig.mint),
+          eq(signals.side, 'buy'),
+          lt(signals.id, sig.id),
+          between(tradedAtSql, from, t),
+          inArray(decisions.verdict, ['KILLED', 'PASSED']),
+          or(isNull(decisions.killedBy), ne(decisions.killedBy, 'data_unavailable')),
+        ),
+      )
+      .get();
+  };
+
   const decide = async (id: number) => {
     const log = d.log.child({ signal_id: id });
     const sig = d.db.select().from(signals).where(eq(signals.id, id)).get();
@@ -129,15 +189,15 @@ export const startRules = (d: RulesDeps) => {
     if (d.db.select().from(decisions).where(eq(decisions.signalId, id)).get())
       return log.debug('already decided');
 
-    const skip = prefilter(sig, d.config.prefilters);
+    // Cheap checks first: neither spends a provider call.
+    const skip = prefilter(sig, d.config.prefilters) ?? (isRepeatBuy(sig) ? 'repeat_buy' : null);
     if (skip) {
       write(sig, null, { verdict: 'SKIPPED', skip });
       return log.info({ verdict: 'SKIPPED', reason: skip }, 'decision');
     }
 
-    // The moment the wallet traded. Backfilled signals get detected_at = fetch time, so block_time
-    // (when known) is what keeps an hours-old buy from looking fresh.
-    const detectedAt = Math.min(sig.blockTime?.getTime() ?? Infinity, sig.detectedAt.getTime());
+    // block_time (when known) is what keeps an hours-old backfilled buy from looking fresh.
+    const detectedAt = tradedAt(sig);
     const maxAgeMs = d.config.data.max_snapshot_age_s * 1000;
     // Already too old to be fresh (boot backlog, backfill): don't spend provider budget on it.
     const tooOld = now() - detectedAt > maxAgeMs;

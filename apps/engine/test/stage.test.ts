@@ -192,6 +192,56 @@ describe('rules stage', () => {
     expect(t.decision(b)).toMatchObject({ verdict: 'SKIPPED' });
   });
 
+  it('repeat buy of an evaluated mint by the same wallet => SKIPPED repeat_buy, no provider call', async () => {
+    const t = setup();
+    const first = t.signal();
+    t.rules.submit(first);
+    await t.rules.idle();
+    expect(t.decision(first)?.verdict).toBe('KILLED');
+    const calls = t.calls.length;
+
+    const repeat = t.signal();
+    const otherWallet = t.signal({ wallet: 'W2' });
+    t.rules.submit(repeat);
+    t.rules.submit(otherWallet);
+    await t.rules.idle();
+    expect(t.decision(repeat)).toMatchObject({ verdict: 'SKIPPED', killedBy: 'repeat_buy' });
+    expect(t.results(repeat)).toHaveLength(0);
+    expect(t.decision(otherWallet)?.verdict).toBe('KILLED'); // another wallet is evaluated
+    expect(t.calls.slice(calls).filter((c) => c === 'dexscreener')).toHaveLength(1);
+  });
+
+  it('repeat_buy: outside the cooldown, or after a data_unavailable kill, the buy is evaluated', async () => {
+    const t = setup(['dexscreener']);
+    const outage = t.signal(); // KILLED data_unavailable: doesn't anchor a cooldown
+    const old = t.signal({ wallet: 'W2', detectedAt: new Date(T - 7 * 3_600_000) }); // stale kill
+    t.db
+      .insert(decisions)
+      .values({ signalId: old, verdict: 'KILLED', killedBy: 'R1', decidedAt: new Date(T) })
+      .run();
+    const a = t.signal();
+    const b = t.signal({ wallet: 'W2' }); // W2's evaluated buy is 7h old: outside the 6h cooldown
+    for (const id of [outage, a, b]) t.rules.submit(id);
+    await t.rules.idle();
+    expect(t.decision(outage)?.killedBy).toBe('data_unavailable');
+    expect(t.decision(a)?.killedBy).toBe('data_unavailable');
+    expect(t.decision(b)?.killedBy).toBe('data_unavailable');
+  });
+
+  it('records confluence: distinct wallets that bought the mint in the window; null for sells', async () => {
+    const t = setup();
+    t.signal({ wallet: 'W2', detectedAt: new Date(T - 30 * 60_000) });
+    t.signal({ wallet: 'W3', detectedAt: new Date(T - 2 * 3_600_000) }); // outside 60 min
+    t.signal({ wallet: 'W4', mint: MINTS.curve }); // other mint
+    const id = t.signal();
+    const sell = t.signal({ wallet: 'W5', side: 'sell' });
+    t.rules.submit(id);
+    t.rules.submit(sell);
+    await t.rules.idle();
+    expect(t.decision(id)?.confluence).toBe(2); // W1 + W2
+    expect(t.decision(sell)?.confluence).toBeNull();
+  });
+
   it('stop(): queued signals are left for the next boot', async () => {
     const t = setup();
     const id = t.signal();

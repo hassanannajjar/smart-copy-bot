@@ -129,6 +129,8 @@ const reportRow = (c: Candidate, rank: number, now: number) =>
     (c.identitySource === 'onchain' ? 'onc' : c.identityChecked ? 'yes' : 'no').padEnd(3),
     (c.lastSwapAt === null ? '-' : `${num1((now - c.lastSwapAt) / 3_600_000)}h`).padStart(7),
     pct(c.solQuotePct).padStart(6),
+    (c.medianSwapSol === null ? '-' : c.medianSwapSol.toFixed(2)).padStart(7),
+    (c.distinctMintRatio === null ? '-' : c.distinctMintRatio.toFixed(2)).padStart(6),
     c.starter ? 'yes' : 'no',
   ].join('  ');
 
@@ -174,6 +176,8 @@ export const formatReport = (
     'id ',
     'swap_ago'.padStart(7),
     'sol_q%'.padStart(6),
+    'med_sol'.padStart(7),
+    'mint_r'.padStart(6),
     'starter',
   ].join('  ');
   const dropped = Object.entries(r.dropped)
@@ -192,7 +196,7 @@ export const formatReport = (
     `human-likeness: ${humanLikeness(r.candidates)}`,
     `STARTER: ${r.candidates.filter((c) => c.starter).length} (identity on-chain: ${r.candidates.filter((c) => c.identitySource === 'onchain').length}; activity-checked: ${r.candidates.filter((c) => c.lastSwapAt !== null).length}; Helius calls = credits: ${r.heliusCalls})`,
     ...r.notes.map((n) => `note: ${n}`),
-    'Scopes: realized/win%/tr/day = leaderboard window; win% = token win rate; top_tok + hold_s = all-time profitable positions, first page ("~" = partial); swap_ago + sol_q% = Helius sample of recent txs.',
+    'Scopes: realized/win%/tr/day = leaderboard window; win% = token win rate; top_tok + hold_s = all-time profitable positions, first page ("~" = partial); swap_ago + sol_q% + med_sol (median SOL swap) + mint_r (distinct mints / swaps) = Helius sample of recent txs.',
     `Wrote ${outPath}. Review by hand; copy chosen rows into data/wallets.csv yourself.`,
   ].join('\n');
 };

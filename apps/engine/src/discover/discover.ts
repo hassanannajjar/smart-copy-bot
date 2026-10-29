@@ -174,6 +174,8 @@ export interface Activity {
   solQuotedSwaps: number;
   nonSolQuoteSwaps: number;
   solQuotePct: number | null;
+  medianSwapSol: number | null; // over SOL-quoted swaps
+  distinctMintRatio: number | null; // distinct mints / SOL-quoted swaps
 }
 
 /**
@@ -191,6 +193,8 @@ export const checkActivity = async (
   let sol = 0;
   let nonSol = 0;
   let last: number | null = null;
+  const sizes: (number | null)[] = [];
+  const mints = new Set<string>();
   const newest = sigs[0]?.blockTime;
   // Nothing at all inside the window means no swap either: skip the getTransaction credits.
   const stale = newest != null && newest * 1000 < now - a.max_inactive_h * 3_600_000;
@@ -199,8 +203,11 @@ export const checkActivity = async (
       const { tx } = await rpc.getTransaction(s.signature);
       if (!tx) continue;
       const p = parseSwap(tx, wallet, h.quoteMint, h.ignoredMints);
-      if (!('skip' in p)) sol++;
-      else if (p.skip === 'non_sol_quote' || p.skip === 'multi_token') nonSol++;
+      if (!('skip' in p)) {
+        sol++;
+        sizes.push(p.amountSol);
+        mints.add(p.mint);
+      } else if (p.skip === 'non_sol_quote' || p.skip === 'multi_token') nonSol++;
       else continue;
       const t = tx.blockTime ?? s.blockTime;
       if (t != null) last = Math.max(last ?? 0, t * 1000);
@@ -212,6 +219,8 @@ export const checkActivity = async (
     solQuotedSwaps: sol,
     nonSolQuoteSwaps: nonSol,
     solQuotePct: swaps ? (sol / swaps) * 100 : null,
+    medianSwapSol: median(sizes),
+    distinctMintRatio: sol ? mints.size / sol : null,
   };
 };
 
@@ -220,6 +229,11 @@ export const activityDrop = (a: Activity, cfg: DiscoveryConfig['activity'], now:
   if (a.lastSwapAt === null || now - a.lastSwapAt > cfg.max_inactive_h * 3_600_000)
     return 'inactive';
   if (a.solQuotePct === null || a.solQuotePct < cfg.min_sol_quote_pct) return 'not_memecoin_trader';
+  // Dust buys never pass prefilters.min_buy_sol, so the wallet would only produce SKIPPED rows.
+  if (a.medianSwapSol !== null && a.medianSwapSol < cfg.min_median_swap_sol) return 'dust_trader';
+  // Trading one or two mints over and over floods the funnel with repeat buys of one token.
+  if (a.distinctMintRatio !== null && a.distinctMintRatio < cfg.min_distinct_mint_ratio)
+    return 'single_token_scalper';
   return null;
 };
 
@@ -355,6 +369,8 @@ export const discover = async (
           }
           c.lastSwapAt = a.lastSwapAt;
           c.solQuotePct = a.solQuotePct;
+          c.medianSwapSol = a.medianSwapSol;
+          c.distinctMintRatio = a.distinctMintRatio;
         } catch (e) {
           warnings.push(`activity check failed for ${c.address} (${errorText(e)}); left unchecked`);
         }

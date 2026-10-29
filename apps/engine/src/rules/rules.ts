@@ -195,7 +195,7 @@ export const evaluate = (
   };
 };
 
-export type SkipReason = 'sell' | 'ignored_mint' | 'below_min_buy' | 'token_age';
+export type SkipReason = 'sell' | 'ignored_mint' | 'below_min_buy' | 'token_age' | 'repeat_buy';
 
 /** Cheap pre-filters that need no provider call. Token age runs after DexScreener. */
 export const prefilter = (

@@ -186,4 +186,31 @@ describe('scout', () => {
     );
     expect(JSON.stringify(ev)).not.toMatch(/wss?:\/\/|api-key/);
   });
+
+  it('heartbeat carries last_notification_age_s; liveness_timeout is logged as a warning', async () => {
+    vi.useFakeTimers();
+    const t = setup();
+    t.s.logs({ wallet: B, signature: sigOf(transfer) });
+    await t.scout.idle();
+    vi.advanceTimersByTime(cfg.heartbeat_interval_ms * 2);
+    t.s.status({ event: 'liveness_timeout', silentMs: 210_000 });
+    t.scout.stop();
+
+    const ev = t.events();
+    const beats = ev
+      .filter((e) => e.message === 'heartbeat')
+      .map((e) => JSON.parse(e.dataJson ?? ''));
+    const age = (cfg.heartbeat_interval_ms * 2) / 1000;
+    expect(beats).toEqual([
+      { last_notification_age_s: null }, // boot: nothing received yet
+      { last_notification_age_s: age / 2 },
+      { last_notification_age_s: age },
+    ]);
+    expect(ev.find((e) => e.message === 'liveness_timeout')).toMatchObject({
+      level: 'warn',
+      dataJson: '{"silent_ms":210000}',
+    });
+    const warned = t.lines.map((l) => JSON.parse(l)).find((l) => l.msg.startsWith('ws silent'));
+    expect(warned).toMatchObject({ level: 40, silent_s: 210 });
+  });
 });

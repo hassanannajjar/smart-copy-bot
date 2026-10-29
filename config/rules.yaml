@@ -14,6 +14,10 @@ prefilters: # SKIPPED, not counted as kills
   token_age_max_h: 72 # placeholder, tune
   min_buy_sol: 0.5 # placeholder, tune. Drops dust buys
   mint_cooldown_h: 6 # placeholder, tune
+  repeat_buy_cooldown_h: 6 # placeholder, tune. Same wallet re-buying an already evaluated mint => SKIPPED repeat_buy
+
+scoring: # recorded on decisions, not used by any rule yet
+  confluence_window_min: 60 # distinct tracked wallets that bought the mint within this window
 
 rules: # killed_by = first failing rule in this order
   order: [R1, R2, R3, R4, R5, R6]
@@ -88,6 +92,8 @@ discovery: # M0.5 `pnpm wallets:discover`: builds data/wallets.candidates.csv fo
     tx_sample: 10
     max_inactive_h: 48 # no swap seen in the sample within this => inactive
     min_sol_quote_pct: 50 # SOL-quoted share of sampled swaps below this => not_memecoin_trader
+    min_median_swap_sol: 0.05 # placeholder, tune. Median sampled SOL-quoted swap below this => dust_trader
+    min_distinct_mint_ratio: 0.3 # placeholder, tune. Distinct mints / sampled SOL-quoted swaps below this => single_token_scalper
   starter: # `starter` CSV column: identity checked + activity checked + all of these
     min_sol_quote_pct: 50
     max_trades_per_day: 55 # raised from 40 on 2026-10-29
@@ -105,6 +111,7 @@ scout: # M1: Helius logsSubscribe per wallet + getTransaction (docs/providers/he
   quote_mint: So11111111111111111111111111111111111111112 # wSOL; SOL-quoted swaps only in v1
   ping_interval_ms: 30000 # Helius drops idle sockets after 10 min; no pong by next ping => reconnect
   heartbeat_interval_ms: 60000 # events_log stage=scout heartbeat row (dashboard reads it)
+  liveness_timeout_s: 180 # placeholder, tune. No logs notification for this long => terminate, reconnect, backfill
   reconnect_base_ms: 1000
   reconnect_max_ms: 30000
   tx_fetch_retries: 5 # getTransaction can be null right after the notification

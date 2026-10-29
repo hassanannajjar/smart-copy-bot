@@ -37,6 +37,8 @@ export interface Candidate {
   identitySource: 'provider' | 'onchain' | null; // onchain = System Program-owned (getAccountInfo)
   lastSwapAt: number | null; // ms; set only by the Helius activity check
   solQuotePct: number | null;
+  medianSwapSol: number | null; // Helius activity sample, SOL-quoted swaps
+  distinctMintRatio: number | null;
   starter: boolean;
 }
 
@@ -117,6 +119,8 @@ export const mergeRows = (rows: WindowRow[], identityChecked: Set<string>): Cand
       identitySource: identityChecked.has(address) ? 'provider' : null,
       lastSwapAt: null,
       solQuotePct: null,
+      medianSwapSol: null,
+      distinctMintRatio: null,
       starter: false,
     };
   });
@@ -197,6 +201,8 @@ export const CSV_COLUMNS = [
   'identity_source',
   'last_swap_at',
   'sol_quote_pct',
+  'median_swap_sol',
+  'distinct_mint_ratio',
   'starter',
 ] as const;
 
@@ -231,6 +237,8 @@ export const toCsv = (candidates: Candidate[]) =>
         c.identitySource ?? '',
         c.lastSwapAt === null ? '' : new Date(c.lastSwapAt).toISOString(),
         fixed(c.solQuotePct),
+        c.medianSwapSol === null ? '' : c.medianSwapSol.toFixed(3),
+        fixed(c.distinctMintRatio),
         String(c.starter),
       ]
         .map(csvCell)
