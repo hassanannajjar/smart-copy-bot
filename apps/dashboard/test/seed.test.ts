@@ -47,7 +47,7 @@ describe('seedDemo', () => {
     const dir = fresh();
     const path = demoTarget(dir);
     seedDemo(path, 1_700_000_000_000);
-    const a = readView(path, 'DEMO');
+    const a = readView(path, 'DEMO', 1_700_000_000_000);
     if (a.state !== 'ok') throw new Error(a.state);
     const { overview, killReasons, copyLog } = a.data;
     expect(overview.signals).toBe(300);
@@ -56,7 +56,7 @@ describe('seedDemo', () => {
     expect(killReasons[0]?.reason).toBe('R1');
     expect(copyLog.some((r) => r.status === 'open')).toBe(true);
     seedDemo(path, 1_700_000_000_000);
-    expect(readView(path, 'DEMO')).toEqual(a);
+    expect(readView(path, 'DEMO', 1_700_000_000_000)).toEqual(a);
     expect(readView(join(dir, 'paper.db'), 'PAPER').state).toBe('empty');
   });
 });

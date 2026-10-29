@@ -22,3 +22,10 @@ export const engineState = (): { state: ModeState; error: string | null } => {
     };
   }
 };
+
+export const THEME_COOKIE = 'scb_theme';
+export type Theme = 'dark' | 'light';
+
+/** Display theme (cookie, read on the server so there is no flash). Defaults to dark. */
+export const getTheme = async (): Promise<Theme> =>
+  (await cookies()).get(THEME_COOKIE)?.value === 'light' ? 'light' : 'dark';

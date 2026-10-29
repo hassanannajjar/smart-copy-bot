@@ -55,6 +55,7 @@ It is a TypeScript pnpm workspace:
 - **Use structured pino logs**, with `signal_id` on every line of the pipeline.
 - **Enforce invariants in the DB where possible.** Examples: the unique `tx_sig` and one open position per mint.
 - **Keep the schema Postgres-portable:** ms-integer timestamps, int booleans, JSON as text.
+- **Push after every fast-forward of main:** run `git push origin main` (remote: git@github.com:hassanannajjar/smart-copy-bot.git). Never force-push. If the push fails, report it; don't retry with --force.
 
 ## Definition of done
 - `pnpm build && pnpm test && pnpm lint` passes.

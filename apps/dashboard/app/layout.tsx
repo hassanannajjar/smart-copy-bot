@@ -1,17 +1,19 @@
-import { loadConfig } from '@scb/shared';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { AutoRefresh } from '../components/AutoRefresh';
 import { ModeBanner } from '../components/ModeBanner';
-import { ModeSwitcher } from '../components/ModeSwitcher';
+import { ViewSwitcher } from '../components/ViewSwitcher';
 import { liveGate } from '../lib/control';
 import { paths } from '../lib/paths';
-import { liveStats, readHeartbeat } from '../lib/trading';
-import { engineState, getView } from '../lib/view';
+import { readRules } from '../lib/rules';
+import { liveStats, readEngineHealth, readHeartbeat } from '../lib/trading';
+import { engineState, getTheme, getView } from '../lib/view';
 import './globals.css';
 
 export const dynamic = 'force-dynamic';
+
+export const viewport: Viewport = { width: 'device-width', initialScale: 1 };
 
 export async function generateMetadata(): Promise<Metadata> {
   if (engineState().state.active === 'LIVE') {
@@ -20,30 +22,41 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: `Copy Bot (${await getView()})`, icons: '/favicon.svg' };
 }
 
-const dailyLossLimit = () => {
-  try {
-    return loadConfig(paths.rules).live.daily_loss_limit_usd;
-  } catch {
-    return 0; // fail closed: an unreadable rules.yaml shows no loss budget left
-  }
-};
-
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const view = await getView();
+  const [view, theme] = await Promise.all([getView(), getTheme()]);
   const { state, error } = engineState();
-  const heartbeat = readHeartbeat(paths.view(state.active));
-  const live = state.active === 'LIVE' ? liveStats(paths.view('LIVE'), dailyLossLimit()) : null;
+  const rules = readRules();
+  const active = paths.view(state.active);
+  // Fail closed: an unreadable rules.yaml shows no loss budget left.
+  const live =
+    state.active === 'LIVE'
+      ? liveStats(paths.view('LIVE'), rules?.live.daily_loss_limit_usd ?? 0)
+      : null;
+  const limits = rules && {
+    heartbeatMs: rules.scout.heartbeat_interval_ms,
+    livenessS: rules.scout.liveness_timeout_s,
+  };
   return (
-    <html lang="en">
-      <body>
-        <ModeBanner engine={state} error={error} heartbeat={heartbeat} live={live} view={view} />
-        <header>
+    <html lang="en" data-theme={theme}>
+      <body className={state.active === 'LIVE' ? 'engine-live' : undefined}>
+        <ModeBanner
+          engine={state}
+          error={error}
+          heartbeat={readHeartbeat(active)}
+          health={readEngineHealth(active)}
+          limits={limits}
+          live={live}
+          view={view}
+          gate={liveGate()}
+        />
+        <header className="bar">
+          <span className="brand">smart-copy-bot</span>
           <nav>
             <Link href="/">Overview</Link>
             <Link href="/history">Mode history</Link>
-            <Link href="/settings">Settings</Link>
+            <Link href="/settings">Rules</Link>
           </nav>
-          <ModeSwitcher view={view} engine={state} gate={liveGate()} />
+          <ViewSwitcher view={view} theme={theme} />
         </header>
         <main>{children}</main>
         <AutoRefresh />

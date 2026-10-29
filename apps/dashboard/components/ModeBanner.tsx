@@ -1,10 +1,8 @@
 import type { Mode } from '@scb/shared';
-import { killSwitch } from '../app/actions';
 import type { ModeState } from '../lib/control';
-import { usd } from '../lib/format';
-import type { Heartbeat } from '../lib/trading';
-
-const ago = (t: number | null) => (t ? `${Math.round((Date.now() - t) / 1000)}s ago` : 'never');
+import { ago, dur, stale, usd } from '../lib/format';
+import type { Health, Heartbeat } from '../lib/trading';
+import { EngineControls } from './EngineControls';
 
 const VIEW_TEXT: Record<Mode, string> = {
   DEMO: 'DEMO data — not real',
@@ -12,45 +10,56 @@ const VIEW_TEXT: Record<Mode, string> = {
   LIVE: 'LIVE data — real funds',
 };
 
+export type Limits = { heartbeatMs: number; livenessS: number } | null;
+
 type Props = {
   engine: ModeState;
   error: string | null;
   heartbeat: Heartbeat | null;
+  health: Health | null;
+  limits: Limits;
   live: { todayPnlUsd: number; lossRemainingUsd: number } | null;
   view: Mode;
+  gate: { open: boolean; reason: string };
 };
 
-/** The engine-mode banner is always shown, whatever data view is selected. */
-export function ModeBanner({ engine, error, heartbeat, live, view }: Props) {
+/** The engine strip and data-view strip: always shown and sticky, whatever view is selected. */
+export function ModeBanner({ engine, error, heartbeat, health, limits, live, view, gate }: Props) {
   const isLive = engine.active === 'LIVE';
+  const now = Date.now();
+  const hbAt = health?.heartbeatAt ?? null;
+  const hbStale = stale(hbAt === null ? null : now - hbAt, limits && 2 * limits.heartbeatMs);
+  const ws = health?.notificationAgeS ?? null;
+  const wsStale = stale(ws === null ? null : ws * 1000, limits && limits.livenessS * 1000);
   return (
-    <>
-      <div className={isLive ? 'banner live' : 'banner paper'}>
-        {isLive ? (
-          <>
-            <b>LIVE — REAL FUNDS</b>
-            {/* ponytail: wallet address and balance arrive with the M7 engine status channel */}
-            <span>Wallet: not reported (M7)</span>
-            <span>Balance: —</span>
-            {live && <span>Today: {usd(live.todayPnlUsd)}</span>}
-            {live && <span>Loss limit left: {usd(live.lossRemainingUsd)}</span>}
-            <form action={killSwitch.bind(null, true)}>
-              <button type="submit" className="kill">
-                STOP
-              </button>
-            </form>
-          </>
-        ) : (
-          <b>PAPER TRADING — real market data, simulated money</b>
-        )}
-        <span>
-          Heartbeat: {ago(heartbeat?.lastEventAt ?? null)} · Last signal:{' '}
-          {ago(heartbeat?.lastSignalAt ?? null)}
+    <div className="sticky">
+      <div className={isLive ? 'strip live' : 'strip'} role="status">
+        <b className="engine">{isLive ? 'LIVE — REAL FUNDS' : 'ENGINE PAPER'}</b>
+        <span className={hbStale ? 'metric bad' : 'metric ok'}>
+          <i className="dot" aria-hidden /> heartbeat {ago(hbAt, now)}
         </span>
-        {engine.killSwitch && <b className="notice">KILL SWITCH ON — no new positions</b>}
-        {error && <b className="notice">{error}</b>}
+        <span className={wsStale ? 'metric bad' : 'metric'}>
+          ws msg {ws === null ? '—' : `${dur(ws)} ago`}
+        </span>
+        <span className="metric dim">last signal {ago(heartbeat?.lastSignalAt ?? null, now)}</span>
+        {isLive && (
+          <>
+            {/* ponytail: wallet address and balance arrive with the M7 engine status channel */}
+            <span className="metric">wallet: not reported (M7)</span>
+            {live && <span className="metric">today {usd(live.todayPnlUsd)}</span>}
+            {live && <span className="metric">loss limit left {usd(live.lossRemainingUsd)}</span>}
+          </>
+        )}
+        <EngineControls engine={engine} gate={gate} />
       </div>
-      <div className={`viewstrip view-${view}`}>Viewing: {VIEW_TEXT[view]}</div>
-    </>
+      {engine.killSwitch && (
+        <div className="notice">KILL SWITCH ON — no new positions open until it is released</div>
+      )}
+      {error && <div className="notice">{error}</div>}
+      <div className={`viewstrip view-${view}`}>
+        Viewing: <b>{VIEW_TEXT[view]}</b>
+        {view !== engine.active && <span> · engine is running {engine.active}</span>}
+      </div>
+    </div>
   );
 }

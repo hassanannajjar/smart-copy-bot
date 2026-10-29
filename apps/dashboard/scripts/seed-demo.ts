@@ -66,6 +66,32 @@ const TABLES = [
   'events_log',
 ];
 
+// The engine's GuardState shape (apps/engine/src/paper/guard.ts), with the rules.yaml defaults.
+// last_mark is not written by the engine yet; DEMO sets it so the mark/uPnL columns can be seen.
+const guardJson = (
+  entryAt: number,
+  price: number,
+  open: boolean,
+  ladderDone: boolean,
+  now: number,
+) =>
+  JSON.stringify({
+    stop_loss_pct: -30,
+    take_profit: [{ at_multiple: 2, sell_pct: 50, done: ladderDone || !open }],
+    trailing_stop_pct: 25,
+    time_stop_at: entryAt + 24 * 3_600_000,
+    rug_liquidity_drop_pct: 50,
+    decimals: 6,
+    initial_raw: '1000000000',
+    remaining_raw: !open ? '0' : ladderDone ? '500000000' : '1000000000',
+    peak_price: ladderDone ? price * 2.4 : null,
+    last_liquidity_usd: null,
+    no_route_polls: 0,
+    platform_fee_usd: 0,
+    slippage_usd: 0,
+    ...(open && { last_mark: price * (ladderDone ? 2.2 : 0.88), last_mark_at: now }),
+  });
+
 export const seedDemo = (path: string, now = Date.now()) => {
   const rnd = prng(42);
   const bytes = (n: number) => Array.from({ length: n }, () => Math.floor(rnd() * 256));
@@ -205,7 +231,9 @@ export const seedDemo = (path: string, now = Date.now()) => {
         if (vetoed) continue;
 
         const size = 50;
-        const open = passedCount === 1;
+        // Two open positions: a fresh one, and one past its TP ladder with the trailing stop armed.
+        const open = passedCount === 1 || passedCount === 3;
+        const entryAt = open ? now - passedCount * 3_600_000 : at + 2000;
         // Mostly small losers, a few runners, one rug.
         const outcome =
           passedCount === 2 ? -0.95 : rnd() < 0.2 ? 1 + rnd() * 3 : -0.1 - rnd() * 0.25;
@@ -218,12 +246,9 @@ export const seedDemo = (path: string, now = Date.now()) => {
             mint,
             size,
             price,
-            at + 2000,
-            price * 0.75,
-            JSON.stringify([
-              { at_pct: 100, sell_pct: 50 },
-              { at_pct: 300, sell_pct: 50 },
-            ]),
+            entryAt,
+            price * 0.7,
+            guardJson(entryAt, price, open, passedCount === 3, now),
             open ? 'open' : 'closed',
             open ? null : exit,
             open ? null : at + 3_600_000,
@@ -235,20 +260,38 @@ export const seedDemo = (path: string, now = Date.now()) => {
             open ? null : ((gross - fees) / size) * 100,
           ).lastInsertRowid,
         );
-        insFill.run(pid, 'buy', size / price, price, fees / 2, at + 2000);
+        insFill.run(pid, 'buy', size / price, price, fees / 2, entryAt);
         if (!open) insFill.run(pid, 'sell', size / price, exit, fees / 2, at + 3_600_000);
       }
 
+      // Realistic event shapes (same stage/message/data as the engine writes), newest last.
+      const EVENTS: [string, string, string, () => Record<string, unknown>][] = [
+        ['info', 'rules', 'KILLED', () => ({ mint: b58(bytes(32)), killed_by: weighted() })],
+        ['info', 'rules', 'SKIPPED', () => ({ mint: b58(bytes(32)), killed_by: 'repeat_buy' })],
+        ['info', 'paper', 'skipped', () => ({ mint: b58(bytes(32)), reason: 'position_open' })],
+        ['warn', 'scout', 'ws_closed', () => ({ code: 1006 })],
+        ['info', 'scout', 'reconnecting', () => ({ attempt: 1, delay_ms: 1000 })],
+        ['warn', 'scout', 'liveness_timeout', () => ({ silent_ms: 181_000 })],
+      ];
       for (let i = 0; i < 50; i++) {
-        insEvent.run(
-          now - Math.floor(rnd() * 7 * 86_400_000),
-          pick(['info', 'info', 'warn']),
-          pick(['scout', 'filter', 'analyst', 'guard', 'paper']),
-          'demo event',
-          null,
-        );
+        const [level, stage, message, data] = pick(EVENTS);
+        const at = now - 3_600_000 + i * 60_000;
+        insEvent.run(at, level, stage, message, JSON.stringify(data()));
       }
-      insEvent.run(now, 'info', 'scout', 'demo heartbeat', null);
+      insEvent.run(
+        now - 30_000,
+        'info',
+        'scout',
+        'subscriptions_acked',
+        JSON.stringify({ count: 15 }),
+      );
+      insEvent.run(
+        now,
+        'info',
+        'scout',
+        'heartbeat',
+        JSON.stringify({ last_notification_age_s: 4 }),
+      );
     })();
   } finally {
     db.close();
